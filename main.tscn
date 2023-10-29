@@ -10,3 +10,4 @@ position = Vector2(341, 543)
 [node name="Player2" parent="." instance=ExtResource("1_syc1s")]
 position = Vector2(341, 543)
 starting_position = 0.9
+player_number = 1

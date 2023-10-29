@@ -4,6 +4,7 @@ extends RigidBody2D
 @export var spin_power = 4000
 @export var bullet_scene : PackedScene
 @export var starting_position = 0.1
+@export var player_number = 0
 
 var thrust = Vector2.ZERO
 var rotation_direction = 0
@@ -19,14 +20,14 @@ func _process(delta):
 
 func get_input():
 	thrust = Vector2.ZERO
-	if Input.is_action_pressed("thrust"):
+	if Input.is_action_pressed(str("thrust", player_number)):
 		thrust = transform.x * engine_power
 		$Thruster.show()
 	else:
 		$Thruster.hide()
-	rotation_direction = Input.get_axis("rotate_left", "rotate_right")
+	rotation_direction = Input.get_axis(str("rotate_left", player_number), str("rotate_right", player_number))
 	
-	if Input.is_action_just_pressed("shoot"):
+	if Input.is_action_just_pressed(str("shoot", player_number)):
 		shoot()
 
 func _physics_process(delta):
