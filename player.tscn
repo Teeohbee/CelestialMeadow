@@ -8,7 +8,7 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_v3wws"]
 radius = 21.0
 
-[node name="Player" type="RigidBody2D"]
+[node name="Player" type="RigidBody2D" groups=["players"]]
 linear_damp = 1.0
 angular_damp = 5.0
 script = ExtResource("1_ljm24")
