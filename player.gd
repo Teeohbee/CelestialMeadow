@@ -35,9 +35,14 @@ func _physics_process(delta):
 	constant_torque = rotation_direction * spin_power
 	
 func shoot():
-	var bullet = bullet_scene.instantiate(player_number)
+	var bullet = bullet_scene.instantiate()
 	get_tree().root.add_child(bullet)
-	bullet.start($Muzzle.global_transform)
+	bullet.start($Muzzle.global_transform, player_number)
 
 func destroy():
+	$Ship.hide()
+	$Explosion.show()
+	$Explosion.play("explode")
+	await $Explosion.animation_finished
 	queue_free()
+

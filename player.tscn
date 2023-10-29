@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://q7anoymfcc8"]
+[gd_scene load_steps=7 format=3 uid="uid://q7anoymfcc8"]
 
 [ext_resource type="Texture2D" uid="uid://tqmhr1w0q7xo" path="res://player.png" id="1_jtibg"]
 [ext_resource type="Script" path="res://player.gd" id="1_ljm24"]
 [ext_resource type="PackedScene" uid="uid://ew1xete2o5va" path="res://bullet.tscn" id="2_wq7s0"]
 [ext_resource type="Texture2D" uid="uid://caew0w1vcsulu" path="res://thruster.png" id="3_tbj52"]
+[ext_resource type="PackedScene" uid="uid://0rrpx2uqw0jh" path="res://explosion.tscn" id="5_8r2ey"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_v3wws"]
 radius = 21.0
@@ -31,3 +32,6 @@ shape = SubResource("CircleShape2D_v3wws")
 
 [node name="Muzzle" type="Marker2D" parent="."]
 position = Vector2(50, 0)
+
+[node name="Explosion" parent="." instance=ExtResource("5_8r2ey")]
+visible = false

@@ -5,12 +5,10 @@ extends Area2D
 var velocity = Vector2.ZERO
 var player_number : int
 
-func instantiate(_player_number):
-	player_number = _player_number
-
-func start(_transform):
+func start(_transform, _player_number):
 	transform = _transform
 	velocity = transform.x * speed
+	player_number = _player_number
 
 func _process(delta):
 	position += velocity * delta
