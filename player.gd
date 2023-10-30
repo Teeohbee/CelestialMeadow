@@ -19,12 +19,14 @@ func _process(delta):
 	get_input()
 
 func get_input():
+	if Input.is_action_just_pressed('reset'):
+		get_tree().reload_current_scene()
 	thrust = Vector2.ZERO
 	if Input.is_action_pressed(str("thrust", player_number)):
 		thrust = transform.x * engine_power
-		$Thruster.show()
+		$Ship/Thruster.show()
 	else:
-		$Thruster.hide()
+		$Ship/Thruster.hide()
 	rotation_direction = Input.get_axis(str("rotate_left", player_number), str("rotate_right", player_number))
 	
 	if Input.is_action_just_pressed(str("shoot", player_number)):

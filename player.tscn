@@ -15,16 +15,15 @@ angular_damp = 5.0
 script = ExtResource("1_ljm24")
 bullet_scene = ExtResource("2_wq7s0")
 
-[node name="Thruster" type="Sprite2D" parent="."]
-position = Vector2(-50, 0)
-rotation = 1.5708
-scale = Vector2(0.25, 0.5)
-texture = ExtResource("3_tbj52")
-
 [node name="Ship" type="Sprite2D" parent="."]
 rotation = 1.5708
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("1_jtibg")
+
+[node name="Thruster" type="Sprite2D" parent="Ship"]
+position = Vector2(0.000361999, 100)
+scale = Vector2(0.5, 1)
+texture = ExtResource("3_tbj52")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(-5, 0)
