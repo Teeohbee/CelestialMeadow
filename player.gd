@@ -50,6 +50,7 @@ func shoot():
 	bullet.start($Muzzle.global_transform, player_number)
 
 func destroy():
+	$CollisionShape2D.set_deferred("disabled", true)
 	$Ship.hide()
 	$Explosion.show()
 	$Explosion.play("explode")

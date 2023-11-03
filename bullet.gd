@@ -17,8 +17,11 @@ func _on_visible_on_screen_notifier_2d_screen_exited():
 	queue_free()
 
 func _on_body_entered(body):
-	if player_number == body.player_number:
-		return
+	if body.is_in_group("asteroids"):
+		body.destroy()
+		queue_free()
 	if body.is_in_group("players"):
+		if player_number == body.player_number:
+			return
 		body.destroy()
 		queue_free()

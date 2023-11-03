@@ -1,0 +1,33 @@
+[gd_scene load_steps=7 format=3 uid="uid://po2jwbc0apgh"]
+
+[ext_resource type="Script" path="res://asteroid.gd" id="1_ftbns"]
+[ext_resource type="Texture2D" uid="uid://b306jfmx0me1x" path="res://sprites/asteroid.png" id="1_fv8dp"]
+[ext_resource type="PackedScene" uid="uid://0rrpx2uqw0jh" path="res://explosion.tscn" id="3_3pasg"]
+[ext_resource type="AudioStream" uid="uid://crehfdwax0f6x" path="res://audio/explosion.ogg" id="4_bsxi3"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_jey0l"]
+bounce = 1.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_nm217"]
+size = Vector2(70.7107, 71.4178)
+
+[node name="Asteroid" type="RigidBody2D" groups=["asteroids"]]
+physics_material_override = SubResource("PhysicsMaterial_jey0l")
+linear_damp_mode = 1
+angular_damp_mode = 1
+script = ExtResource("1_ftbns")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_fv8dp")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0.250001, -0.250001)
+rotation = 0.785398
+scale = Vector2(1, 1)
+shape = SubResource("RectangleShape2D_nm217")
+
+[node name="Explosion" parent="." instance=ExtResource("3_3pasg")]
+visible = false
+
+[node name="ExplosionSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_bsxi3")
