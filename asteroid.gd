@@ -1,9 +1,16 @@
 extends RigidBody2D
 
 var screen_size
+var radius
+@export var sprites : Array[CompressedTexture2D] = []
 
 func _ready():
 	screen_size = get_viewport_rect().size
+	$Sprite2D.texture = sprites[randi() % sprites.size()]
+	var asteroid_scale = randf_range(0.8, 1.5)
+	$Sprite2D.scale = Vector2(asteroid_scale, asteroid_scale)
+	$CollisionShape2D.scale = Vector2(asteroid_scale, asteroid_scale)
+	radius = int($Sprite2D.texture.get_size().x / 2 * asteroid_scale)
 	
 func start(_position, _velocity):
 	position = _position
@@ -12,8 +19,8 @@ func start(_position, _velocity):
 
 func _integrate_forces(physics_state):
 	var xform = physics_state.transform
-	xform.origin.x = wrapf(xform.origin.x, 0, screen_size.x)
-	xform.origin.y = wrapf(xform.origin.y, 0, screen_size.y)
+	xform.origin.x = wrapf(xform.origin.x, 0 - radius, screen_size.x + radius)
+	xform.origin.y = wrapf(xform.origin.y, 0 - radius, screen_size.y + radius)
 	physics_state.transform = xform
 	
 func destroy():

@@ -5,7 +5,7 @@ var screensize
 
 func _ready():
 	screensize = get_viewport().get_visible_rect().size
-	for i in 3:
+	for i in 5:
 		spawn_asteroid()
 
 func spawn_asteroid():

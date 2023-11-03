@@ -1,7 +1,8 @@
-[gd_scene load_steps=7 format=3 uid="uid://po2jwbc0apgh"]
+[gd_scene load_steps=8 format=3 uid="uid://po2jwbc0apgh"]
 
 [ext_resource type="Script" path="res://asteroid.gd" id="1_ftbns"]
-[ext_resource type="Texture2D" uid="uid://b306jfmx0me1x" path="res://sprites/asteroid.png" id="1_fv8dp"]
+[ext_resource type="Texture2D" uid="uid://b306jfmx0me1x" path="res://sprites/asteroid00.png" id="2_c3vyr"]
+[ext_resource type="Texture2D" uid="uid://wtpq2d37xq51" path="res://sprites/asteroid01.png" id="3_2d4gk"]
 [ext_resource type="PackedScene" uid="uid://0rrpx2uqw0jh" path="res://explosion.tscn" id="3_3pasg"]
 [ext_resource type="AudioStream" uid="uid://crehfdwax0f6x" path="res://audio/explosion.ogg" id="4_bsxi3"]
 
@@ -16,9 +17,9 @@ physics_material_override = SubResource("PhysicsMaterial_jey0l")
 linear_damp_mode = 1
 angular_damp_mode = 1
 script = ExtResource("1_ftbns")
+sprites = Array[CompressedTexture2D]([ExtResource("2_c3vyr"), ExtResource("3_2d4gk")])
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-texture = ExtResource("1_fv8dp")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0.250001, -0.250001)
