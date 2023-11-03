@@ -16,7 +16,7 @@ func _ready():
 	if starting_position > 0.5:
 		rotation_degrees = 180
 
-func _process(delta):
+func _process(_delta):
 	get_input()
 
 func _integrate_forces(physics_state):
@@ -39,7 +39,7 @@ func get_input():
 	if Input.is_action_just_pressed(str("shoot", player_number)):
 		shoot()
 
-func _physics_process(delta):
+func _physics_process(_delta):
 	constant_force = thrust
 	constant_torque = rotation_direction * spin_power
 	

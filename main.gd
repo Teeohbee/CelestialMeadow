@@ -10,8 +10,7 @@ func _ready():
 
 func spawn_asteroid():
 	$AsteroidPath/AsteroidSpawn.progress = randi()
-	var position = $AsteroidPath/AsteroidSpawn.position
 	var velocity = Vector2.RIGHT.rotated(randf_range(0, TAU)) * randf_range(50, 125)
 	var asteroid = asteroid_scene.instantiate()
-	asteroid.start(position, velocity)
+	asteroid.start($AsteroidPath/AsteroidSpawn.position, velocity)
 	call_deferred("add_child", asteroid)
