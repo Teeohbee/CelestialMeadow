@@ -1,8 +1,15 @@
-[gd_scene load_steps=2 format=3 uid="uid://ww418vo28v70"]
+[gd_scene load_steps=3 format=3 uid="uid://ww418vo28v70"]
 
+[ext_resource type="PackedScene" uid="uid://bnauy0payb6b1" path="res://planet.tscn" id="1_kiu5r"]
 [ext_resource type="PackedScene" uid="uid://q7anoymfcc8" path="res://player.tscn" id="1_syc1s"]
 
 [node name="Main" type="Node2D"]
+
+[node name="Planet" parent="." instance=ExtResource("1_kiu5r")]
+
+[node name="Planet2" parent="." instance=ExtResource("1_kiu5r")]
+
+[node name="Planet3" parent="." instance=ExtResource("1_kiu5r")]
 
 [node name="Player" parent="." instance=ExtResource("1_syc1s")]
 position = Vector2(341, 543)

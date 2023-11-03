@@ -1,0 +1,17 @@
+[gd_scene load_steps=12 format=3 uid="uid://bnauy0payb6b1"]
+
+[ext_resource type="Script" path="res://planet.gd" id="1_ivuc2"]
+[ext_resource type="Texture2D" uid="uid://baeus40j2oryh" path="res://planet00.png" id="2_rub08"]
+[ext_resource type="Texture2D" uid="uid://dil4lkja3126u" path="res://planet01.png" id="3_e7tbt"]
+[ext_resource type="Texture2D" uid="uid://1ipltpid65ih" path="res://planet02.png" id="4_vuvb3"]
+[ext_resource type="Texture2D" uid="uid://cove71ef3ihtu" path="res://planet03.png" id="5_5v1vt"]
+[ext_resource type="Texture2D" uid="uid://d4amkuucim056" path="res://planet04.png" id="6_m1mt4"]
+[ext_resource type="Texture2D" uid="uid://m4tbl45xtthk" path="res://planet05.png" id="7_0vdrr"]
+[ext_resource type="Texture2D" uid="uid://33s5c6afdwyi" path="res://planet06.png" id="8_m0lln"]
+[ext_resource type="Texture2D" uid="uid://bgioc4nl73xc0" path="res://planet07.png" id="9_7ksyc"]
+[ext_resource type="Texture2D" uid="uid://kvy4jitc24uw" path="res://planet08.png" id="10_vt7s7"]
+[ext_resource type="Texture2D" uid="uid://da822ryvpydf2" path="res://planet09.png" id="11_tjj8t"]
+
+[node name="Planet" type="Sprite2D"]
+script = ExtResource("1_ivuc2")
+sprites = Array[CompressedTexture2D]([ExtResource("2_rub08"), ExtResource("3_e7tbt"), ExtResource("4_vuvb3"), ExtResource("5_5v1vt"), ExtResource("6_m1mt4"), ExtResource("7_0vdrr"), ExtResource("8_m0lln"), ExtResource("9_7ksyc"), ExtResource("10_vt7s7"), ExtResource("11_tjj8t")])
