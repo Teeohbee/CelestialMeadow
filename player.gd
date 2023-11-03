@@ -39,12 +39,14 @@ func _physics_process(delta):
 func shoot():
 	var bullet = bullet_scene.instantiate()
 	get_tree().root.add_child(bullet)
+	$LaserSound.play()
 	bullet.start($Muzzle.global_transform, player_number)
 
 func destroy():
 	$Ship.hide()
 	$Explosion.show()
 	$Explosion.play("explode")
+	$ExplosionSound.play()
 	await $Explosion.animation_finished
 	queue_free()
 

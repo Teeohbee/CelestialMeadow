@@ -1,10 +1,12 @@
-[gd_scene load_steps=7 format=3 uid="uid://q7anoymfcc8"]
+[gd_scene load_steps=9 format=3 uid="uid://q7anoymfcc8"]
 
 [ext_resource type="Texture2D" uid="uid://tqmhr1w0q7xo" path="res://player.png" id="1_jtibg"]
 [ext_resource type="Script" path="res://player.gd" id="1_ljm24"]
 [ext_resource type="PackedScene" uid="uid://ew1xete2o5va" path="res://bullet.tscn" id="2_wq7s0"]
 [ext_resource type="Texture2D" uid="uid://caew0w1vcsulu" path="res://thruster.png" id="3_tbj52"]
 [ext_resource type="PackedScene" uid="uid://0rrpx2uqw0jh" path="res://explosion.tscn" id="5_8r2ey"]
+[ext_resource type="AudioStream" uid="uid://d1ih0wlocb1vm" path="res://laser.ogg" id="6_uy166"]
+[ext_resource type="AudioStream" uid="uid://crehfdwax0f6x" path="res://explosion.ogg" id="7_m6obc"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_v3wws"]
 radius = 21.0
@@ -34,3 +36,9 @@ position = Vector2(50, 0)
 
 [node name="Explosion" parent="." instance=ExtResource("5_8r2ey")]
 visible = false
+
+[node name="LaserSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_uy166")
+
+[node name="ExplosionSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_m6obc")
