@@ -19,6 +19,12 @@ func _ready():
 func _process(delta):
 	get_input()
 
+func _integrate_forces(physics_state):
+	var xform = physics_state.transform
+	xform.origin.x = wrapf(xform.origin.x, 0, screen_size.x)
+	xform.origin.y = wrapf(xform.origin.y, 0, screen_size.y)
+	physics_state.transform = xform
+
 func get_input():
 	if Input.is_action_just_pressed('reset'):
 		get_tree().reload_current_scene()
