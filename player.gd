@@ -8,9 +8,10 @@ extends RigidBody2D
 
 var thrust = Vector2.ZERO
 var rotation_direction = 0
+var screen_size
 
 func _ready():
-	var screen_size = get_viewport_rect().size
+	screen_size = get_viewport_rect().size
 	position = screen_size * starting_position
 	if starting_position > 0.5:
 		rotation_degrees = 180
