@@ -3,7 +3,7 @@ extends RigidBody2D
 @export var engine_power = 500
 @export var spin_power = 4000
 @export var bullet_scene : PackedScene
-@export var starting_position = 0.1
+@export var starting_position = Vector2(0.1, 1)
 @export var player_number = 0
 
 var thrust = Vector2.ZERO
@@ -12,9 +12,10 @@ var screen_size
 
 func _ready():
 	screen_size = get_viewport_rect().size
-	position = screen_size * starting_position
+	position.x = screen_size.x * starting_position.x
+	position.y = screen_size.y * starting_position.y
 	set_ship_colour()
-	if starting_position > 0.5:
+	if starting_position.x > 0.5:
 		rotation_degrees = 180
 
 func _process(_delta):
@@ -51,7 +52,7 @@ func shoot():
 	bullet.start($Muzzle.global_transform, player_number)
 
 func set_ship_colour():
-	var player_colours = [Color.LIGHT_CORAL, Color.LIGHT_GREEN]
+	var player_colours = [Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW]
 	$Ship.set_self_modulate(player_colours[player_number])
 
 func destroy():

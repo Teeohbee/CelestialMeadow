@@ -24,7 +24,6 @@ sprites = Array[CompressedTexture2D]([ExtResource("2_c3vyr"), ExtResource("3_2d4
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0.250001, -0.250001)
 rotation = 0.785398
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_nm217")
 
 [node name="Explosion" parent="." instance=ExtResource("3_3pasg")]

@@ -68,6 +68,38 @@ reset={
 "events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":82,"key_label":0,"unicode":114,"echo":false,"script":null)
 ]
 }
+rotate_left2={
+"deadzone": 0.5,
+"events": []
+}
+rotate_left3={
+"deadzone": 0.5,
+"events": []
+}
+rotate_right2={
+"deadzone": 0.5,
+"events": []
+}
+rotate_right3={
+"deadzone": 0.5,
+"events": []
+}
+thrust2={
+"deadzone": 0.5,
+"events": []
+}
+thrust3={
+"deadzone": 0.5,
+"events": []
+}
+shoot2={
+"deadzone": 0.5,
+"events": []
+}
+shoot3={
+"deadzone": 0.5,
+"events": []
+}
 
 [physics]
 
