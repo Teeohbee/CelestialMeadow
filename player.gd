@@ -18,6 +18,7 @@ func _ready():
 	set_ship_colour()
 	if starting_position.x > 0.5:
 		rotation_degrees = 180
+	rotation_degrees += randf_range(-6.00, 6.00)
 
 func _process(_delta):
 	get_input()
