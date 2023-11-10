@@ -8,6 +8,7 @@ extends RigidBody2D
 
 var thrust = Vector2.ZERO
 var rotation_direction = 0
+var dead = false
 var screen_size
 
 func _ready():
@@ -28,6 +29,8 @@ func _integrate_forces(physics_state):
 	physics_state.transform = xform
 
 func get_input():
+	if dead == true:
+		return
 	if Input.is_action_just_pressed('reset'):
 		get_tree().reload_current_scene()
 	thrust = Vector2.ZERO
@@ -57,6 +60,7 @@ func set_ship_colour():
 
 func destroy():
 	$CollisionShape2D.set_deferred("disabled", true)
+	dead = true
 	$Ship.hide()
 	$Explosion.show()
 	$Explosion.play("explode")
