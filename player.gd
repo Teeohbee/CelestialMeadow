@@ -13,6 +13,7 @@ var screen_size
 func _ready():
 	screen_size = get_viewport_rect().size
 	position = screen_size * starting_position
+	set_ship_colour()
 	if starting_position > 0.5:
 		rotation_degrees = 180
 
@@ -48,6 +49,10 @@ func shoot():
 	get_tree().root.add_child(bullet)
 	$LaserSound.play()
 	bullet.start($Muzzle.global_transform, player_number)
+
+func set_ship_colour():
+	var player_colours = [Color.LIGHT_CORAL, Color.LIGHT_GREEN]
+	$Ship.set_self_modulate(player_colours[player_number])
 
 func destroy():
 	$CollisionShape2D.set_deferred("disabled", true)
