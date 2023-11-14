@@ -9,6 +9,7 @@ extends RigidBody2D
 var thrust = Vector2.ZERO
 var rotation_direction = 0
 var dead = false
+var can_shoot = true
 var screen_size
 
 func _ready():
@@ -40,7 +41,7 @@ func get_input():
 		$Ship/Thruster.hide()
 	rotation_direction = Input.get_axis(str("rotate_left", player_number), str("rotate_right", player_number))
 	
-	if Input.is_action_just_pressed(str("shoot", player_number)):
+	if Input.is_action_pressed(str("shoot", player_number)):
 		shoot()
 
 func _physics_process(_delta):
@@ -48,10 +49,13 @@ func _physics_process(_delta):
 	constant_torque = rotation_direction * spin_power
 	
 func shoot():
-	var bullet = bullet_scene.instantiate()
-	get_tree().root.add_child(bullet)
-	$LaserSound.play()
-	bullet.start($Muzzle.global_transform, player_number)
+	if can_shoot:
+		var bullet = bullet_scene.instantiate()
+		get_tree().root.add_child(bullet)
+		$LaserSound.play()
+		bullet.start($Muzzle.global_transform, player_number)
+		$ShootTimer.start()
+		can_shoot = false
 
 func set_ship_colour():
 	var player_colours = [Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW]
@@ -73,3 +77,5 @@ func destroy():
 	await $Explosion.animation_finished
 	queue_free()
 
+func _on_timer_timeout():
+	can_shoot = true
