@@ -1,10 +1,11 @@
-[gd_scene load_steps=7 format=3 uid="uid://ww418vo28v70"]
+[gd_scene load_steps=8 format=3 uid="uid://ww418vo28v70"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_k3tpq"]
 [ext_resource type="PackedScene" uid="uid://bnauy0payb6b1" path="res://planet.tscn" id="1_kiu5r"]
 [ext_resource type="PackedScene" uid="uid://q7anoymfcc8" path="res://player.tscn" id="1_syc1s"]
 [ext_resource type="PackedScene" uid="uid://po2jwbc0apgh" path="res://asteroid.tscn" id="2_xklmo"]
 [ext_resource type="AudioStream" uid="uid://brd507otbqj41" path="res://audio/voxel_revolution.ogg" id="5_t5cjv"]
+[ext_resource type="PackedScene" uid="uid://dw6t1mq7v7ltb" path="res://space_station.tscn" id="6_vfkaa"]
 
 [sub_resource type="Curve2D" id="Curve2D_1lhca"]
 _data = {
@@ -50,3 +51,6 @@ curve = SubResource("Curve2D_1lhca")
 stream = ExtResource("5_t5cjv")
 volume_db = -10.0
 autoplay = true
+
+[node name="SpaceStation" parent="." instance=ExtResource("6_vfkaa")]
+position = Vector2(960, 540)

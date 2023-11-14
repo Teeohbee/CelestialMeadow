@@ -20,6 +20,8 @@ func _on_body_entered(body):
 	if body.is_in_group("asteroids"):
 		body.destroy()
 		queue_free()
+	if body.is_in_group("space_stations"):
+		queue_free()
 	if body.is_in_group("players"):
 		if player_number == body.player_number:
 			return

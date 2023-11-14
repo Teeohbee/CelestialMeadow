@@ -1,0 +1,40 @@
+[gd_scene load_steps=5 format=3 uid="uid://dw6t1mq7v7ltb"]
+
+[ext_resource type="Script" path="res://space_station.gd" id="1_tpi0f"]
+[ext_resource type="Texture2D" uid="uid://6to4hoo5jbon" path="res://sprites/station.png" id="1_yn1n7"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_f7t7u"]
+radius = 32.5615
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jj3xh"]
+size = Vector2(20, 54.4472)
+
+[node name="SpaceStation" type="AnimatableBody2D" groups=["space_stations"]]
+scale = Vector2(1.5, 1.5)
+script = ExtResource("1_tpi0f")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_yn1n7")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_f7t7u")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="."]
+position = Vector2(-36, -36)
+rotation = 0.785398
+shape = SubResource("RectangleShape2D_jj3xh")
+
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="."]
+position = Vector2(36, 36)
+rotation = 0.785398
+shape = SubResource("RectangleShape2D_jj3xh")
+
+[node name="CollisionShape2D4" type="CollisionShape2D" parent="."]
+position = Vector2(-35.5, 36)
+rotation = -0.785398
+shape = SubResource("RectangleShape2D_jj3xh")
+
+[node name="CollisionShape2D5" type="CollisionShape2D" parent="."]
+position = Vector2(36, -35.5)
+rotation = -0.785398
+shape = SubResource("RectangleShape2D_jj3xh")
