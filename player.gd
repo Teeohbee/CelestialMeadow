@@ -16,9 +16,7 @@ func _ready():
 	position.x = screen_size.x * starting_position.x
 	position.y = screen_size.y * starting_position.y
 	set_ship_colour()
-	if starting_position.x > 0.5:
-		rotation_degrees = 180
-	rotation_degrees += randf_range(-6.00, 6.00)
+	set_ship_starting_rotation()
 
 func _process(_delta):
 	get_input()
@@ -58,6 +56,12 @@ func shoot():
 func set_ship_colour():
 	var player_colours = [Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW]
 	$Ship.set_self_modulate(player_colours[player_number])
+
+func set_ship_starting_rotation():
+	if starting_position.x > 0.5:
+		rotation_degrees = 180
+	var player_rotation_adjustment = [30, 30, -30, -30]
+	rotation_degrees += player_rotation_adjustment[player_number]
 
 func destroy():
 	$CollisionShape2D.set_deferred("disabled", true)
