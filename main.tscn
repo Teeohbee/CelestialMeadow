@@ -54,3 +54,9 @@ autoplay = true
 
 [node name="SpaceStation" parent="." instance=ExtResource("6_vfkaa")]
 position = Vector2(960, 540)
+
+[node name="AsteroidTimer" type="Timer" parent="."]
+wait_time = 5.0
+autostart = true
+
+[connection signal="timeout" from="AsteroidTimer" to="." method="_on_asteroid_timer_timeout"]
