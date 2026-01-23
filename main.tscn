@@ -16,31 +16,13 @@ point_count = 5
 [node name="Main" type="Node2D"]
 script = ExtResource("1_k3tpq")
 asteroid_scene = ExtResource("2_xklmo")
+player_scene = ExtResource("1_syc1s")
 
 [node name="Planet" parent="." instance=ExtResource("1_kiu5r")]
 
 [node name="Planet2" parent="." instance=ExtResource("1_kiu5r")]
 
 [node name="Planet3" parent="." instance=ExtResource("1_kiu5r")]
-
-[node name="Player" parent="." instance=ExtResource("1_syc1s")]
-position = Vector2(341, 543)
-starting_position = Vector2(0.1, 0.1)
-
-[node name="Player2" parent="." instance=ExtResource("1_syc1s")]
-position = Vector2(341, 543)
-starting_position = Vector2(0.9, 0.9)
-player_number = 1
-
-[node name="Player3" parent="." instance=ExtResource("1_syc1s")]
-position = Vector2(341, 543)
-starting_position = Vector2(0.1, 0.9)
-player_number = 2
-
-[node name="Player4" parent="." instance=ExtResource("1_syc1s")]
-position = Vector2(341, 543)
-starting_position = Vector2(0.9, 0.1)
-player_number = 3
 
 [node name="AsteroidPath" type="Path2D" parent="."]
 curve = SubResource("Curve2D_1lhca")
