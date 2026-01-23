@@ -31,5 +31,8 @@ func destroy():
 	$ExplosionSound.play()
 	linear_velocity = Vector2.ZERO
 	angular_velocity = 0
+	var camera = get_tree().root.get_node_or_null("Main/Camera2D")
+	if camera and camera.has_method("shake"):
+		camera.shake(12.0)
 	await $Explosion.animation_finished
 	queue_free()
