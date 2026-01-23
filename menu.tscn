@@ -56,6 +56,9 @@ custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
 text = "-"
+focus_neighbor_right = NodePath("../IncreaseButton")
+focus_next = NodePath("../../StartButton")
+focus_previous = NodePath("../../StartButton")
 
 [node name="PlayerLabel" type="Label" parent="VBoxContainer/PlayerCount"]
 custom_minimum_size = Vector2(150, 0)
@@ -80,6 +83,9 @@ custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
 text = "+"
+focus_neighbor_left = NodePath("../DecreaseButton")
+focus_next = NodePath("../../StartButton")
+focus_previous = NodePath("../../StartButton")
 
 [node name="Spacer2" type="Control" parent="VBoxContainer"]
 custom_minimum_size = Vector2(0, 20)
@@ -90,12 +96,17 @@ custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
 theme_override_font_sizes/font_size = 28
 text = "START GAME"
+focus_neighbor_top = NodePath("../PlayerCount/DecreaseButton")
+focus_neighbor_bottom = NodePath("../QuitButton")
+focus_previous = NodePath("../PlayerCount/DecreaseButton")
 
 [node name="QuitButton" type="Button" parent="VBoxContainer"]
 custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
 theme_override_font_sizes/font_size = 28
 text = "QUIT"
+focus_neighbor_top = NodePath("../StartButton")
+focus_neighbor_bottom = NodePath("../PlayerCount/DecreaseButton")
 
 [connection signal="pressed" from="VBoxContainer/PlayerCount/DecreaseButton" to="." method="_on_decrease_pressed"]
 [connection signal="pressed" from="VBoxContainer/PlayerCount/IncreaseButton" to="." method="_on_increase_pressed"]
