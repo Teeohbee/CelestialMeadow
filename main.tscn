@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://ww418vo28v70"]
+[gd_scene load_steps=9 format=3 uid="uid://ww418vo28v70"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_k3tpq"]
 [ext_resource type="PackedScene" uid="uid://bnauy0payb6b1" path="res://planet.tscn" id="1_kiu5r"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://po2jwbc0apgh" path="res://asteroid.tscn" id="2_xklmo"]
 [ext_resource type="AudioStream" uid="uid://brd507otbqj41" path="res://audio/voxel_revolution.ogg" id="5_t5cjv"]
 [ext_resource type="PackedScene" uid="uid://dw6t1mq7v7ltb" path="res://space_station.tscn" id="6_vfkaa"]
+[ext_resource type="Script" path="res://camera_shake.gd" id="7_shake"]
 
 [sub_resource type="Curve2D" id="Curve2D_1lhca"]
 _data = {
@@ -17,6 +18,10 @@ point_count = 5
 script = ExtResource("1_k3tpq")
 asteroid_scene = ExtResource("2_xklmo")
 player_scene = ExtResource("1_syc1s")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+offset = Vector2(960, 540)
+script = ExtResource("7_shake")
 
 [node name="Planet" parent="." instance=ExtResource("1_kiu5r")]
 
