@@ -47,6 +47,8 @@ position = Vector2(960, 540)
 wait_time = 5.0
 autostart = true
 
-[node name="PauseMenu" parent="." instance=ExtResource("8_pause")]
+[node name="PauseMenu" type="CanvasLayer" parent="."]
+
+[node name="UI" parent="PauseMenu" instance=ExtResource("8_pause")]
 
 [connection signal="timeout" from="AsteroidTimer" to="." method="_on_asteroid_timer_timeout"]
