@@ -11,9 +11,13 @@ config_version=5
 [application]
 
 config/name="Starfield"
-run/main_scene="res://main.tscn"
-config/features=PackedStringArray("4.3", "Forward Plus")
+run/main_scene="res://menu.tscn"
+config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://icon.svg"
+
+[autoload]
+
+GameState="*res://game_state.gd"
 
 [display]
 
