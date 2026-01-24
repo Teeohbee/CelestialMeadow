@@ -31,8 +31,6 @@ func _integrate_forces(physics_state):
 func get_input():
 	if dead == true:
 		return
-	if Input.is_action_just_pressed('reset'):
-		get_tree().reload_current_scene()
 	thrust = Vector2.ZERO
 	if Input.is_action_pressed(str("thrust", player_number)):
 		thrust = transform.x * engine_power
