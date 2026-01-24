@@ -74,6 +74,9 @@ func destroy():
 	$Explosion.show()
 	$Explosion.play("explode")
 	$ExplosionSound.play()
+	var camera = get_tree().root.get_node_or_null("Main/Camera2D")
+	if camera and camera.has_method("shake"):
+		camera.shake(20.0)
 	await $Explosion.animation_finished
 	queue_free()
 
