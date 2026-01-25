@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://ww418vo28v70"]
+[gd_scene load_steps=10 format=3 uid="uid://ww418vo28v70"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_k3tpq"]
 [ext_resource type="PackedScene" uid="uid://bnauy0payb6b1" path="res://planet.tscn" id="1_kiu5r"]
@@ -7,6 +7,7 @@
 [ext_resource type="AudioStream" uid="uid://brd507otbqj41" path="res://audio/voxel_revolution.ogg" id="5_t5cjv"]
 [ext_resource type="PackedScene" uid="uid://dw6t1mq7v7ltb" path="res://space_station.tscn" id="6_vfkaa"]
 [ext_resource type="Script" path="res://camera_shake.gd" id="7_shake"]
+[ext_resource type="PackedScene" uid="uid://c8m4vjx2qnxpb" path="res://pause_menu.tscn" id="8_pause"]
 
 [sub_resource type="Curve2D" id="Curve2D_1lhca"]
 _data = {
@@ -45,5 +46,9 @@ position = Vector2(960, 540)
 [node name="AsteroidTimer" type="Timer" parent="."]
 wait_time = 5.0
 autostart = true
+
+[node name="PauseMenu" type="CanvasLayer" parent="."]
+
+[node name="UI" parent="PauseMenu" instance=ExtResource("8_pause")]
 
 [connection signal="timeout" from="AsteroidTimer" to="." method="_on_asteroid_timer_timeout"]
