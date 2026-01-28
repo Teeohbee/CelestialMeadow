@@ -14,6 +14,7 @@ var player_configs = [
 func _ready():
 	screensize = get_viewport().get_visible_rect().size
 	spawn_players()
+	initialize_hud()
 	for i in 10:
 		spawn_asteroid()
 
@@ -24,6 +25,7 @@ func spawn_players():
 		player.player_number = player_configs[i].number
 		player.tree_exiting.connect(_on_player_destroyed)
 		player.respawn_requested.connect(_on_player_respawn_requested)
+		player.lives_changed.connect(_on_player_lives_changed)
 		add_child(player)
 
 func spawn_asteroid():
@@ -118,3 +120,11 @@ func _on_player_respawn_requested(player):
 	await get_tree().create_timer(3.0).timeout
 	if is_instance_valid(player):
 		player.respawn()
+
+func initialize_hud():
+	var hud = $HUD
+	for i in GameState.num_players:
+		hud.update_lives(i, GameState.lives_per_player)
+
+func _on_player_lives_changed(player_number: int, lives: int):
+	$HUD.update_lives(player_number, lives)
