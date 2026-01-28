@@ -54,39 +54,55 @@ func _on_player_destroyed():
 		show_draw()
 
 func show_victory(winner_number: int):
+	var overlay = ColorRect.new()
+	overlay.color = Color(0, 0, 0, 0.6)
+	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(overlay)
+	
 	var panel = Panel.new()
-	panel.position = Vector2(screensize.x / 2 - 350, screensize.y / 2 - 150)
-	panel.size = Vector2(700, 300)
-	panel.modulate = Color(0, 0, 0, 0.8)
+	panel.set_anchors_preset(Control.PRESET_CENTER)
+	panel.offset_left = -200
+	panel.offset_top = -100
+	panel.offset_right = 200
+	panel.offset_bottom = 100
+	panel.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	panel.grow_vertical = Control.GROW_DIRECTION_BOTH
 	add_child(panel)
 	
 	var label = Label.new()
 	label.text = "Player %d Wins!" % (winner_number + 1)
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	label.add_theme_font_size_override("font_size", 72)
-	label.position = Vector2(screensize.x / 2 - 300, screensize.y / 2 - 100)
-	label.size = Vector2(600, 200)
-	add_child(label)
+	label.add_theme_font_size_override("font_size", 48)
+	label.set_anchors_preset(Control.PRESET_FULL_RECT)
+	panel.add_child(label)
 	
 	await get_tree().create_timer(3.0).timeout
 	get_tree().change_scene_to_file("res://menu.tscn")
 
 func show_draw():
+	var overlay = ColorRect.new()
+	overlay.color = Color(0, 0, 0, 0.6)
+	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(overlay)
+	
 	var panel = Panel.new()
-	panel.position = Vector2(screensize.x / 2 - 350, screensize.y / 2 - 150)
-	panel.size = Vector2(700, 300)
-	panel.modulate = Color(0, 0, 0, 0.8)
+	panel.set_anchors_preset(Control.PRESET_CENTER)
+	panel.offset_left = -200
+	panel.offset_top = -100
+	panel.offset_right = 200
+	panel.offset_bottom = 100
+	panel.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	panel.grow_vertical = Control.GROW_DIRECTION_BOTH
 	add_child(panel)
 	
 	var label = Label.new()
-	label.text = "Draw! Everyone Lost!"
+	label.text = "Draw!\nEveryone Lost!"
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	label.add_theme_font_size_override("font_size", 72)
-	label.position = Vector2(screensize.x / 2 - 300, screensize.y / 2 - 100)
-	label.size = Vector2(600, 200)
-	add_child(label)
+	label.add_theme_font_size_override("font_size", 48)
+	label.set_anchors_preset(Control.PRESET_FULL_RECT)
+	panel.add_child(label)
 	
 	await get_tree().create_timer(3.0).timeout
 	get_tree().change_scene_to_file("res://menu.tscn")
