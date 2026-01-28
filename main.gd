@@ -23,6 +23,7 @@ func spawn_players():
 		player.starting_position = player_configs[i].position
 		player.player_number = player_configs[i].number
 		player.tree_exiting.connect(_on_player_destroyed)
+		player.respawn_requested.connect(_on_player_respawn_requested)
 		add_child(player)
 
 func spawn_asteroid():
@@ -112,3 +113,8 @@ func show_draw():
 	
 	await get_tree().create_timer(3.0).timeout
 	get_tree().change_scene_to_file("res://menu.tscn")
+
+func _on_player_respawn_requested(player):
+	await get_tree().create_timer(3.0).timeout
+	if is_instance_valid(player):
+		player.respawn()
