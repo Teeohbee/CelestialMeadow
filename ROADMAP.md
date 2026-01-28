@@ -10,11 +10,11 @@
 - [x] Background music
 - [x] Space station obstacles
 - [x] Planets with gravity
+- [x] Pause menu system
+- [x] Camera shake on explosions
+- [x] End-game victory/draw conditions
 
 ## In Progress / Pending Merge 🚧
-- [ ] **End-game Conditions** - Ready to merge (endgame-condition branch)
-- [ ] **Pause Menu** - PR #3 (pause-menu branch)
-- [ ] **Camera Shake** - Ready to merge (camera-shake branch)
 - [ ] **Particle Effects** - In development (particle-effects branch)
 - [ ] **P2P Multiplayer** - In development (p2p-multiplayer branch)
 
