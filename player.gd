@@ -1,6 +1,7 @@
 extends RigidBody2D
 
 signal respawn_requested(player)
+signal lives_changed(player_number, lives)
 
 @export var engine_power = 500
 @export var spin_power = 4000
@@ -81,6 +82,7 @@ func destroy():
 		camera.shake(20.0)
 	
 	lives -= 1
+	emit_signal("lives_changed", player_number, lives)
 	
 	await $Explosion.animation_finished
 	
