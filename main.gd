@@ -2,6 +2,7 @@ extends Node2D
 
 @export var asteroid_scene : PackedScene
 @export var player_scene : PackedScene
+@export var powerup_scene : PackedScene
 var screensize
 var game_over = false
 var player_configs = [
@@ -33,6 +34,8 @@ func spawn_asteroid():
 	var velocity = Vector2.RIGHT.rotated(randf_range(0, TAU)) * randf_range(100, 200)
 	var asteroid = asteroid_scene.instantiate()
 	asteroid.start($AsteroidPath/AsteroidSpawn.position, velocity)
+	asteroid.powerup_dropped.connect(_on_powerup_dropped)
+	call_deferred("add_child", asteroid)
 	call_deferred("add_child", asteroid)
 
 func _on_asteroid_timer_timeout():
@@ -128,3 +131,9 @@ func initialize_hud():
 
 func _on_player_lives_changed(player_number: int, lives: int):
 	$HUD.update_lives(player_number, lives)
+
+func _on_powerup_dropped(powerup_position: Vector2, powerup_type: int):
+var powerup = powerup_scene.instantiate()
+powerup.position = powerup_position
+powerup.type = powerup_type
+call_deferred("add_child", powerup)

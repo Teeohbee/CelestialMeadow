@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://ww418vo28v70"]
+[gd_scene load_steps=12 format=3 uid="uid://ww418vo28v70"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_k3tpq"]
 [ext_resource type="PackedScene" uid="uid://bnauy0payb6b1" path="res://planet.tscn" id="1_kiu5r"]
@@ -9,6 +9,7 @@
 [ext_resource type="Script" path="res://camera_shake.gd" id="7_shake"]
 [ext_resource type="PackedScene" uid="uid://c8m4vjx2qnxpb" path="res://pause_menu.tscn" id="8_pause"]
 [ext_resource type="PackedScene" uid="uid://b8yjq4m7nfx2f" path="res://hud.tscn" id="9_hud"]
+[ext_resource type="PackedScene" uid="uid://cq8r4y5g3mbhp" path="res://powerup.tscn" id="10_powerup"]
 
 [sub_resource type="Curve2D" id="Curve2D_1lhca"]
 _data = {
@@ -20,6 +21,7 @@ point_count = 5
 script = ExtResource("1_k3tpq")
 asteroid_scene = ExtResource("2_xklmo")
 player_scene = ExtResource("1_syc1s")
+powerup_scene = ExtResource("10_powerup")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 offset = Vector2(960, 540)
