@@ -54,6 +54,12 @@ func _on_player_destroyed():
 		show_draw()
 
 func show_victory(winner_number: int):
+	var panel = Panel.new()
+	panel.position = Vector2(screensize.x / 2 - 350, screensize.y / 2 - 150)
+	panel.size = Vector2(700, 300)
+	panel.modulate = Color(0, 0, 0, 0.8)
+	add_child(panel)
+	
 	var label = Label.new()
 	label.text = "Player %d Wins!" % (winner_number + 1)
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -67,6 +73,12 @@ func show_victory(winner_number: int):
 	get_tree().change_scene_to_file("res://menu.tscn")
 
 func show_draw():
+	var panel = Panel.new()
+	panel.position = Vector2(screensize.x / 2 - 350, screensize.y / 2 - 150)
+	panel.size = Vector2(700, 300)
+	panel.modulate = Color(0, 0, 0, 0.8)
+	add_child(panel)
+	
 	var label = Label.new()
 	label.text = "Draw! Everyone Lost!"
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
