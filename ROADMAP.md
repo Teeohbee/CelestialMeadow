@@ -13,6 +13,9 @@
 - [x] Pause menu system
 - [x] Camera shake on explosions
 - [x] End-game victory/draw conditions
+- [x] Lives system (3 lives per player)
+- [x] Respawn system with invincibility
+- [x] HUD with visual life indicators
 
 ## In Progress / Pending Merge 🚧
 - [ ] **Particle Effects** - In development (particle-effects branch)
@@ -21,6 +24,9 @@
 ---
 
 ## Gameplay Improvements 🎮
+
+### Elimination Mode Complete! 🎉
+The game now features a complete elimination mode where players battle with 3 lives each until one remains standing.
 
 ### Core Mechanics
 - [ ] **Scoring System**
@@ -34,11 +40,6 @@
   - Rapid fire pickup (faster shooting)
   - Speed boost pickup
   - Multi-shot pickup (spread bullets)
-
-- [ ] **Lives System**
-  - Start with 3 lives per player
-  - Respawn after death
-  - Visual lives indicator
 
 - [ ] **Progressive Difficulty**
   - More asteroids over time
