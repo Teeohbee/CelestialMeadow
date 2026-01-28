@@ -1,5 +1,7 @@
 extends RigidBody2D
 
+signal respawn_requested(player)
+
 @export var engine_power = 500
 @export var spin_power = 4000
 @export var bullet_scene : PackedScene
@@ -11,11 +13,13 @@ var rotation_direction = 0
 var dead = false
 var can_shoot = true
 var screen_size
+var lives = 3
 
 func _ready():
 	screen_size = get_viewport_rect().size
 	position.x = screen_size.x * starting_position.x
 	position.y = screen_size.y * starting_position.y
+	lives = GameState.lives_per_player
 	set_ship_colour()
 	set_ship_starting_rotation()
 
@@ -75,8 +79,38 @@ func destroy():
 	var camera = get_tree().root.get_node_or_null("Main/Camera2D")
 	if camera and camera.has_method("shake"):
 		camera.shake(20.0)
+	
+	lives -= 1
+	
 	await $Explosion.animation_finished
-	queue_free()
+	
+	if lives <= 0:
+		queue_free()
+	else:
+		emit_signal("respawn_requested", self)
 
 func _on_timer_timeout():
 	can_shoot = true
+
+func respawn():
+	position.x = screen_size.x * starting_position.x
+	position.y = screen_size.y * starting_position.y
+	rotation_degrees = 0
+	set_ship_starting_rotation()
+	linear_velocity = Vector2.ZERO
+	angular_velocity = 0
+	dead = false
+	$Ship.show()
+	$Explosion.hide()
+	$CollisionShape2D.set_deferred("disabled", false)
+	
+	# Brief invincibility with visual feedback
+	set_collision_layer_value(1, false)
+	var tween = create_tween()
+	tween.set_loops(10)
+	tween.tween_property($Ship, "modulate:a", 0.3, 0.2)
+	tween.tween_property($Ship, "modulate:a", 1.0, 0.2)
+	
+	await get_tree().create_timer(2.0).timeout
+	set_collision_layer_value(1, true)
+	$Ship.modulate.a = 1.0
