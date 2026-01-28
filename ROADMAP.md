@@ -16,6 +16,7 @@
 - [x] Lives system (3 lives per player)
 - [x] Respawn system with invincibility
 - [x] HUD with visual life indicators
+- [x] Power-ups (Shield, Rapid Fire, Speed Boost)
 
 ## In Progress / Pending Merge 🚧
 - [ ] **Particle Effects** - In development (particle-effects branch)
@@ -35,11 +36,10 @@ The game now features a complete elimination mode where players battle with 3 li
   - Different point values for different asteroid sizes
   - Score display on HUD
 
-- [ ] **Power-ups**
-  - Shield pickup (temporary invincibility)
-  - Rapid fire pickup (faster shooting)
-  - Speed boost pickup
+- [ ] **Additional Power-ups**
   - Multi-shot pickup (spread bullets)
+  - Health restore (gain a life)
+  - More power-up types
 
 - [ ] **Progressive Difficulty**
   - More asteroids over time
