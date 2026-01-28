@@ -8,7 +8,7 @@ var despawn_time = 15.0
 var blink_warning_time = 5.0
 
 func _ready():
-	set_powerup_color()
+	set_powerup_visual()
 	body_entered.connect(_on_body_entered)
 	
 	# Start despawn timer
@@ -30,13 +30,20 @@ func _ready():
 func _process(delta):
 	rotation += rotation_speed * delta
 
-func set_powerup_color():
-	var colors = {
-		PowerupType.SHIELD: Color(0, 0.8, 1.0),      # Cyan
-		PowerupType.RAPID_FIRE: Color(1.0, 0.3, 0),  # Orange
-		PowerupType.SPEED_BOOST: Color(0, 1.0, 0.3)  # Green
-	}
-	$ColorRect.color = colors[type]
+func set_powerup_visual():
+	# Hide all visuals first
+	$Shield.hide()
+	$RapidFire.hide()
+	$SpeedBoost.hide()
+	
+	# Show the correct one based on type
+	match type:
+		PowerupType.SHIELD:
+			$Shield.show()
+		PowerupType.RAPID_FIRE:
+			$RapidFire.show()
+		PowerupType.SPEED_BOOST:
+			$SpeedBoost.show()
 
 func _on_body_entered(body):
 	if body.is_in_group("players"):
@@ -56,7 +63,16 @@ func _on_despawn_timeout():
 	queue_free()
 
 func _on_blink_warning():
+	var icon_node
+	match type:
+		PowerupType.SHIELD:
+			icon_node = $Shield
+		PowerupType.RAPID_FIRE:
+			icon_node = $RapidFire
+		PowerupType.SPEED_BOOST:
+			icon_node = $SpeedBoost
+	
 	var tween = create_tween()
 	tween.set_loops()
-	tween.tween_property($ColorRect, "modulate:a", 0.3, 0.3)
-	tween.tween_property($ColorRect, "modulate:a", 1.0, 0.3)
+	tween.tween_property(icon_node, "modulate:a", 0.3, 0.3)
+	tween.tween_property(icon_node, "modulate:a", 1.0, 0.3)
