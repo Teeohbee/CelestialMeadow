@@ -122,9 +122,9 @@ func _on_player_respawn_requested(player):
 		player.respawn()
 
 func initialize_hud():
-var hud = $HUD
-for i in GameState.num_players:
-hud.update_lives(i, GameState.lives_per_player)
+	var hud = $HUD
+	for i in GameState.num_players:
+		hud.update_lives(i, GameState.lives_per_player)
 
 func _on_player_lives_changed(player_number: int, lives: int):
-$HUD.update_lives(player_number, lives)
+	$HUD.update_lives(player_number, lives)
