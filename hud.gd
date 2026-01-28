@@ -4,10 +4,10 @@ var player_containers = []
 var life_icon_size = 20
 var player_colors = [Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW]
 var corner_positions = [
-	{"anchor": Control.PRESET_TOP_LEFT, "margin": Vector2(20, 20)},
-	{"anchor": Control.PRESET_TOP_RIGHT, "margin": Vector2(-20, 20)},
-	{"anchor": Control.PRESET_BOTTOM_LEFT, "margin": Vector2(20, -20)},
-	{"anchor": Control.PRESET_BOTTOM_RIGHT, "margin": Vector2(-20, 20)}
+	{"anchor": Control.PRESET_TOP_LEFT, "margin": Vector2(20, 20)},       # Player 0
+	{"anchor": Control.PRESET_BOTTOM_RIGHT, "margin": Vector2(-20, -20)}, # Player 1
+	{"anchor": Control.PRESET_BOTTOM_LEFT, "margin": Vector2(20, -20)},   # Player 2
+	{"anchor": Control.PRESET_TOP_RIGHT, "margin": Vector2(-20, 20)}      # Player 3
 ]
 
 func _ready():
@@ -18,13 +18,13 @@ func _ready():
 		# Position container in corner
 		if i == 0:  # Top left
 			container.position = corner_positions[i].margin
-		elif i == 1:  # Top right
-			container.position = Vector2(corner_positions[i].margin.x - 100, corner_positions[i].margin.y)
+		elif i == 1:  # Bottom right
+			container.position = Vector2(corner_positions[i].margin.x - 100, corner_positions[i].margin.y - 30)
 			container.alignment = BoxContainer.ALIGNMENT_END
 		elif i == 2:  # Bottom left
 			container.position = Vector2(corner_positions[i].margin.x, corner_positions[i].margin.y - 30)
-		else:  # Bottom right
-			container.position = Vector2(corner_positions[i].margin.x - 100, corner_positions[i].margin.y - 30)
+		else:  # Top right (Player 3)
+			container.position = Vector2(corner_positions[i].margin.x - 100, corner_positions[i].margin.y)
 			container.alignment = BoxContainer.ALIGNMENT_END
 		
 		container.add_theme_constant_override("separation", 5)
