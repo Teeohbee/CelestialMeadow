@@ -54,10 +54,13 @@ func _on_player_destroyed():
 		show_draw()
 
 func show_victory(winner_number: int):
+	var canvas_layer = CanvasLayer.new()
+	add_child(canvas_layer)
+	
 	var overlay = ColorRect.new()
 	overlay.color = Color(0, 0, 0, 0.6)
 	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(overlay)
+	canvas_layer.add_child(overlay)
 	
 	var panel = Panel.new()
 	panel.set_anchors_preset(Control.PRESET_CENTER)
@@ -67,7 +70,7 @@ func show_victory(winner_number: int):
 	panel.offset_bottom = 100
 	panel.grow_horizontal = Control.GROW_DIRECTION_BOTH
 	panel.grow_vertical = Control.GROW_DIRECTION_BOTH
-	add_child(panel)
+	canvas_layer.add_child(panel)
 	
 	var label = Label.new()
 	label.text = "Player %d Wins!" % (winner_number + 1)
@@ -81,10 +84,13 @@ func show_victory(winner_number: int):
 	get_tree().change_scene_to_file("res://menu.tscn")
 
 func show_draw():
+	var canvas_layer = CanvasLayer.new()
+	add_child(canvas_layer)
+	
 	var overlay = ColorRect.new()
 	overlay.color = Color(0, 0, 0, 0.6)
 	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(overlay)
+	canvas_layer.add_child(overlay)
 	
 	var panel = Panel.new()
 	panel.set_anchors_preset(Control.PRESET_CENTER)
@@ -94,7 +100,7 @@ func show_draw():
 	panel.offset_bottom = 100
 	panel.grow_horizontal = Control.GROW_DIRECTION_BOTH
 	panel.grow_vertical = Control.GROW_DIRECTION_BOTH
-	add_child(panel)
+	canvas_layer.add_child(panel)
 	
 	var label = Label.new()
 	label.text = "Draw!\nEveryone Lost!"
