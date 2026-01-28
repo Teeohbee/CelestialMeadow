@@ -86,6 +86,9 @@ func destroy():
 	if camera and camera.has_method("shake"):
 		camera.shake(20.0)
 	
+	# Clean up active power-ups
+	cleanup_powerups()
+	
 	lives -= 1
 	emit_signal("lives_changed", player_number, lives)
 	
@@ -111,6 +114,9 @@ func respawn():
 	$Explosion.hide()
 	$CollisionShape2D.set_deferred("disabled", false)
 	
+	# Ensure power-ups are cleaned up
+	cleanup_powerups()
+	
 	# Brief invincibility with visual feedback
 	set_collision_layer_value(1, false)
 	var tween = create_tween()
@@ -123,7 +129,7 @@ func respawn():
 	$Ship.modulate.a = 1.0
 
 func activate_shield():
-	if shield_active:
+	if shield_active or dead:
 		return
 	shield_active = true
 	set_collision_layer_value(1, false)
@@ -144,27 +150,47 @@ func activate_shield():
 	
 	await get_tree().create_timer(5.0).timeout
 	shield_active = false
-	if not dead:
+	if not dead and is_instance_valid(self):
 		set_collision_layer_value(1, true)
 		if has_node("ShieldBubble"):
 			$ShieldBubble.queue_free()
 
 func activate_rapid_fire():
-	if rapid_fire_active:
+	if rapid_fire_active or dead:
 		return
 	rapid_fire_active = true
 	$ShootTimer.wait_time = base_shoot_delay * 0.5
 	
 	await get_tree().create_timer(10.0).timeout
 	rapid_fire_active = false
-	$ShootTimer.wait_time = base_shoot_delay
+	if is_instance_valid(self):
+		$ShootTimer.wait_time = base_shoot_delay
 
 func activate_speed_boost():
-	if speed_boost_active:
+	if speed_boost_active or dead:
 		return
 	speed_boost_active = true
 	engine_power = base_engine_power * 2.0
 	
 	await get_tree().create_timer(8.0).timeout
 	speed_boost_active = false
-	engine_power = base_engine_power
+	if is_instance_valid(self):
+		engine_power = base_engine_power
+
+func cleanup_powerups():
+# Reset all power-up states
+shield_active = false
+rapid_fire_active = false
+speed_boost_active = false
+
+# Remove shield bubble if it exists
+if has_node("ShieldBubble"):
+$ShieldBubble.queue_free()
+
+# Reset stats to base values
+engine_power = base_engine_power
+$ShootTimer.wait_time = base_shoot_delay
+
+# Re-enable collision (in case shield was active)
+if not dead:
+set_collision_layer_value(1, true)
