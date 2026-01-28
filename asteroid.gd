@@ -1,8 +1,11 @@
 extends RigidBody2D
 
+signal powerup_dropped(powerup_position, powerup_type)
+
 var screen_size
 var radius
 @export var sprites : Array[CompressedTexture2D] = []
+var drop_chance = 0.3  # 30% chance to drop power-up
 
 func _ready():
 	screen_size = get_viewport_rect().size
@@ -34,5 +37,11 @@ func destroy():
 	var camera = get_tree().root.get_node_or_null("Main/Camera2D")
 	if camera and camera.has_method("shake"):
 		camera.shake(12.0)
+	
+	# Drop power-up randomly
+	if randf() < drop_chance:
+		var powerup_type = randi() % 3  # Random type 0-2
+		emit_signal("powerup_dropped", global_position, powerup_type)
+	
 	await $Explosion.animation_finished
 	queue_free()
