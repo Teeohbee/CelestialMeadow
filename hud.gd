@@ -13,4 +13,4 @@ func _ready():
 
 func update_lives(player_number: int, lives: int):
 	if player_number < player_labels.size():
-		player_labels[player_number].text = "P%d Lives: %d" % (player_number + 1, lives)
+		player_labels[player_number].text = "P%d Lives: %d" % [player_number + 1, lives]
