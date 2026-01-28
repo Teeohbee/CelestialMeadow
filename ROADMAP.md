@@ -12,6 +12,7 @@
 - [x] Planets with gravity
 
 ## In Progress / Pending Merge 🚧
+- [ ] **End-game Conditions** - Ready to merge (endgame-condition branch)
 - [ ] **Pause Menu** - PR #3 (pause-menu branch)
 - [ ] **Camera Shake** - Ready to merge (camera-shake branch)
 - [ ] **Particle Effects** - In development (particle-effects branch)
