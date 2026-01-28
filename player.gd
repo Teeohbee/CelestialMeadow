@@ -127,14 +127,27 @@ func activate_shield():
 		return
 	shield_active = true
 	set_collision_layer_value(1, false)
-	$Ship.modulate = Color(0, 0.8, 1.0, 0.7)
+	
+	# Create shield bubble
+	var shield_bubble = Polygon2D.new()
+	shield_bubble.name = "ShieldBubble"
+	shield_bubble.color = Color(0, 0.8, 1.0, 0.3)
+	# Create circle polygon
+	var points = PackedVector2Array()
+	var radius = 40
+	var segments = 32
+	for i in segments:
+		var angle = (i / float(segments)) * TAU
+		points.append(Vector2(cos(angle), sin(angle)) * radius)
+	shield_bubble.polygon = points
+	add_child(shield_bubble)
 	
 	await get_tree().create_timer(5.0).timeout
 	shield_active = false
 	if not dead:
 		set_collision_layer_value(1, true)
-		$Ship.modulate = Color(1, 1, 1, 1)
-		set_ship_colour()
+		if has_node("ShieldBubble"):
+			$ShieldBubble.queue_free()
 
 func activate_rapid_fire():
 	if rapid_fire_active:
