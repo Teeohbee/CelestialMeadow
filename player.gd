@@ -153,7 +153,7 @@ func activate_rapid_fire():
 	if rapid_fire_active:
 		return
 	rapid_fire_active = true
-	$ShootTimer.wait_time = base_shoot_delay * 0.3
+	$ShootTimer.wait_time = base_shoot_delay * 0.5
 	
 	await get_tree().create_timer(10.0).timeout
 	rapid_fire_active = false
