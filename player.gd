@@ -15,6 +15,11 @@ var dead = false
 var can_shoot = true
 var screen_size
 var lives = 3
+var base_engine_power = 500
+var base_shoot_delay = 0.25
+var shield_active = false
+var rapid_fire_active = false
+var speed_boost_active = false
 
 func _ready():
 	screen_size = get_viewport_rect().size
@@ -116,3 +121,50 @@ func respawn():
 	await get_tree().create_timer(2.0).timeout
 	set_collision_layer_value(1, true)
 	$Ship.modulate.a = 1.0
+
+func activate_shield():
+	if shield_active:
+		return
+	shield_active = true
+	set_collision_layer_value(1, false)
+	
+	# Create shield bubble
+	var shield_bubble = Polygon2D.new()
+	shield_bubble.name = "ShieldBubble"
+	shield_bubble.color = Color(0, 0.8, 1.0, 0.3)
+	# Create circle polygon
+	var points = PackedVector2Array()
+	var radius = 40
+	var segments = 32
+	for i in segments:
+		var angle = (i / float(segments)) * TAU
+		points.append(Vector2(cos(angle), sin(angle)) * radius)
+	shield_bubble.polygon = points
+	add_child(shield_bubble)
+	
+	await get_tree().create_timer(5.0).timeout
+	shield_active = false
+	if not dead:
+		set_collision_layer_value(1, true)
+		if has_node("ShieldBubble"):
+			$ShieldBubble.queue_free()
+
+func activate_rapid_fire():
+	if rapid_fire_active:
+		return
+	rapid_fire_active = true
+	$ShootTimer.wait_time = base_shoot_delay * 0.5
+	
+	await get_tree().create_timer(10.0).timeout
+	rapid_fire_active = false
+	$ShootTimer.wait_time = base_shoot_delay
+
+func activate_speed_boost():
+	if speed_boost_active:
+		return
+	speed_boost_active = true
+	engine_power = base_engine_power * 2.0
+	
+	await get_tree().create_timer(8.0).timeout
+	speed_boost_active = false
+	engine_power = base_engine_power
