@@ -3,6 +3,7 @@ extends Node2D
 @export var asteroid_scene : PackedScene
 @export var player_scene : PackedScene
 var screensize
+var game_over = false
 var player_configs = [
 	{"position": Vector2(0.1, 0.1), "number": 0},
 	{"position": Vector2(0.9, 0.9), "number": 1},
@@ -21,6 +22,7 @@ func spawn_players():
 		var player = player_scene.instantiate()
 		player.starting_position = player_configs[i].position
 		player.player_number = player_configs[i].number
+		player.tree_exiting.connect(_on_player_destroyed)
 		add_child(player)
 
 func spawn_asteroid():
@@ -35,3 +37,44 @@ func _on_asteroid_timer_timeout():
 	if asteroids.size() < 10:
 		for i in 2:
 			spawn_asteroid()
+
+func _on_player_destroyed():
+	if game_over:
+		return
+	
+	await get_tree().create_timer(0.5).timeout
+	
+	var remaining_players = get_tree().get_nodes_in_group("players")
+	
+	if remaining_players.size() == 1:
+		game_over = true
+		show_victory(remaining_players[0].player_number)
+	elif remaining_players.size() == 0:
+		game_over = true
+		show_draw()
+
+func show_victory(winner_number: int):
+	var label = Label.new()
+	label.text = "Player %d Wins!" % (winner_number + 1)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.add_theme_font_size_override("font_size", 72)
+	label.position = Vector2(screensize.x / 2 - 300, screensize.y / 2 - 100)
+	label.size = Vector2(600, 200)
+	add_child(label)
+	
+	await get_tree().create_timer(3.0).timeout
+	get_tree().change_scene_to_file("res://menu.tscn")
+
+func show_draw():
+	var label = Label.new()
+	label.text = "Draw! Everyone Lost!"
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.add_theme_font_size_override("font_size", 72)
+	label.position = Vector2(screensize.x / 2 - 300, screensize.y / 2 - 100)
+	label.size = Vector2(600, 200)
+	add_child(label)
+	
+	await get_tree().create_timer(3.0).timeout
+	get_tree().change_scene_to_file("res://menu.tscn")
