@@ -90,6 +90,7 @@ func destroy():
 	emit_signal("lives_changed", player_number, lives)
 	
 	await $Explosion.animation_finished
+	$Explosion.hide()
 	
 	if lives <= 0:
 		queue_free()
