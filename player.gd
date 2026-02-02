@@ -71,7 +71,10 @@ func set_ship_starting_rotation():
 	var center = Vector2(0.5, 0.5)
 	var direction_to_center = center - starting_position
 	var angle_to_center = direction_to_center.angle()
-	rotation = angle_to_center
+	
+	# Ship sprite is rotated 90 degrees (1.5708 radians) in the scene
+	# So we need to subtract that offset
+	rotation = angle_to_center - PI/2
 	
 	# Apply additional rotation adjustment for variety
 	rotation_degrees += GameConfig.PLAYER_ROTATION_ADJUSTMENTS[player_number]
