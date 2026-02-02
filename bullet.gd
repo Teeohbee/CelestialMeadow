@@ -1,16 +1,16 @@
 extends Area2D
 
-@export var speed = 1000
+@export var speed: int = 1000
 
-var velocity = Vector2.ZERO
-var player_number : int
+var velocity: Vector2 = Vector2.ZERO
+var player_number: int
 
 func start(_transform, _player_number):
 	transform = _transform
 	velocity = transform.x * speed
 	player_number = _player_number
 
-func _process(delta):
+func _physics_process(delta):
 	position += velocity * delta
 
 func _on_visible_on_screen_notifier_2d_screen_exited():
