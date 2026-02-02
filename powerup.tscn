@@ -20,7 +20,7 @@ offset_bottom = 12.0
 color = Color(1, 0.5, 0, 1)
 
 [node name="SpeedBoost" type="Polygon2D" parent="."]
-color = Color(1, 1, 1, 1)
+color = Color(0.5, 1, 0, 1)
 polygon = PackedVector2Array(0, -15, -13, 15, 13, 15)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
