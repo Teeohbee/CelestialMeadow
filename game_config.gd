@@ -37,6 +37,7 @@ const ASTEROID_MAX_SPEED: float = 200.0
 
 # Camera Effects
 const CAMERA_SHAKE_EXPLOSION: float = 20.0
+const CAMERA_SHAKE_ASTEROID: float = 12.0
 
 # Game Flow Timing
 const END_GAME_CHECK_DELAY: float = 0.5
