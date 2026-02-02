@@ -67,8 +67,15 @@ func set_ship_colour():
 	$Ship.set_self_modulate(GameConfig.PLAYER_COLORS[player_number])
 
 func set_ship_starting_rotation():
+	# Face toward center of screen
 	if starting_position.x > 0.5:
-		rotation_degrees = 180
+		rotation_degrees = 180  # Right side faces left
+	elif starting_position.y > 0.5:
+		rotation_degrees = -90  # Bottom faces up
+	elif starting_position.y < 0.5:
+		rotation_degrees = 90   # Top faces down
+	# Left side (x < 0.5, y == 0.5) stays at 0 (faces right)
+	
 	rotation_degrees += GameConfig.PLAYER_ROTATION_ADJUSTMENTS[player_number]
 
 func destroy():
