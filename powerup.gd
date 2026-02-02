@@ -3,9 +3,10 @@ extends Area2D
 enum PowerupType { SHIELD, RAPID_FIRE, SPEED_BOOST }
 
 @export var type: PowerupType = PowerupType.SHIELD
-var rotation_speed = 2.0
-var despawn_time = 15.0
-var blink_warning_time = 5.0
+
+var rotation_speed: float = 2.0
+var despawn_time: float = GameConfig.POWERUP_DESPAWN_TIME
+var blink_warning_time: float = 5.0
 
 func _ready():
 	set_powerup_visual()
