@@ -1,6 +1,6 @@
 extends Control
 
-var num_players = 2
+var num_players: int = 2
 
 func _ready():
 	$VBoxContainer/StartButton.grab_focus()

@@ -1,9 +1,8 @@
 extends CanvasLayer
 
-var player_containers = []
-var life_icon_size = 20
-var player_colors = [Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW]
-var corner_positions = [
+var player_containers: Array = []
+var life_icon_size: int = 20
+var corner_positions: Array = [
 	{"anchor": Control.PRESET_TOP_LEFT, "margin": Vector2(20, 20)},       # Player 0
 	{"anchor": Control.PRESET_BOTTOM_RIGHT, "margin": Vector2(-20, -20)}, # Player 1
 	{"anchor": Control.PRESET_BOTTOM_LEFT, "margin": Vector2(20, -20)},   # Player 2
@@ -52,5 +51,5 @@ func update_lives(player_number: int, lives: int):
 	for i in lives:
 		var icon = ColorRect.new()
 		icon.custom_minimum_size = Vector2(life_icon_size, life_icon_size)
-		icon.color = player_colors[player_number]
+		icon.color = GameConfig.PLAYER_COLORS[player_number]
 		container.add_child(icon)
