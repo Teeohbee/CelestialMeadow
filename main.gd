@@ -1,10 +1,11 @@
 extends Node2D
 
-@export var asteroid_scene : PackedScene
-@export var player_scene : PackedScene
-@export var powerup_scene : PackedScene
-var screensize
-var game_over = false
+@export var asteroid_scene: PackedScene
+@export var player_scene: PackedScene
+@export var powerup_scene: PackedScene
+
+var screen_size: Vector2
+var game_over: bool = false
 var player_configs = [
 	{"position": Vector2(0.1, 0.1), "number": 0},
 	{"position": Vector2(0.9, 0.9), "number": 1},
@@ -13,10 +14,10 @@ var player_configs = [
 ]
 
 func _ready():
-	screensize = get_viewport().get_visible_rect().size
+	screen_size = get_viewport().get_visible_rect().size
 	spawn_players()
 	initialize_hud()
-	for i in 10:
+	for i in GameConfig.ASTEROID_INITIAL_COUNT:
 		spawn_asteroid()
 
 func spawn_players():
@@ -31,7 +32,7 @@ func spawn_players():
 
 func spawn_asteroid():
 	$AsteroidPath/AsteroidSpawn.progress = randi()
-	var velocity = Vector2.RIGHT.rotated(randf_range(0, TAU)) * randf_range(100, 200)
+	var velocity = Vector2.RIGHT.rotated(randf_range(0, TAU)) * randf_range(GameConfig.ASTEROID_MIN_SPEED, GameConfig.ASTEROID_MAX_SPEED)
 	var asteroid = asteroid_scene.instantiate()
 	asteroid.start($AsteroidPath/AsteroidSpawn.position, velocity)
 	asteroid.powerup_dropped.connect(_on_powerup_dropped)
@@ -39,15 +40,15 @@ func spawn_asteroid():
 
 func _on_asteroid_timer_timeout():
 	var asteroids = get_tree().get_nodes_in_group("asteroids")
-	if asteroids.size() < 10:
-		for i in 2:
+	if asteroids.size() < GameConfig.ASTEROID_MAX_COUNT:
+		for i in GameConfig.ASTEROID_SPAWN_COUNT:
 			spawn_asteroid()
 
 func _on_player_destroyed():
 	if game_over:
 		return
 	
-	await get_tree().create_timer(0.5).timeout
+	await get_tree().create_timer(GameConfig.END_GAME_CHECK_DELAY).timeout
 	
 	var remaining_players = get_tree().get_nodes_in_group("players")
 	
@@ -85,7 +86,7 @@ func show_victory(winner_number: int):
 	label.set_anchors_preset(Control.PRESET_FULL_RECT)
 	panel.add_child(label)
 	
-	await get_tree().create_timer(3.0).timeout
+	await get_tree().create_timer(GameConfig.VICTORY_SCREEN_DURATION).timeout
 	get_tree().change_scene_to_file("res://menu.tscn")
 
 func show_draw():
@@ -115,11 +116,11 @@ func show_draw():
 	label.set_anchors_preset(Control.PRESET_FULL_RECT)
 	panel.add_child(label)
 	
-	await get_tree().create_timer(3.0).timeout
+	await get_tree().create_timer(GameConfig.VICTORY_SCREEN_DURATION).timeout
 	get_tree().change_scene_to_file("res://menu.tscn")
 
 func _on_player_respawn_requested(player):
-	await get_tree().create_timer(3.0).timeout
+	await get_tree().create_timer(GameConfig.PLAYER_RESPAWN_DELAY).timeout
 	if is_instance_valid(player):
 		player.respawn()
 
