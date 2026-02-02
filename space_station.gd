@@ -1,4 +1,6 @@
 extends AnimatableBody2D
 
-func _process(delta):
-	rotation += 1 * delta
+const ROTATION_SPEED: float = 1.0
+
+func _process(delta: float) -> void:
+	rotation += ROTATION_SPEED * delta
