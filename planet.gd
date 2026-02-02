@@ -1,7 +1,8 @@
 extends Sprite2D
 
-@export var sprites : Array[CompressedTexture2D] = []
-var screen_size
+@export var sprites: Array[CompressedTexture2D] = []
+
+var screen_size: Vector2
 
 func _ready():
 	screen_size = get_viewport_rect().size
