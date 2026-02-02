@@ -7,8 +7,8 @@ var corner_positions: Array = [
 	{"anchor": Control.PRESET_BOTTOM_RIGHT, "margin": Vector2(-20, -20)}, # Player 1
 	{"anchor": Control.PRESET_BOTTOM_LEFT, "margin": Vector2(20, -20)},   # Player 2
 	{"anchor": Control.PRESET_TOP_RIGHT, "margin": Vector2(-20, 20)},     # Player 3
-	{"anchor": Control.PRESET_TOP_CENTER, "margin": Vector2(0, 20)},      # Player 4
-	{"anchor": Control.PRESET_BOTTOM_CENTER, "margin": Vector2(0, -20)}   # Player 5
+	{"anchor": Control.PRESET_CENTER_TOP, "margin": Vector2(0, 20)},      # Player 4
+	{"anchor": Control.PRESET_CENTER_BOTTOM, "margin": Vector2(0, -20)}   # Player 5
 ]
 
 func _ready():
