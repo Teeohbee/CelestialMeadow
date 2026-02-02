@@ -6,15 +6,17 @@ var corner_positions: Array = [
 	{"anchor": Control.PRESET_TOP_LEFT, "margin": Vector2(20, 20)},       # Player 0
 	{"anchor": Control.PRESET_BOTTOM_RIGHT, "margin": Vector2(-20, -20)}, # Player 1
 	{"anchor": Control.PRESET_BOTTOM_LEFT, "margin": Vector2(20, -20)},   # Player 2
-	{"anchor": Control.PRESET_TOP_RIGHT, "margin": Vector2(-20, 20)}      # Player 3
+	{"anchor": Control.PRESET_TOP_RIGHT, "margin": Vector2(-20, 20)},     # Player 3
+	{"anchor": Control.PRESET_TOP_CENTER, "margin": Vector2(0, 20)},      # Player 4
+	{"anchor": Control.PRESET_BOTTOM_CENTER, "margin": Vector2(0, -20)}   # Player 5
 ]
 
 func _ready():
-	for i in range(4):
+	for i in range(6):
 		var container = HBoxContainer.new()
 		container.set_anchors_preset(corner_positions[i].anchor)
 		
-		# Position container in corner
+		# Position container based on player position
 		if i == 0:  # Top left
 			container.position = corner_positions[i].margin
 		elif i == 1:  # Bottom right
@@ -22,9 +24,13 @@ func _ready():
 			container.alignment = BoxContainer.ALIGNMENT_END
 		elif i == 2:  # Bottom left
 			container.position = Vector2(corner_positions[i].margin.x, corner_positions[i].margin.y - 30)
-		else:  # Top right (Player 3)
+		elif i == 3:  # Top right
 			container.position = Vector2(corner_positions[i].margin.x - 100, corner_positions[i].margin.y)
 			container.alignment = BoxContainer.ALIGNMENT_END
+		elif i == 4:  # Top center
+			container.position = Vector2(corner_positions[i].margin.x - 50, corner_positions[i].margin.y)
+		else:  # Bottom center (Player 5)
+			container.position = Vector2(corner_positions[i].margin.x - 50, corner_positions[i].margin.y - 30)
 		
 		container.add_theme_constant_override("separation", 5)
 		add_child(container)

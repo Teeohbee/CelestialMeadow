@@ -21,5 +21,5 @@ func _on_decrease_pressed():
 	update_player_label()
 
 func _on_increase_pressed():
-	num_players = min(4, num_players + 1)
+	num_players = min(6, num_players + 1)
 	update_player_label()
