@@ -48,8 +48,10 @@ const PLAYER_COLORS: Array[Color] = [
 	Color.RED,
 	Color.GREEN,
 	Color.BLUE,
-	Color.YELLOW
+	Color.YELLOW,
+	Color.MAGENTA,
+	Color.CYAN
 ]
 
 # Player Starting Rotation Adjustments (degrees)
-const PLAYER_ROTATION_ADJUSTMENTS: Array[int] = [30, 30, -30, -30]
+const PLAYER_ROTATION_ADJUSTMENTS: Array[int] = [30, 30, -30, -30, 0, 0]

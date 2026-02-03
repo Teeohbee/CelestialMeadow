@@ -7,10 +7,12 @@ extends Node2D
 var screen_size: Vector2
 var game_over: bool = false
 var player_configs = [
-	{"position": Vector2(0.1, 0.1), "number": 0},
-	{"position": Vector2(0.9, 0.9), "number": 1},
-	{"position": Vector2(0.1, 0.9), "number": 2},
-	{"position": Vector2(0.9, 0.1), "number": 3}
+	{"position": Vector2(0.1, 0.1), "number": 0},   # Top-left
+	{"position": Vector2(0.9, 0.9), "number": 1},   # Bottom-right
+	{"position": Vector2(0.1, 0.9), "number": 2},   # Bottom-left
+	{"position": Vector2(0.9, 0.1), "number": 3},   # Top-right
+	{"position": Vector2(0.5, 0.1), "number": 4},   # Top-center
+	{"position": Vector2(0.5, 0.9), "number": 5}    # Bottom-center
 ]
 
 func _ready():
