@@ -26,6 +26,19 @@ func _ready():
 	$ShootTimer.wait_time = GameConfig.PLAYER_SHOOT_DELAY
 	set_ship_colour()
 	set_ship_starting_rotation()
+	
+	# Freeze player during countdown
+	var main_node = get_parent()
+	if main_node and "game_started" in main_node and not main_node.game_started:
+		freeze = true
+		$Ship/Thruster.hide()  # Hide thruster during countdown
+		# Connect to countdown finished to unfreeze
+		var countdown = main_node.get_node_or_null("Countdown")
+		if countdown:
+			countdown.countdown_finished.connect(_on_countdown_finished)
+
+func _on_countdown_finished():
+	freeze = false
 
 func _process(_delta):
 	get_input()
@@ -39,6 +52,11 @@ func _integrate_forces(physics_state):
 func get_input():
 	if dead == true:
 		return
+	# Check if game has started (countdown finished)
+	var main_node = get_parent()
+	if main_node and "game_started" in main_node and not main_node.game_started:
+		return
+	
 	thrust = Vector2.ZERO
 	if Input.is_action_pressed(str("thrust", player_number)):
 		thrust = transform.x * engine_power
@@ -115,6 +133,14 @@ func respawn():
 	$Ship.show()
 	$Explosion.hide()
 	$CollisionShape2D.set_deferred("disabled", false)
+	
+	# Check if countdown is still running and freeze if needed
+	var main_node = get_parent()
+	if main_node and "game_started" in main_node and not main_node.game_started:
+		freeze = true
+		$Ship/Thruster.hide()
+	else:
+		freeze = false
 	
 	# Brief invincibility with visual feedback
 	set_collision_layer_value(1, false)
