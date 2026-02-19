@@ -3,6 +3,7 @@ extends CanvasLayer
 signal countdown_finished
 
 @onready var countdown_label = $CountdownLabel
+@onready var audio_player = $AudioStreamPlayer
 
 var count = 3
 var is_counting = false
@@ -21,6 +22,9 @@ func show_number(number: int):
 		countdown_label.text = str(number)
 	else:
 		countdown_label.text = "GO!"
+	
+	# Play audio for the number
+	play_countdown_audio(number)
 	
 	# Set pivot to center of label for proper scaling
 	countdown_label.pivot_offset = countdown_label.size / 2
@@ -56,3 +60,19 @@ func show_number(number: int):
 		is_counting = false
 		countdown_label.visible = false
 		countdown_finished.emit()
+
+func play_countdown_audio(number: int):
+	var audio_path = ""
+	match number:
+		3:
+			audio_path = "res://audio/countdown/three.wav"
+		2:
+			audio_path = "res://audio/countdown/two.wav"
+		1:
+			audio_path = "res://audio/countdown/one.wav"
+		0:
+			audio_path = "res://audio/countdown/go.wav"
+	
+	if ResourceLoader.exists(audio_path) and audio_player:
+		audio_player.stream = load(audio_path)
+		audio_player.play()

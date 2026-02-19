@@ -5,6 +5,8 @@
 [node name="Countdown" type="CanvasLayer"]
 script = ExtResource("1")
 
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+
 [node name="CountdownLabel" type="Label" parent="."]
 anchors_preset = 8
 anchor_left = 0.5
