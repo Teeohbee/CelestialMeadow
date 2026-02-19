@@ -26,6 +26,18 @@ func _ready():
 	$ShootTimer.wait_time = GameConfig.PLAYER_SHOOT_DELAY
 	set_ship_colour()
 	set_ship_starting_rotation()
+	
+	# Freeze player during countdown
+	var main_node = get_parent()
+	if main_node and "game_started" in main_node and not main_node.game_started:
+		freeze = true
+		# Connect to countdown finished to unfreeze
+		var countdown = main_node.get_node_or_null("Countdown")
+		if countdown:
+			countdown.countdown_finished.connect(_on_countdown_finished)
+
+func _on_countdown_finished():
+	freeze = false
 
 func _process(_delta):
 	get_input()
