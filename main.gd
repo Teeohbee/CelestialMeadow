@@ -6,6 +6,7 @@ extends Node2D
 
 var screen_size: Vector2
 var game_over: bool = false
+var game_started: bool = false
 var player_configs = [
 	{"position": Vector2(0.1, 0.1), "number": 0},   # Top-left
 	{"position": Vector2(0.9, 0.9), "number": 1},   # Bottom-right
@@ -19,8 +20,18 @@ func _ready():
 	screen_size = get_viewport().get_visible_rect().size
 	spawn_players()
 	initialize_hud()
+	
+	# Start countdown before beginning the game
+	$Countdown.countdown_finished.connect(_on_countdown_finished)
+	$Countdown.start_countdown()
+
+func _on_countdown_finished():
+	game_started = true
+	# Spawn asteroids after countdown
 	for i in GameConfig.ASTEROID_INITIAL_COUNT:
 		spawn_asteroid()
+	# Start asteroid timer
+	$AsteroidTimer.start()
 
 func spawn_players():
 	for i in GameState.num_players:

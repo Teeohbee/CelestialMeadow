@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://ww418vo28v70"]
+[gd_scene load_steps=13 format=3 uid="uid://ww418vo28v70"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_k3tpq"]
 [ext_resource type="PackedScene" uid="uid://bnauy0payb6b1" path="res://planet.tscn" id="1_kiu5r"]
@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://c8m4vjx2qnxpb" path="res://pause_menu.tscn" id="8_pause"]
 [ext_resource type="PackedScene" uid="uid://b8yjq4m7nfx2f" path="res://hud.tscn" id="9_hud"]
 [ext_resource type="PackedScene" uid="uid://cq8r4y5g3mbhp" path="res://powerup.tscn" id="10_powerup"]
+[ext_resource type="PackedScene" uid="uid://countdown123" path="res://countdown.tscn" id="11_countdown"]
 
 [sub_resource type="Curve2D" id="Curve2D_1lhca"]
 _data = {
@@ -48,12 +49,13 @@ position = Vector2(960, 540)
 
 [node name="AsteroidTimer" type="Timer" parent="."]
 wait_time = 5.0
-autostart = true
 
 [node name="PauseMenu" type="CanvasLayer" parent="."]
 
 [node name="UI" parent="PauseMenu" instance=ExtResource("8_pause")]
 
 [node name="HUD" parent="." instance=ExtResource("9_hud")]
+
+[node name="Countdown" parent="." instance=ExtResource("11_countdown")]
 
 [connection signal="timeout" from="AsteroidTimer" to="." method="_on_asteroid_timer_timeout"]

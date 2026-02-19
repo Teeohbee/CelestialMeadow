@@ -39,6 +39,11 @@ func _integrate_forces(physics_state):
 func get_input():
 	if dead == true:
 		return
+	# Check if game has started (countdown finished)
+	var main_node = get_parent()
+	if main_node and "game_started" in main_node and not main_node.game_started:
+		return
+	
 	thrust = Vector2.ZERO
 	if Input.is_action_pressed(str("thrust", player_number)):
 		thrust = transform.x * engine_power
