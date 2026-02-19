@@ -31,6 +31,7 @@ func _ready():
 	var main_node = get_parent()
 	if main_node and "game_started" in main_node and not main_node.game_started:
 		freeze = true
+		$Ship/Thruster.hide()  # Hide thruster during countdown
 		# Connect to countdown finished to unfreeze
 		var countdown = main_node.get_node_or_null("Countdown")
 		if countdown:
