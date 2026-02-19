@@ -134,6 +134,14 @@ func respawn():
 	$Explosion.hide()
 	$CollisionShape2D.set_deferred("disabled", false)
 	
+	# Check if countdown is still running and freeze if needed
+	var main_node = get_parent()
+	if main_node and "game_started" in main_node and not main_node.game_started:
+		freeze = true
+		$Ship/Thruster.hide()
+	else:
+		freeze = false
+	
 	# Brief invincibility with visual feedback
 	set_collision_layer_value(1, false)
 	var tween = create_tween()
