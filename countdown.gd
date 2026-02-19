@@ -31,21 +31,21 @@ func show_number(number: int):
 	
 	var tween = create_tween()
 	tween.set_parallel(true)
-	# Scale up from small to large (zoom in effect) - slower
-	tween.tween_property(countdown_label, "scale", Vector2(1.2, 1.2), 0.6).set_ease(Tween.EASE_OUT)
-	tween.tween_property(countdown_label, "modulate:a", 1.0, 0.3)
+	# Scale up from small to large (zoom in effect) - much slower
+	tween.tween_property(countdown_label, "scale", Vector2(1.2, 1.2), 1.0).set_ease(Tween.EASE_OUT)
+	tween.tween_property(countdown_label, "modulate:a", 1.0, 0.5)
 	
 	# Slight overshoot for impact
-	tween.chain().tween_property(countdown_label, "scale", Vector2(1.0, 1.0), 0.15)
+	tween.chain().tween_property(countdown_label, "scale", Vector2(1.0, 1.0), 0.2)
 	
-	# Hold for longer
-	await get_tree().create_timer(0.5).timeout
+	# Hold for much longer
+	await get_tree().create_timer(0.8).timeout
 	
 	# Fade out slower
 	var fade_tween = create_tween()
 	fade_tween.set_parallel(true)
-	fade_tween.tween_property(countdown_label, "scale", Vector2(1.5, 1.5), 0.3)
-	fade_tween.tween_property(countdown_label, "modulate:a", 0.0, 0.3)
+	fade_tween.tween_property(countdown_label, "scale", Vector2(1.5, 1.5), 0.5)
+	fade_tween.tween_property(countdown_label, "modulate:a", 0.0, 0.5)
 	
 	await fade_tween.finished
 	
