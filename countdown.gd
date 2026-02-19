@@ -22,8 +22,7 @@ func show_number(number: int):
 	else:
 		countdown_label.text = "GO!"
 	
-	# Reset position to center
-	countdown_label.position = Vector2.ZERO
+	# Set pivot to center of label for proper scaling
 	countdown_label.pivot_offset = countdown_label.size / 2
 	
 	# Animate: start small and grow (coming towards you)
