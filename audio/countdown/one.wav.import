@@ -2,12 +2,13 @@
 
 importer="wav"
 type="AudioStreamWAV"
-path="res://.godot/imported/${f}-12bb757b1c9969cb8656f4f905664542.sample"
+uid="uid://bcg45j1yeq2yp"
+path="res://.godot/imported/one.wav-c2cdf4cd97dd92b2b5cb4875b52ca4c0.sample"
 
 [deps]
 
-source_file="res://audio/countdown/${f}"
-dest_files=["res://.godot/imported/${f}-1e6e35fd033bc320e88299746f3c7d27.sample"]
+source_file="res://audio/countdown/one.wav"
+dest_files=["res://.godot/imported/one.wav-c2cdf4cd97dd92b2b5cb4875b52ca4c0.sample"]
 
 [params]
 
