@@ -21,16 +21,17 @@ func _ready():
 	spawn_players()
 	initialize_hud()
 	
+	# Spawn asteroids before countdown starts
+	for i in GameConfig.ASTEROID_INITIAL_COUNT:
+		spawn_asteroid()
+	
 	# Start countdown before beginning the game
 	$Countdown.countdown_finished.connect(_on_countdown_finished)
 	$Countdown.start_countdown()
 
 func _on_countdown_finished():
 	game_started = true
-	# Spawn asteroids after countdown
-	for i in GameConfig.ASTEROID_INITIAL_COUNT:
-		spawn_asteroid()
-	# Start asteroid timer
+	# Start asteroid timer (asteroids already spawned)
 	$AsteroidTimer.start()
 
 func spawn_players():
