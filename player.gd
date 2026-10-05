@@ -1,5 +1,7 @@
 extends RigidBody2D
 
+const NeonFx = preload("res://neon_fx.gd")
+
 signal respawn_requested(player)
 signal lives_changed(player_number, lives)
 
@@ -17,6 +19,7 @@ var engine_power: float = GameConfig.PLAYER_ENGINE_POWER
 var shield_active: bool = false
 var rapid_fire_active: bool = false
 var speed_boost_active: bool = false
+var thrust_trail: CPUParticles2D
 
 func _ready():
 	screen_size = get_viewport_rect().size
@@ -25,6 +28,9 @@ func _ready():
 	lives = GameState.lives_per_player
 	$ShootTimer.wait_time = GameConfig.PLAYER_SHOOT_DELAY
 	set_ship_colour()
+	thrust_trail = NeonFx.thrust_trail(GameConfig.PLAYER_COLORS[player_number])
+	thrust_trail.position = Vector2(-28, 0)
+	add_child(thrust_trail)
 	set_ship_starting_rotation()
 	
 	# Freeze player during countdown
@@ -51,6 +57,7 @@ func _integrate_forces(physics_state):
 
 func get_input():
 	if dead == true:
+		thrust_trail.emitting = false
 		return
 	# Check if game has started (countdown finished)
 	var main_node = get_parent()
@@ -61,8 +68,10 @@ func get_input():
 	if Input.is_action_pressed(str("thrust", player_number)):
 		thrust = transform.x * engine_power
 		$Ship/Thruster.show()
+		thrust_trail.emitting = true
 	else:
 		$Ship/Thruster.hide()
+		thrust_trail.emitting = false
 	rotation_direction = Input.get_axis(str("rotate_left", player_number), str("rotate_right", player_number))
 	
 	if Input.is_action_pressed(str("shoot", player_number)):
@@ -105,6 +114,7 @@ func destroy():
 	$Explosion.show()
 	$Explosion.play("explode")
 	$ExplosionSound.play()
+	NeonFx.spark_burst(get_tree(), global_position, GameConfig.PLAYER_COLORS[player_number], GameConfig.SPARK_COUNT_PLAYER)
 	var camera = get_tree().root.get_node_or_null("Main/Camera2D")
 	if camera and camera.has_method("shake"):
 		camera.shake(GameConfig.CAMERA_SHAKE_EXPLOSION)

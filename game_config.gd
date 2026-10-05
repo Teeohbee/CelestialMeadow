@@ -63,6 +63,15 @@ const PLAYER_COLORS: Array[Color] = [
 # Neon Rendering
 ## Multiplier pushing neon colours above 1.0 so the glow post-process picks them up
 const NEON_GLOW: float = 2.5
+# Particles
+const SPARK_LIFETIME: float = 0.7
+const SPARK_SPEED_MIN: float = 150.0
+const SPARK_SPEED_MAX: float = 550.0
+const SPARK_DAMPING: float = 400.0
+const SPARK_COUNT_ASTEROID: int = 40
+const SPARK_COUNT_PLAYER: int = 90
+const BULLET_TRAIL_LENGTH: float = 120.0  # in bullet-local units (bullet is scaled 0.5)
+
 const ASTEROID_COLOR: Color = Color(0.85, 0.85, 1.0)
 const HOLOGRAM_COLORS: Array[Color] = [
 	Color(0.0, 0.8, 1.0),   # Cyan

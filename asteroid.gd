@@ -1,5 +1,7 @@
 extends RigidBody2D
 
+const NeonFx = preload("res://neon_fx.gd")
+
 signal powerup_dropped(powerup_position, powerup_type)
 
 @export var sprites: Array[CompressedTexture2D] = []
@@ -35,6 +37,7 @@ func destroy():
 	$Explosion.show()
 	$Explosion.play("explode")
 	$ExplosionSound.play()
+	NeonFx.spark_burst(get_tree(), global_position, GameConfig.ASTEROID_COLOR, GameConfig.SPARK_COUNT_ASTEROID)
 	linear_velocity = Vector2.ZERO
 	angular_velocity = 0
 	var camera = get_tree().root.get_node_or_null("Main/Camera2D")

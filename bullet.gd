@@ -1,5 +1,7 @@
 extends Area2D
 
+const NeonFx = preload("res://neon_fx.gd")
+
 @export var speed: int = 1000
 
 var velocity: Vector2 = Vector2.ZERO
@@ -10,6 +12,7 @@ func start(_transform, _player_number):
 	velocity = transform.x * speed
 	player_number = _player_number
 	$Sprite2D.self_modulate = GameConfig.PLAYER_COLORS[player_number]
+	add_child(NeonFx.bullet_trail(GameConfig.PLAYER_COLORS[player_number], GameConfig.BULLET_TRAIL_LENGTH))
 
 func _physics_process(delta):
 	position += velocity * delta
