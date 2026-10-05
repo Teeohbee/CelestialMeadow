@@ -1,0 +1,10 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3]
+
+[ext_resource type="Shader" path="res://shaders/neon_sprite.gdshader" id="1_shader"]
+
+[resource]
+shader = ExtResource("1_shader")
+shader_parameter/outline_width = 5.0
+shader_parameter/glow_strength = 3.5
+shader_parameter/detail_strength = 0.8
+shader_parameter/fill_strength = 0.1

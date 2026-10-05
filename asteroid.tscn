@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://0rrpx2uqw0jh" path="res://explosion.tscn" id="3_3pasg"]
 [ext_resource type="AudioStream" uid="uid://crehfdwax0f6x" path="res://audio/explosion.ogg" id="4_bsxi3"]
 
+[ext_resource type="Material" path="res://shaders/neon_sprite_material.tres" id="neon_mat"]
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_jey0l"]
 bounce = 1.0
 
@@ -20,6 +21,7 @@ script = ExtResource("1_ftbns")
 sprites = Array[CompressedTexture2D]([ExtResource("2_c3vyr"), ExtResource("3_2d4gk")])
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+material = ExtResource("neon_mat")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0.250001, -0.250001)
@@ -27,6 +29,7 @@ rotation = 0.785398
 shape = SubResource("RectangleShape2D_nm217")
 
 [node name="Explosion" parent="." instance=ExtResource("3_3pasg")]
+material = ExtResource("neon_mat")
 visible = false
 
 [node name="ExplosionSound" type="AudioStreamPlayer" parent="."]

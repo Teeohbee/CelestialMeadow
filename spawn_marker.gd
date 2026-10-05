@@ -11,7 +11,7 @@ func _ready():
 	pulse_tween.tween_property(self, "scale", Vector2(0.8, 0.8), GameConfig.SPAWN_MARKER_PULSE_DURATION)
 
 func _draw():
-	draw_arc(Vector2.ZERO, GameConfig.SPAWN_MARKER_RADIUS, 0, TAU, 48, color, GameConfig.SPAWN_MARKER_WIDTH, true)
+	draw_arc(Vector2.ZERO, GameConfig.SPAWN_MARKER_RADIUS, 0, TAU, 48, color * GameConfig.NEON_GLOW, GameConfig.SPAWN_MARKER_WIDTH, true)
 
 func burst():
 	pulse_tween.kill()

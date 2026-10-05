@@ -9,6 +9,7 @@ func start(_transform, _player_number):
 	transform = _transform
 	velocity = transform.x * speed
 	player_number = _player_number
+	$Sprite2D.self_modulate = GameConfig.PLAYER_COLORS[player_number]
 
 func _physics_process(delta):
 	position += velocity * delta

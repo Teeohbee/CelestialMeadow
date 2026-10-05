@@ -11,6 +11,8 @@ var drop_chance: float = GameConfig.POWERUP_DROP_CHANCE
 func _ready():
 	screen_size = get_viewport_rect().size
 	$Sprite2D.texture = sprites[randi() % sprites.size()]
+	$Sprite2D.self_modulate = GameConfig.ASTEROID_COLOR
+	$Explosion.self_modulate = GameConfig.ASTEROID_COLOR
 	var asteroid_scale = randf_range(0.8, 1.5)
 	$Sprite2D.scale = Vector2(asteroid_scale, asteroid_scale)
 	$CollisionShape2D.scale = Vector2(asteroid_scale, asteroid_scale)

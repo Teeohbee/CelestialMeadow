@@ -50,15 +50,20 @@ const CAMERA_SHAKE_ASTEROID: float = 12.0
 const END_GAME_CHECK_DELAY: float = 0.5
 const VICTORY_SCREEN_DURATION: float = 3.0
 
-# Player Colors
+# Player Colors (neon palette)
 const PLAYER_COLORS: Array[Color] = [
-	Color.RED,
-	Color.GREEN,
-	Color.BLUE,
-	Color.YELLOW,
-	Color.MAGENTA,
-	Color.CYAN
+	Color(1.0, 0.15, 0.6),   # Hot pink
+	Color(0.45, 1.0, 0.15),  # Lime
+	Color(0.2, 0.45, 1.0),   # Electric blue
+	Color(1.0, 0.7, 0.0),    # Amber
+	Color(0.7, 0.3, 1.0),    # Violet
+	Color(0.0, 0.9, 1.0)     # Cyan
 ]
+
+# Neon Rendering
+## Multiplier pushing neon colours above 1.0 so the glow post-process picks them up
+const NEON_GLOW: float = 2.5
+const ASTEROID_COLOR: Color = Color(0.85, 0.85, 1.0)
 
 # Player Starting Rotation Adjustments (degrees)
 const PLAYER_ROTATION_ADJUSTMENTS: Array[int] = [30, 30, -30, -30, 0, 0]

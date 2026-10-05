@@ -12,6 +12,8 @@
 [ext_resource type="PackedScene" uid="uid://cq8r4y5g3mbhp" path="res://powerup.tscn" id="10_powerup"]
 [ext_resource type="PackedScene" uid="uid://countdown123" path="res://countdown.tscn" id="11_countdown"]
 
+[ext_resource type="Environment" path="res://neon_environment.tres" id="12_env"]
+
 [sub_resource type="Curve2D" id="Curve2D_1lhca"]
 _data = {
 "points": PackedVector2Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1920, 0, 0, 0, 0, 0, 1920, 1080, 0, 0, 0, 0, 0, 1080, 0, 0, 0, 0, 0, 0)
@@ -23,6 +25,9 @@ script = ExtResource("1_k3tpq")
 asteroid_scene = ExtResource("2_xklmo")
 player_scene = ExtResource("1_syc1s")
 powerup_scene = ExtResource("10_powerup")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource("12_env")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 offset = Vector2(960, 540)
