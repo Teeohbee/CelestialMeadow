@@ -4,6 +4,8 @@ extends Node2D
 @export var player_scene: PackedScene
 @export var powerup_scene: PackedScene
 
+const SpawnMarker = preload("res://spawn_marker.gd")
+
 var screen_size: Vector2
 var game_over: bool = false
 var game_started: bool = false
@@ -134,9 +136,17 @@ func show_draw():
 	get_tree().change_scene_to_file("res://menu.tscn")
 
 func _on_player_respawn_requested(player):
+	var marker = SpawnMarker.new()
+	marker.color = GameConfig.PLAYER_COLORS[player.player_number]
+	marker.position = player.screen_size * player.starting_position
+	add_child(marker)
+	
 	await get_tree().create_timer(GameConfig.PLAYER_RESPAWN_DELAY).timeout
 	if is_instance_valid(player):
 		player.respawn()
+		marker.burst()
+	else:
+		marker.queue_free()
 
 func initialize_hud():
 	var hud = $HUD
