@@ -3,6 +3,8 @@
 [ext_resource type="Script" path="res://menu.gd" id="1_menu"]
 [ext_resource type="PackedScene" uid="uid://bnauy0payb6b1" path="res://planet.tscn" id="2_planet"]
 [ext_resource type="Environment" path="res://neon_environment.tres" id="3_env"]
+[ext_resource type="Material" path="res://shaders/grid_material.tres" id="4_grid"]
+[ext_resource type="PackedScene" path="res://post_fx.tscn" id="5_postfx"]
 
 [node name="Menu" type="Control"]
 layout_mode = 3
@@ -20,6 +22,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
+material = ExtResource("4_grid")
 color = Color(0, 0, 0, 1)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
@@ -128,6 +132,9 @@ theme_override_font_sizes/font_size = 28
 text = "QUIT"
 focus_neighbor_top = NodePath("../StartButton")
 focus_neighbor_bottom = NodePath("../PlayerCount/DecreaseButton")
+
+
+[node name="PostFX" parent="." instance=ExtResource("5_postfx")]
 
 [connection signal="pressed" from="VBoxContainer/PlayerCount/DecreaseButton" to="." method="_on_decrease_pressed"]
 [connection signal="pressed" from="VBoxContainer/PlayerCount/IncreaseButton" to="." method="_on_increase_pressed"]

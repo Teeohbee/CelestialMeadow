@@ -22,3 +22,4 @@ func _process(delta: float) -> void:
 
 func shake(intensity: float = shake_intensity) -> void:
 	shake_strength = intensity
+	get_tree().call_group("post_fx", "pulse", intensity * GameConfig.ABERRATION_PER_SHAKE)

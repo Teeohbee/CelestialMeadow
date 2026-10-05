@@ -13,6 +13,8 @@
 [ext_resource type="PackedScene" uid="uid://countdown123" path="res://countdown.tscn" id="11_countdown"]
 
 [ext_resource type="Environment" path="res://neon_environment.tres" id="12_env"]
+[ext_resource type="Material" path="res://shaders/grid_material.tres" id="13_grid"]
+[ext_resource type="PackedScene" path="res://post_fx.tscn" id="14_postfx"]
 
 [sub_resource type="Curve2D" id="Curve2D_1lhca"]
 _data = {
@@ -32,6 +34,15 @@ environment = ExtResource("12_env")
 [node name="Camera2D" type="Camera2D" parent="."]
 offset = Vector2(960, 540)
 script = ExtResource("7_shake")
+
+[node name="Grid" type="ColorRect" parent="."]
+z_index = -10
+material = ExtResource("13_grid")
+offset_left = -64.0
+offset_top = -64.0
+offset_right = 1984.0
+offset_bottom = 1144.0
+mouse_filter = 2
 
 [node name="Planet" parent="." instance=ExtResource("1_kiu5r")]
 
@@ -60,6 +71,8 @@ wait_time = 5.0
 [node name="UI" parent="PauseMenu" instance=ExtResource("8_pause")]
 
 [node name="HUD" parent="." instance=ExtResource("9_hud")]
+
+[node name="PostFX" parent="." instance=ExtResource("14_postfx")]
 
 [node name="Countdown" parent="." instance=ExtResource("11_countdown")]
 

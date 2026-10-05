@@ -43,6 +43,8 @@ const ASTEROID_MIN_SPEED: float = 100.0
 const ASTEROID_MAX_SPEED: float = 200.0
 
 # Camera Effects
+const ABERRATION_PER_SHAKE: float = 0.6  # aberration pixels per unit of shake
+const ABERRATION_DECAY: float = 6.0
 const CAMERA_SHAKE_EXPLOSION: float = 20.0
 const CAMERA_SHAKE_ASTEROID: float = 12.0
 
