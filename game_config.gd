@@ -64,6 +64,11 @@ const PLAYER_COLORS: Array[Color] = [
 ## Multiplier pushing neon colours above 1.0 so the glow post-process picks them up
 const NEON_GLOW: float = 2.5
 const ASTEROID_COLOR: Color = Color(0.85, 0.85, 1.0)
+const HOLOGRAM_COLORS: Array[Color] = [
+	Color(0.0, 0.8, 1.0),   # Cyan
+	Color(0.15, 0.3, 1.0),  # Deep blue
+	Color(0.55, 0.3, 1.0)   # Violet
+]
 
 # Player Starting Rotation Adjustments (degrees)
 const PLAYER_ROTATION_ADJUSTMENTS: Array[int] = [30, 30, -30, -30, 0, 0]

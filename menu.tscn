@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://menu.gd" id="1_menu"]
 [ext_resource type="PackedScene" uid="uid://bnauy0payb6b1" path="res://planet.tscn" id="2_planet"]
+[ext_resource type="Environment" path="res://neon_environment.tres" id="3_env"]
 
 [node name="Menu" type="Control"]
 layout_mode = 3
@@ -20,6 +21,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 1)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource("3_env")
 
 [node name="Planet1" parent="." instance=ExtResource("2_planet")]
 position = Vector2(200, 150)

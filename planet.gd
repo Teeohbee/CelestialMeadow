@@ -8,6 +8,7 @@ func _ready():
 	screen_size = get_viewport_rect().size
 	set_planet_texture()
 	set_planet_scale()
+	self_modulate = GameConfig.HOLOGRAM_COLORS[randi() % GameConfig.HOLOGRAM_COLORS.size()]
 	position = Vector2(randf_range(0, 1)*screen_size.x, randf_range(0, 1)*screen_size.y)
 
 func set_planet_texture():
