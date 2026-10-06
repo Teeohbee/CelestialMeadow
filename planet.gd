@@ -1,14 +1,18 @@
 extends Sprite2D
 
 @export var sprites: Array[CompressedTexture2D] = []
+## Off when a scene picks the planet's texture, size and position itself,
+## as the title screen does
+@export var randomise: bool = true
 
 var screen_size: Vector2
 
 func _ready():
 	screen_size = get_viewport_rect().size
-	set_planet_texture()
-	set_planet_scale()
-	position = Vector2(randf_range(0, 1)*screen_size.x, randf_range(0, 1)*screen_size.y)
+	if randomise:
+		set_planet_texture()
+		set_planet_scale()
+		position = Vector2(randf_range(0, 1)*screen_size.x, randf_range(0, 1)*screen_size.y)
 
 func set_planet_texture():
 	var texture_index = randi() % sprites.size()
