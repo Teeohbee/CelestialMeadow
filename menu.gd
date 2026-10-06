@@ -8,6 +8,10 @@ extends Control
 const SeatCard = preload("res://seat_card.gd")
 const SEAT_COUNT: int = 6
 
+## Debug builds let one player launch against an idle dummy ship, so a
+## round can be won and the results screen tested with one controller
+var debug_dummy: bool = OS.is_debug_build()
+
 var cards: Array = []
 var launch_countdown: float = GameConfig.TITLE_LAUNCH_DELAY
 var launching: bool = false
@@ -24,7 +28,8 @@ func _ready():
 		cards.append(card)
 	# Coming back from a game, the same crew is still seated
 	for i in GameState.players:
-		cards[i].set_state(SeatCard.State.JOINED)
+		if i not in GameState.dummies:
+			cards[i].set_state(SeatCard.State.JOINED)
 	spawn_asteroids()
 	quit_confirm.hide()
 
@@ -40,7 +45,9 @@ func spawn_asteroids():
 func _process(delta):
 	var seated = seated_players()
 	var ready_count = cards.filter(func(c): return c.state == SeatCard.State.READY).size()
-	var can_launch = seated.size() >= GameConfig.TITLE_MIN_PLAYERS and ready_count == seated.size()
+	var solo_test = debug_dummy and seated.size() == 1
+	var enough = seated.size() >= GameConfig.TITLE_MIN_PLAYERS or solo_test
+	var can_launch = enough and ready_count == seated.size()
 
 	if can_launch and not launching:
 		launch_countdown -= delta
@@ -51,10 +58,12 @@ func _process(delta):
 
 	if seated.is_empty():
 		status.text = "Press shoot to take a seat"
-	elif seated.size() < GameConfig.TITLE_MIN_PLAYERS:
+	elif not enough:
 		status.text = "Waiting for another pilot"
 	elif not can_launch:
 		status.text = "%d of %d ready" % [ready_count, seated.size()]
+	elif solo_test:
+		status.text = "Launching in %d against a dummy (debug)" % ceili(launch_countdown)
 	else:
 		status.text = "Launching in %d" % ceili(launch_countdown)
 
@@ -101,7 +110,13 @@ func back(card):
 
 func launch(seated: Array[int]):
 	launching = true
-	GameState.start_session(seated)
+	var dummy_seats: Array[int] = []
+	if seated.size() == 1:
+		for card in cards:
+			if card.state == SeatCard.State.EMPTY:
+				dummy_seats.append(card.seat)
+				break
+	GameState.start_session(seated, dummy_seats)
 	get_tree().change_scene_to_file("res://main.tscn")
 
 func _on_quit_button_pressed():
