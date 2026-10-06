@@ -65,6 +65,10 @@ func _on_player_destroyed():
 		return
 	
 	await get_tree().create_timer(GameConfig.END_GAME_CHECK_DELAY).timeout
+	# Several players can die at once; only the first check to finish ends
+	# the round
+	if game_over:
+		return
 	
 	var remaining_players = get_tree().get_nodes_in_group("players")
 	
