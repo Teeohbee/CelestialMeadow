@@ -4,12 +4,12 @@ extends CanvasLayer
 ## into the next round. Any player's controls can drive it: rotate to choose,
 ## shoot to confirm.
 
-const PIP_SIZE: int = 16
+const PIP_SIZE: Vector2 = Vector2(22, 10)
 
 var locked: bool = true
 var chosen: bool = false
 
-@onready var ship: TextureRect = $Center/Panel/Margin/VBox/Ship
+@onready var ship: Control = $Center/Panel/Margin/VBox/Ship
 @onready var title: Label = $Center/Panel/Margin/VBox/Title
 @onready var subtitle: Label = $Center/Panel/Margin/VBox/Subtitle
 @onready var tally: VBoxContainer = $Center/Panel/Margin/VBox/Tally
@@ -20,19 +20,20 @@ var chosen: bool = false
 ## scores is each player's score this round, if the mode keeps one.
 func show_result(winners: Array[int], scores: Dictionary = {}):
 	var team = GameState.teams[winners[0]] if not winners.is_empty() else GameState.SOLO
+	title.add_theme_font_override("font", Poster.font(700))
 	if team != GameState.SOLO:
 		var colour = GameConfig.TEAM_COLORS[team]
 		title.text = "Team %s Wins!" % GameConfig.TEAM_NAMES[team]
 		title.add_theme_color_override("font_color", colour)
 		subtitle.text = names(winners)
-		ship.self_modulate = colour
+		ship.ink = colour
 	elif winners.size() == 1:
 		var winner_number = winners[0]
 		var colour = GameConfig.PLAYER_COLORS[winner_number]
 		title.text = "%s Wins!" % GameConfig.PLAYER_COLOR_NAMES[winner_number]
 		title.add_theme_color_override("font_color", colour)
 		subtitle.text = "Player %d" % (winner_number + 1)
-		ship.self_modulate = colour
+		ship.ink = colour
 	else:
 		title.text = "Draw!"
 		subtitle.text = "Everyone lost"
@@ -73,10 +74,7 @@ func build_tally(winners: Array[int], scores: Dictionary):
 			kills.add_theme_font_size_override("font_size", 22)
 			row.add_child(kills)
 		for w in GameState.wins[i]:
-			var pip = ColorRect.new()
-			pip.custom_minimum_size = Vector2(PIP_SIZE, PIP_SIZE)
-			pip.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-			pip.color = GameConfig.PLAYER_COLORS[i]
+			var pip = pill(GameConfig.PLAYER_COLORS[i])
 			row.add_child(pip)
 			# The win just earned fades in
 			if i in winners and w == GameState.wins[i] - 1:
@@ -85,6 +83,16 @@ func build_tally(winners: Array[int], scores: Dictionary):
 				tween.tween_interval(0.4)
 				tween.tween_property(pip, "modulate:a", 1.0, 0.5)
 		tally.add_child(row)
+
+## A win as a trail-shaped pill, like the HUD's lives
+func pill(colour: Color) -> Control:
+	var pip = Control.new()
+	pip.custom_minimum_size = PIP_SIZE
+	pip.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	pip.draw.connect(func():
+		var r = PIP_SIZE.y * 0.5
+		Poster.bar(pip, Vector2(r, r), Vector2(PIP_SIZE.x - r, r), PIP_SIZE.y, colour))
+	return pip
 
 func set_buttons_disabled(disabled: bool):
 	rematch_button.disabled = disabled
