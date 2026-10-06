@@ -1,61 +1,54 @@
 extends CanvasLayer
 
-var player_containers: Array = []
-var life_icon_size: int = 20
-var corner_positions: Array = [
-	{"anchor": Control.PRESET_TOP_LEFT, "margin": Vector2(20, 20)},       # Player 0
-	{"anchor": Control.PRESET_BOTTOM_RIGHT, "margin": Vector2(-20, -20)}, # Player 1
-	{"anchor": Control.PRESET_BOTTOM_LEFT, "margin": Vector2(20, -20)},   # Player 2
-	{"anchor": Control.PRESET_TOP_RIGHT, "margin": Vector2(-20, 20)},     # Player 3
-	{"anchor": Control.PRESET_CENTER_TOP, "margin": Vector2(0, 20)},      # Player 4
-	{"anchor": Control.PRESET_CENTER_BOTTOM, "margin": Vector2(0, -20)}   # Player 5
+## Each pilot's corner of the poster: an outlined numeral, a tracked
+## "PILOT n" label and their lives as trail-shaped pills.
+
+const MARGIN: float = 34.0
+## Where each seat's block sits: x anchor (0 left, 0.5 centre, 1 right), top or bottom
+const SLOTS: Array = [
+	[0.0, true], [1.0, false], [0.0, false], [1.0, true], [0.5, true], [0.5, false],
 ]
 
-func _ready():
-	for i in range(6):
-		var container = HBoxContainer.new()
-		container.set_anchors_preset(corner_positions[i].anchor)
-		
-		# Position container based on player position
-		if i == 0:  # Top left
-			container.position = corner_positions[i].margin
-		elif i == 1:  # Bottom right
-			container.position = Vector2(corner_positions[i].margin.x - 100, corner_positions[i].margin.y - 30)
-			container.alignment = BoxContainer.ALIGNMENT_END
-		elif i == 2:  # Bottom left
-			container.position = Vector2(corner_positions[i].margin.x, corner_positions[i].margin.y - 30)
-		elif i == 3:  # Top right
-			container.position = Vector2(corner_positions[i].margin.x - 100, corner_positions[i].margin.y)
-			container.alignment = BoxContainer.ALIGNMENT_END
-		elif i == 4:  # Top center
-			container.position = Vector2(corner_positions[i].margin.x - 50, corner_positions[i].margin.y)
-		else:  # Bottom center (Player 5)
-			container.position = Vector2(corner_positions[i].margin.x - 50, corner_positions[i].margin.y - 30)
-		
-		container.add_theme_constant_override("separation", 5)
-		add_child(container)
-		player_containers.append(container)
-		
-		# Hide containers for inactive players
-		if i not in GameState.players:
-			container.hide()
-		else:
-			# Create initial life icons
-			update_lives(i, GameState.lives_per_player)
+var lives: Dictionary = {}
+var canvas := Node2D.new()
 
-func update_lives(player_number: int, lives: int):
-	if player_number >= player_containers.size():
-		return
-	
-	var container = player_containers[player_number]
-	
-	# Clear existing icons
-	for child in container.get_children():
-		child.queue_free()
-	
-	# Add life icons
+func _ready():
+	add_child(canvas)
+	canvas.draw.connect(_draw_hud)
+	for i in GameState.players:
+		lives[i] = GameState.lives_per_player
+	canvas.queue_redraw()
+
+func update_lives(player_number: int, remaining: int):
+	lives[player_number] = remaining
+	canvas.queue_redraw()
+
+func _draw_hud():
+	var size = canvas.get_viewport_rect().size
+	var numeral_font = Poster.font(700)
+	var label_font = Poster.font(600, 4)
 	for i in lives:
-		var icon = ColorRect.new()
-		icon.custom_minimum_size = Vector2(life_icon_size, life_icon_size)
-		icon.color = GameConfig.PLAYER_COLORS[player_number]
-		container.add_child(icon)
+		var slot = SLOTS[i]
+		var ink = GameConfig.PLAYER_COLORS[i]
+		var top = MARGIN if slot[1] else size.y - MARGIN - 56.0
+		var numeral = str(i + 1)
+		var label = "PILOT %d" % (i + 1)
+		var numeral_w = numeral_font.get_string_size(numeral, HORIZONTAL_ALIGNMENT_LEFT, -1, 58).x
+		var label_w = label_font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, 14).x
+		var block_w = 46.0 + maxf(label_w, 26.0 * GameState.lives_per_player)
+		# Mirror on the right so the numeral always sits nearest the corner
+		var right = slot[0] == 1.0
+		var x0 = MARGIN + 12.0
+		if right:
+			x0 = size.x - MARGIN - 12.0 - block_w
+		elif slot[0] == 0.5:
+			x0 = (size.x - block_w) * 0.5
+		var num_x = x0 + block_w - numeral_w if right else x0
+		var text_x = x0 if right else x0 + 46.0
+		canvas.draw_string_outline(numeral_font, Vector2(num_x, top + numeral_font.get_ascent(58) - 8), numeral, HORIZONTAL_ALIGNMENT_LEFT, -1, 58, 3, ink)
+		var label_x = x0 + block_w - 46.0 - label_w if right else text_x
+		canvas.draw_string(label_font, Vector2(label_x, top + 8 + label_font.get_ascent(14)), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color(GameConfig.CREAM, 0.8))
+		for n in GameState.lives_per_player:
+			var px = x0 + block_w - 46.0 - 20.0 - n * 26.0 if right else text_x + n * 26.0
+			var colour = ink if n < lives[i] else Color(GameConfig.CREAM, 0.18)
+			Poster.bar(canvas, Vector2(px + 4, top + 36), Vector2(px + 16, top + 36), 8, colour)

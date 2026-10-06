@@ -7,23 +7,17 @@
 
 [ext_resource type="Script" path="res://art/arena_backdrop.gd" id="9_backdrop"]
 [ext_resource type="Script" path="res://art/grain.gd" id="10_grain"]
+[ext_resource type="FontFile" path="res://fonts/JosefinSans-Variable.ttf" id="11_josefin"]
 
 [sub_resource type="FontVariation" id="FontVariation_kicker"]
-variation_embolden = 0.4
+base_font = ExtResource("11_josefin")
+variation_opentype = {2003265652: 600}
 spacing_glyph = 22
 
 [sub_resource type="FontVariation" id="FontVariation_logo"]
-variation_embolden = 1.1
-spacing_glyph = 6
-
-[sub_resource type="Gradient" id="Gradient_shade"]
-offsets = PackedFloat32Array(0, 0.45, 1)
-colors = PackedColorArray(0, 0, 0, 0.15, 0, 0, 0, 0.45, 0, 0, 0, 0.8)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_shade"]
-gradient = SubResource("Gradient_shade")
-fill_from = Vector2(0.5, 0)
-fill_to = Vector2(0.5, 1)
+base_font = ExtResource("11_josefin")
+variation_opentype = {2003265652: 700}
+spacing_glyph = 18
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_none"]
 
@@ -73,17 +67,6 @@ randomise = false
 [node name="SpaceStation" parent="Backdrop" instance=ExtResource("7_station")]
 position = Vector2(1600, 330)
 
-[node name="Shade" type="TextureRect" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-texture = SubResource("GradientTexture2D_shade")
-expand_mode = 1
-
 [node name="Logo" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 10
@@ -96,7 +79,7 @@ theme_override_constants/separation = -12
 
 [node name="Kicker" type="Label" parent="Logo"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.82, 0.32, 1)
+theme_override_colors/font_color = Color(0.941, 0.655, 0.282, 1)
 theme_override_fonts/font = SubResource("FontVariation_kicker")
 theme_override_font_sizes/font_size = 52
 text = "CELESTIAL"
@@ -104,9 +87,9 @@ horizontal_alignment = 1
 
 [node name="Title" type="Label" parent="Logo"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_shadow_color = Color(0.45, 0.25, 0.9, 0.55)
-theme_override_constants/shadow_offset_x = 0
+theme_override_colors/font_color = Color(0.953, 0.906, 0.824, 1)
+theme_override_colors/font_shadow_color = Color(0.153, 0.525, 0.498, 1)
+theme_override_constants/shadow_offset_x = 8
 theme_override_constants/shadow_offset_y = 8
 theme_override_fonts/font = SubResource("FontVariation_logo")
 theme_override_font_sizes/font_size = 168
@@ -115,7 +98,7 @@ horizontal_alignment = 1
 
 [node name="Tagline" type="Label" parent="Logo"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.78, 0.78, 0.86, 1)
+theme_override_colors/font_color = Color(0.953, 0.906, 0.824, 0.8)
 theme_override_font_sizes/font_size = 32
 text = "Up to six pilots. One sky."
 horizontal_alignment = 1
@@ -143,7 +126,7 @@ offset_top = -170.0
 offset_bottom = -110.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_colors/font_color = Color(1, 0.86, 0.45, 1)
+theme_override_colors/font_color = Color(0.941, 0.655, 0.282, 1)
 theme_override_font_sizes/font_size = 40
 text = "Press shoot to take a seat"
 horizontal_alignment = 1
@@ -190,7 +173,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 0.6)
+color = Color(0.0863, 0.0706, 0.122, 0.75)
 
 [node name="Center" type="CenterContainer" parent="QuitConfirm"]
 layout_mode = 1
