@@ -6,6 +6,9 @@ func _ready():
 
 func _input(event):
 	if event.is_action_pressed("pause"):
+		# Something else (the results screen) has paused the game
+		if get_tree().paused and not visible:
+			return
 		toggle_pause()
 
 func toggle_pause():
