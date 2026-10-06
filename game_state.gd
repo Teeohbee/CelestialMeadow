@@ -2,7 +2,7 @@ extends Node
 
 # Seats taken this session. A seat is a player number, which fixes that
 # player's colour, start position and controls (the shoot0..shoot5 actions).
-var players: Array[int] = [0, 1]
+var players: Array[int] = []
 var lives_per_player: int = GameConfig.PLAYER_LIVES_DEFAULT
 
 # Rounds won by each player since the session started from the main menu.
