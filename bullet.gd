@@ -9,6 +9,7 @@ func start(_transform, _player_number):
 	transform = _transform
 	velocity = transform.x * speed
 	player_number = _player_number
+	$Shot.set_player(player_number)
 
 func _physics_process(delta):
 	position += velocity * delta

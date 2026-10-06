@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://0rrpx2uqw0jh"]
+[gd_scene load_steps=6 format=3 uid="uid://0rrpx2uqw0jh"]
 
 [ext_resource type="Texture2D" uid="uid://dqeyrdtevklx4" path="res://sprites/star_small.png" id="1_xvatj"]
 [ext_resource type="Texture2D" uid="uid://c2xillm2wtj76" path="res://sprites/star_medium.png" id="2_rnwpx"]
 [ext_resource type="Texture2D" uid="uid://cwo8psgtk24p6" path="res://sprites/star_large.png" id="3_wu2kj"]
+[ext_resource type="Material" path="res://shaders/engraving_star_material.tres" id="4_star_mat"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_shs2g"]
 animations = [{
@@ -40,6 +41,7 @@ animations = [{
 }]
 
 [node name="Explosion" type="AnimatedSprite2D"]
+material = ExtResource("4_star_mat")
 rotation = 0.785398
 sprite_frames = SubResource("SpriteFrames_shs2g")
 animation = &"explode"

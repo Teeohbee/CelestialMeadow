@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Shader" path="res://shaders/chart_paper.gdshader" id="1_paper"]
+[ext_resource type="Script" path="res://star_chart.gd" id="2_chart"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_paper"]
+shader = ExtResource("1_paper")
+
+[node name="StarChart" type="Node2D"]
+z_index = -10
+
+[node name="Paper" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_paper")
+offset_left = -64.0
+offset_top = -64.0
+offset_right = 1984.0
+offset_bottom = 1144.0
+mouse_filter = 2
+
+[node name="Plate" type="Node2D" parent="."]
+script = ExtResource("2_chart")

@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://ew1xete2o5va"]
 
 [ext_resource type="Script" path="res://bullet.gd" id="1_w6a11"]
-[ext_resource type="Texture2D" uid="uid://bgjfce45u4m1c" path="res://sprites/laser.png" id="2_ilf2a"]
+[ext_resource type="Script" path="res://chart_shot.gd" id="2_shot"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ek1mn"]
 size = Vector2(24, 128)
@@ -11,10 +11,9 @@ scale = Vector2(0.5, 0.5)
 script = ExtResource("1_w6a11")
 metadata/_edit_group_ = true
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-rotation = 1.5708
-scale = Vector2(0.2, 0.5)
-texture = ExtResource("2_ilf2a")
+[node name="Shot" type="Node2D" parent="."]
+scale = Vector2(2, 2)
+script = ExtResource("2_shot")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 rotation = 1.5708

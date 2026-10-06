@@ -33,7 +33,7 @@ const POWERUP_DESPAWN_TIME: float = 15.0
 # Shield Visual
 const SHIELD_RADIUS: int = 40
 const SHIELD_SEGMENTS: int = 32
-const SHIELD_COLOR: Color = Color(0, 0.8, 1.0, 0.3)
+const SHIELD_COLOR: Color = Color(0.17, 0.31, 0.63, 0.25)  # Ultramarine wash
 
 # Asteroid Settings
 const ASTEROID_INITIAL_COUNT: int = 10
@@ -56,14 +56,20 @@ const CAMERA_SHAKE_ASTEROID: float = 12.0
 const END_GAME_CHECK_DELAY: float = 0.5
 const RESULTS_INPUT_LOCK: float = 1.0
 
-# Player Colors
+# Star Chart Style
+const CHART_INK: Color = Color("#2a2016")
+const CHART_PAPER: Color = Color("#e8dcc0")
+const CHART_GOLD: Color = Color("#c9a13b")
+
+# Player Colors: watercolour pigments used to hand-tint antique plates,
+# pushed a little brighter so six players stay distinct across a room
 const PLAYER_COLORS: Array[Color] = [
-	Color.RED,
-	Color.GREEN,
-	Color.BLUE,
-	Color.YELLOW,
-	Color.MAGENTA,
-	Color.CYAN
+	Color("#b8402a"), # Vermilion
+	Color("#3e8a55"), # Verdigris
+	Color("#2b4fa0"), # Ultramarine
+	Color("#c8932a"), # Ochre
+	Color("#8a3a78"), # Madder
+	Color("#2f8a94")  # Slate teal
 ]
 
 # Player colour names, shown on the results screen

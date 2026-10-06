@@ -1,0 +1,13 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3]
+
+[ext_resource type="Shader" path="res://shaders/engraving.gdshader" id="1_shader"]
+
+[resource]
+shader = ExtResource("1_shader")
+shader_parameter/wash_from_tint = false
+shader_parameter/wash_color = Color(0.79, 0.7, 0.53, 1)
+shader_parameter/wash_strength = 0.7
+shader_parameter/line_angle = 35.0
+shader_parameter/shade_strength = 3.0
+shader_parameter/base_density = 0.2
+shader_parameter/cross_threshold = 0.6
