@@ -10,7 +10,9 @@ func update_player_label():
 	$VBoxContainer/PlayerCount/Label.text = str(num_players)
 
 func _on_start_button_pressed():
-	GameState.start_session(num_players)
+	var seats: Array[int] = []
+	seats.assign(range(num_players))
+	GameState.start_session(seats)
 	get_tree().change_scene_to_file("res://main.tscn")
 
 func _on_quit_button_pressed():
