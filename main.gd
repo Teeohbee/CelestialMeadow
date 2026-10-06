@@ -5,6 +5,7 @@ extends Node2D
 @export var powerup_scene: PackedScene
 
 const SpawnMarker = preload("res://spawn_marker.gd")
+const ResultsScene = preload("res://results.tscn")
 
 var screen_size: Vector2
 var game_over: bool = false
@@ -65,75 +66,26 @@ func _on_player_destroyed():
 		return
 	
 	await get_tree().create_timer(GameConfig.END_GAME_CHECK_DELAY).timeout
+	# Several players can die at once; only the first check to finish ends
+	# the round
+	if game_over:
+		return
 	
 	var remaining_players = get_tree().get_nodes_in_group("players")
 	
 	if remaining_players.size() == 1:
 		game_over = true
-		show_victory(remaining_players[0].player_number)
+		show_results(remaining_players[0].player_number)
 	elif remaining_players.size() == 0:
 		game_over = true
-		show_draw()
+		show_results(-1)
 
-func show_victory(winner_number: int):
-	var canvas_layer = CanvasLayer.new()
-	add_child(canvas_layer)
-	
-	var overlay = ColorRect.new()
-	overlay.color = Color(0, 0, 0, 0.6)
-	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
-	canvas_layer.add_child(overlay)
-	
-	var panel = Panel.new()
-	panel.set_anchors_preset(Control.PRESET_CENTER)
-	panel.offset_left = -200
-	panel.offset_top = -100
-	panel.offset_right = 200
-	panel.offset_bottom = 100
-	panel.grow_horizontal = Control.GROW_DIRECTION_BOTH
-	panel.grow_vertical = Control.GROW_DIRECTION_BOTH
-	canvas_layer.add_child(panel)
-	
-	var label = Label.new()
-	label.text = "Player %d Wins!" % (winner_number + 1)
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	label.add_theme_font_size_override("font_size", 48)
-	label.set_anchors_preset(Control.PRESET_FULL_RECT)
-	panel.add_child(label)
-	
-	await get_tree().create_timer(GameConfig.VICTORY_SCREEN_DURATION).timeout
-	get_tree().change_scene_to_file("res://menu.tscn")
-
-func show_draw():
-	var canvas_layer = CanvasLayer.new()
-	add_child(canvas_layer)
-	
-	var overlay = ColorRect.new()
-	overlay.color = Color(0, 0, 0, 0.6)
-	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
-	canvas_layer.add_child(overlay)
-	
-	var panel = Panel.new()
-	panel.set_anchors_preset(Control.PRESET_CENTER)
-	panel.offset_left = -200
-	panel.offset_top = -100
-	panel.offset_right = 200
-	panel.offset_bottom = 100
-	panel.grow_horizontal = Control.GROW_DIRECTION_BOTH
-	panel.grow_vertical = Control.GROW_DIRECTION_BOTH
-	canvas_layer.add_child(panel)
-	
-	var label = Label.new()
-	label.text = "Draw!\nEveryone Lost!"
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	label.add_theme_font_size_override("font_size", 48)
-	label.set_anchors_preset(Control.PRESET_FULL_RECT)
-	panel.add_child(label)
-	
-	await get_tree().create_timer(GameConfig.VICTORY_SCREEN_DURATION).timeout
-	get_tree().change_scene_to_file("res://menu.tscn")
+func show_results(winner_number: int):
+	if winner_number >= 0:
+		GameState.record_win(winner_number)
+	var results = ResultsScene.instantiate()
+	add_child(results)
+	results.show_result(winner_number)
 
 func _on_player_respawn_requested(player):
 	var marker = SpawnMarker.new()

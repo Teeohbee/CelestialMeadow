@@ -48,7 +48,7 @@ const CAMERA_SHAKE_ASTEROID: float = 12.0
 
 # Game Flow Timing
 const END_GAME_CHECK_DELAY: float = 0.5
-const VICTORY_SCREEN_DURATION: float = 3.0
+const RESULTS_INPUT_LOCK: float = 1.0
 
 # Player Colors
 const PLAYER_COLORS: Array[Color] = [
@@ -59,6 +59,9 @@ const PLAYER_COLORS: Array[Color] = [
 	Color.MAGENTA,
 	Color.CYAN
 ]
+
+# Player colour names, shown on the results screen
+const PLAYER_COLOR_NAMES: Array[String] = ["Red", "Green", "Blue", "Yellow", "Magenta", "Cyan"]
 
 # Player Starting Rotation Adjustments (degrees)
 const PLAYER_ROTATION_ADJUSTMENTS: Array[int] = [30, 30, -30, -30, 0, 0]
