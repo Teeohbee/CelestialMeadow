@@ -87,6 +87,7 @@ func shoot():
 
 func set_ship_colour():
 	$Ship.ink = GameConfig.PLAYER_COLORS[player_number]
+	$Explosion.ink = GameConfig.PLAYER_COLORS[player_number]
 
 ## A ring in the team's colour so teammates can spot each other. It sits on
 ## the ship sprite, so it hides and blinks along with it.
