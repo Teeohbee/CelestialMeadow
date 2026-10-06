@@ -32,8 +32,6 @@ const POWERUP_DESPAWN_TIME: float = 15.0
 
 # Shield Visual
 const SHIELD_RADIUS: int = 40
-const SHIELD_SEGMENTS: int = 32
-const SHIELD_COLOR: Color = Color(0, 0.8, 1.0, 0.3)
 
 # Asteroid Settings
 const ASTEROID_INITIAL_COUNT: int = 10

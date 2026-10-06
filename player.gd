@@ -31,7 +31,6 @@ func _ready():
 	var main_node = get_parent()
 	if main_node and "game_started" in main_node and not main_node.game_started:
 		freeze = true
-		$Ship/Thruster.hide()  # Hide thruster during countdown
 		# Connect to countdown finished to unfreeze
 		var countdown = main_node.get_node_or_null("Countdown")
 		if countdown:
@@ -42,6 +41,7 @@ func _on_countdown_finished():
 
 func _process(_delta):
 	get_input()
+	$Ship.velocity = Vector2.ZERO if dead else linear_velocity
 
 func _integrate_forces(physics_state):
 	var xform = physics_state.transform
@@ -60,9 +60,9 @@ func get_input():
 	thrust = Vector2.ZERO
 	if Input.is_action_pressed(str("thrust", player_number)):
 		thrust = transform.x * engine_power
-		$Ship/Thruster.show()
+		$Ship.thrusting = true
 	else:
-		$Ship/Thruster.hide()
+		$Ship.thrusting = false
 	rotation_direction = Input.get_axis(str("rotate_left", player_number), str("rotate_right", player_number))
 	
 	if Input.is_action_pressed(str("shoot", player_number)):
@@ -82,7 +82,7 @@ func shoot():
 		can_shoot = false
 
 func set_ship_colour():
-	$Ship.set_self_modulate(GameConfig.PLAYER_COLORS[player_number])
+	$Ship.ink = GameConfig.PLAYER_COLORS[player_number]
 
 func set_ship_starting_rotation():
 	# Original logic that works for corners
@@ -138,7 +138,7 @@ func respawn():
 	var main_node = get_parent()
 	if main_node and "game_started" in main_node and not main_node.game_started:
 		freeze = true
-		$Ship/Thruster.hide()
+		$Ship.thrusting = false
 	else:
 		freeze = false
 	
@@ -159,16 +159,13 @@ func activate_shield():
 	shield_active = true
 	set_collision_layer_value(1, false)
 	
-	# Create shield bubble
-	var shield_bubble = Polygon2D.new()
+	# Shield bubble: a faint wash of the pilot's ink inside a dashed ring
+	var shield_bubble = Node2D.new()
 	shield_bubble.name = "ShieldBubble"
-	shield_bubble.color = GameConfig.SHIELD_COLOR
-	# Create circle polygon
-	var points = PackedVector2Array()
-	for i in GameConfig.SHIELD_SEGMENTS:
-		var angle = (i / float(GameConfig.SHIELD_SEGMENTS)) * TAU
-		points.append(Vector2(cos(angle), sin(angle)) * GameConfig.SHIELD_RADIUS)
-	shield_bubble.polygon = points
+	var ink = GameConfig.PLAYER_COLORS[player_number]
+	shield_bubble.draw.connect(func():
+		shield_bubble.draw_circle(Vector2.ZERO, GameConfig.SHIELD_RADIUS, Color(ink, 0.15))
+		Poster.dashed_circle(shield_bubble, Vector2.ZERO, GameConfig.SHIELD_RADIUS, 9, 6, ink, 3))
 	add_child(shield_bubble)
 	
 	await get_tree().create_timer(GameConfig.POWERUP_SHIELD_DURATION).timeout

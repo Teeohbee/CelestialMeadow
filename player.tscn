@@ -2,8 +2,7 @@
 
 [ext_resource type="Script" path="res://player.gd" id="1_ljm24"]
 [ext_resource type="PackedScene" uid="uid://ew1xete2o5va" path="res://bullet.tscn" id="2_wq7s0"]
-[ext_resource type="Texture2D" uid="uid://tqmhr1w0q7xo" path="res://sprites/player.png" id="3_d23ed"]
-[ext_resource type="Texture2D" uid="uid://caew0w1vcsulu" path="res://sprites/thruster.png" id="4_jcy36"]
+[ext_resource type="Script" path="res://art/ship_art.gd" id="3_art"]
 [ext_resource type="PackedScene" uid="uid://0rrpx2uqw0jh" path="res://explosion.tscn" id="5_8r2ey"]
 [ext_resource type="AudioStream" uid="uid://d1ih0wlocb1vm" path="res://audio/laser.ogg" id="6_fcvbl"]
 [ext_resource type="AudioStream" uid="uid://crehfdwax0f6x" path="res://audio/explosion.ogg" id="7_3y38g"]
@@ -17,15 +16,8 @@ angular_damp = 5.0
 script = ExtResource("1_ljm24")
 bullet_scene = ExtResource("2_wq7s0")
 
-[node name="Ship" type="Sprite2D" parent="."]
-rotation = 1.5708
-scale = Vector2(0.5, 0.5)
-texture = ExtResource("3_d23ed")
-
-[node name="Thruster" type="Sprite2D" parent="Ship"]
-position = Vector2(0.000361999, 100)
-scale = Vector2(0.5, 1)
-texture = ExtResource("4_jcy36")
+[node name="Ship" type="Node2D" parent="."]
+script = ExtResource("3_art")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(-5, 0)
