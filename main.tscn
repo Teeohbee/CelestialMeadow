@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://ww418vo28v70"]
+[gd_scene load_steps=14 format=3 uid="uid://ww418vo28v70"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_k3tpq"]
 [ext_resource type="PackedScene" uid="uid://bnauy0payb6b1" path="res://planet.tscn" id="1_kiu5r"]
@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://b8yjq4m7nfx2f" path="res://hud.tscn" id="9_hud"]
 [ext_resource type="PackedScene" uid="uid://cq8r4y5g3mbhp" path="res://powerup.tscn" id="10_powerup"]
 [ext_resource type="PackedScene" uid="uid://countdown123" path="res://countdown.tscn" id="11_countdown"]
+[ext_resource type="PackedScene" path="res://star_chart.tscn" id="12_chart"]
 
 [sub_resource type="Curve2D" id="Curve2D_1lhca"]
 _data = {
@@ -27,6 +28,8 @@ powerup_scene = ExtResource("10_powerup")
 [node name="Camera2D" type="Camera2D" parent="."]
 offset = Vector2(960, 540)
 script = ExtResource("7_shake")
+
+[node name="StarChart" parent="." instance=ExtResource("12_chart")]
 
 [node name="Planet" parent="." instance=ExtResource("1_kiu5r")]
 
