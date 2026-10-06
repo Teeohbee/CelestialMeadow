@@ -13,7 +13,7 @@
 [ext_resource type="PackedScene" uid="uid://countdown123" path="res://countdown.tscn" id="11_countdown"]
 
 [ext_resource type="Environment" path="res://neon_environment.tres" id="12_env"]
-[ext_resource type="Material" path="res://shaders/grid_material.tres" id="13_grid"]
+[ext_resource type="Material" path="res://shaders/riso_paper_material.tres" id="13_grid"]
 [ext_resource type="PackedScene" path="res://post_fx.tscn" id="14_postfx"]
 
 [sub_resource type="Curve2D" id="Curve2D_1lhca"]

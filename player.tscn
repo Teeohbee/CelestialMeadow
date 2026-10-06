@@ -8,8 +8,8 @@
 [ext_resource type="AudioStream" uid="uid://d1ih0wlocb1vm" path="res://audio/laser.ogg" id="6_fcvbl"]
 [ext_resource type="AudioStream" uid="uid://crehfdwax0f6x" path="res://audio/explosion.ogg" id="7_3y38g"]
 
-[ext_resource type="Material" path="res://shaders/neon_sprite_material.tres" id="neon_mat"]
-[ext_resource type="Material" path="res://shaders/neon_ship_material.tres" id="neon_ship_mat"]
+[ext_resource type="Material" path="res://shaders/riso_sprite_material.tres" id="neon_mat"]
+[ext_resource type="Material" path="res://shaders/riso_ship_material.tres" id="neon_ship_mat"]
 [sub_resource type="CircleShape2D" id="CircleShape2D_v3wws"]
 radius = 21.0
 

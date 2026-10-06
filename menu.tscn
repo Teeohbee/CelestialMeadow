@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://menu.gd" id="1_menu"]
 [ext_resource type="PackedScene" uid="uid://bnauy0payb6b1" path="res://planet.tscn" id="2_planet"]
 [ext_resource type="Environment" path="res://neon_environment.tres" id="3_env"]
-[ext_resource type="Material" path="res://shaders/grid_material.tres" id="4_grid"]
+[ext_resource type="Material" path="res://shaders/riso_paper_material.tres" id="4_grid"]
 [ext_resource type="PackedScene" path="res://post_fx.tscn" id="5_postfx"]
 
 [node name="Menu" type="Control"]
@@ -62,7 +62,7 @@ theme_override_constants/separation = 20
 
 [node name="Title" type="Label" parent="VBoxContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(0.97, 0.955, 0.915, 1)
 theme_override_font_sizes/font_size = 48
 text = "CELESTIAL MEADOW"
 horizontal_alignment = 1
@@ -88,7 +88,7 @@ focus_previous = NodePath("../../StartButton")
 [node name="PlayerLabel" type="Label" parent="VBoxContainer/PlayerCount"]
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(0.97, 0.955, 0.915, 1)
 theme_override_font_sizes/font_size = 24
 text = "Players:"
 horizontal_alignment = 2
@@ -97,7 +97,7 @@ vertical_alignment = 1
 [node name="Label" type="Label" parent="VBoxContainer/PlayerCount"]
 custom_minimum_size = Vector2(50, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 0, 1)
+theme_override_colors/font_color = Color(1, 0.282, 0.69, 1)
 theme_override_font_sizes/font_size = 32
 text = "2"
 horizontal_alignment = 1

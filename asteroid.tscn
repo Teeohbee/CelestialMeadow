@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://0rrpx2uqw0jh" path="res://explosion.tscn" id="3_3pasg"]
 [ext_resource type="AudioStream" uid="uid://crehfdwax0f6x" path="res://audio/explosion.ogg" id="4_bsxi3"]
 
-[ext_resource type="Material" path="res://shaders/neon_sprite_material.tres" id="neon_mat"]
+[ext_resource type="Material" path="res://shaders/riso_sprite_material.tres" id="neon_mat"]
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_jey0l"]
 bounce = 1.0
 

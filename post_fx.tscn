@@ -5,6 +5,9 @@
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_postfx"]
 shader = ExtResource("2_shader")
+shader_parameter/scanline_alpha = 0.0
+shader_parameter/vignette = 0.06
+shader_parameter/grain = 0.04
 
 [node name="PostFX" type="CanvasLayer"]
 layer = 10
