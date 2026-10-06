@@ -83,6 +83,7 @@ func shoot():
 
 func set_ship_colour():
 	$Ship.set_self_modulate(GameConfig.PLAYER_COLORS[player_number])
+	$Ship/Wash.set_self_modulate(GameConfig.PLAYER_COLORS[player_number])
 
 func set_ship_starting_rotation():
 	# Original logic that works for corners

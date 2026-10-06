@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://q7anoymfcc8"]
+[gd_scene load_steps=15 format=3 uid="uid://q7anoymfcc8"]
 
 [ext_resource type="Script" path="res://player.gd" id="1_ljm24"]
 [ext_resource type="PackedScene" uid="uid://ew1xete2o5va" path="res://bullet.tscn" id="2_wq7s0"]
@@ -9,6 +9,19 @@
 [ext_resource type="AudioStream" uid="uid://crehfdwax0f6x" path="res://audio/explosion.ogg" id="7_3y38g"]
 [ext_resource type="Material" path="res://shaders/engraving_ship_material.tres" id="8_ship_mat"]
 [ext_resource type="Material" path="res://shaders/engraving_star_material.tres" id="9_flame_mat"]
+
+[ext_resource type="Shader" path="res://shaders/watercolour_wash.gdshader" id="10_wash"]
+
+[sub_resource type="Gradient" id="Gradient_wash"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_wash"]
+gradient = SubResource("Gradient_wash")
+width = 128
+height = 128
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_wash"]
+shader = ExtResource("10_wash")
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_v3wws"]
 radius = 21.0
@@ -24,6 +37,12 @@ material = ExtResource("8_ship_mat")
 rotation = 1.5708
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("3_d23ed")
+
+[node name="Wash" type="Sprite2D" parent="Ship"]
+show_behind_parent = true
+material = SubResource("ShaderMaterial_wash")
+scale = Vector2(2.6, 2.6)
+texture = SubResource("GradientTexture2D_wash")
 
 [node name="Thruster" type="Sprite2D" parent="Ship"]
 material = ExtResource("9_flame_mat")
