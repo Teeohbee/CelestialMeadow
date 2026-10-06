@@ -1,0 +1,13 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3]
+
+[ext_resource type="Shader" path="res://shaders/riso_sprite.gdshader" id="1_shader"]
+
+[resource]
+shader = ExtResource("1_shader")
+shader_parameter/second_ink = Color(1, 0.282, 0.69, 1)
+shader_parameter/misregister = Vector2(16, -12)
+shader_parameter/fill = 0.12
+shader_parameter/shade_strength = 0.5
+shader_parameter/offset_strength = 0.45
+shader_parameter/shade_in_main_ink = true
+shader_parameter/dot_cell = 9.0

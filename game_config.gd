@@ -52,19 +52,19 @@ const CAMERA_SHAKE_ASTEROID: float = 12.0
 const END_GAME_CHECK_DELAY: float = 0.5
 const VICTORY_SCREEN_DURATION: float = 3.0
 
-# Player Colors (neon palette)
+# Player Colors (riso ink palette)
 const PLAYER_COLORS: Array[Color] = [
-	Color(1.0, 0.15, 0.6),   # Hot pink
-	Color(0.45, 1.0, 0.15),  # Lime
-	Color(0.2, 0.45, 1.0),   # Electric blue
-	Color(1.0, 0.7, 0.0),    # Amber
-	Color(0.7, 0.3, 1.0),    # Violet
-	Color(0.0, 0.9, 1.0)     # Cyan
+	Color(1.0, 0.282, 0.69),    # Fluorescent Pink
+	Color(0.0, 0.663, 0.361),   # Green
+	Color(0.196, 0.333, 0.643), # Medium Blue
+	Color(1.0, 0.424, 0.184),   # Orange
+	Color(0.463, 0.357, 0.655), # Violet
+	Color(0.0, 0.514, 0.541)    # Teal
 ]
 
 # Neon Rendering
 ## Multiplier pushing neon colours above 1.0 so the glow post-process picks them up
-const NEON_GLOW: float = 2.5
+const NEON_GLOW: float = 1.0
 # Particles
 const SPARK_LIFETIME: float = 0.7
 const SPARK_SPEED_MIN: float = 150.0
@@ -74,11 +74,10 @@ const SPARK_COUNT_ASTEROID: int = 40
 const SPARK_COUNT_PLAYER: int = 90
 const BULLET_TRAIL_LENGTH: float = 120.0  # in bullet-local units (bullet is scaled 0.5)
 
-const ASTEROID_COLOR: Color = Color(0.85, 0.85, 1.0)
+const ASTEROID_COLOR: Color = Color(0.196, 0.333, 0.643)  # riso Medium Blue
 const HOLOGRAM_COLORS: Array[Color] = [
-	Color(0.0, 0.8, 1.0),   # Cyan
-	Color(0.15, 0.3, 1.0),  # Deep blue
-	Color(0.55, 0.3, 1.0)   # Violet
+	Color(0.0, 0.514, 0.541),   # Teal
+	Color(0.463, 0.357, 0.655)  # Violet
 ]
 
 # Player Starting Rotation Adjustments (degrees)

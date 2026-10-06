@@ -8,6 +8,7 @@ uniform float aberration = 0.0;        // screen pixels at the edges
 uniform float scanline_alpha = 0.08;
 uniform float scanline_spacing = 3.0;  // screen pixels
 uniform float vignette = 0.45;
+uniform float grain = 0.0;
 
 void fragment() {
 	vec2 from_centre = SCREEN_UV - 0.5;
@@ -19,5 +20,6 @@ void fragment() {
 
 	float scan = 1.0 - scanline_alpha * step(0.5, fract(FRAGCOORD.y / scanline_spacing));
 	float vig = 1.0 - vignette * dot(from_centre, from_centre) * 2.0;
-	COLOR = vec4(col * scan * vig, 1.0);
+	float noise = fract(sin(dot(floor(FRAGCOORD.xy), vec2(12.9898, 78.233))) * 43758.5453);
+	COLOR = vec4(col * scan * vig * (1.0 - grain * noise), 1.0);
 }
