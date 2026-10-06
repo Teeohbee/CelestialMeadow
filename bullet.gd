@@ -9,6 +9,12 @@ func start(_transform, _player_number):
 	transform = _transform
 	velocity = transform.x * speed
 	player_number = _player_number
+	queue_redraw()
+
+## An ink streak with a cream head. The scene is scaled 0.5, so lengths are doubled
+func _draw():
+	Poster.bar(self, Vector2.ZERO, Vector2(-68, 0), 14, GameConfig.PLAYER_COLORS[player_number])
+	draw_circle(Vector2.ZERO, 9, GameConfig.CREAM)
 
 func _physics_process(delta):
 	position += velocity * delta
