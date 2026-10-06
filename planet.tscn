@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://bnauy0payb6b1"]
+[gd_scene load_steps=13 format=3 uid="uid://bnauy0payb6b1"]
 
 [ext_resource type="Script" path="res://planet.gd" id="1_ivuc2"]
 [ext_resource type="Texture2D" uid="uid://baeus40j2oryh" path="res://sprites/planet00.png" id="2_w0pjv"]
@@ -11,7 +11,9 @@
 [ext_resource type="Texture2D" uid="uid://bgioc4nl73xc0" path="res://sprites/planet07.png" id="9_gib37"]
 [ext_resource type="Texture2D" uid="uid://kvy4jitc24uw" path="res://sprites/planet08.png" id="10_e8ovj"]
 [ext_resource type="Texture2D" uid="uid://da822ryvpydf2" path="res://sprites/planet09.png" id="11_wohbm"]
+[ext_resource type="Material" path="res://shaders/engraving_planet_material.tres" id="12_planet_mat"]
 
 [node name="Planet" type="Sprite2D"]
+material = ExtResource("12_planet_mat")
 script = ExtResource("1_ivuc2")
 sprites = Array[CompressedTexture2D]([ExtResource("2_w0pjv"), ExtResource("3_yxdm2"), ExtResource("4_kokns"), ExtResource("5_2epay"), ExtResource("6_fo2w3"), ExtResource("7_6upxq"), ExtResource("8_1vb86"), ExtResource("9_gib37"), ExtResource("10_e8ovj"), ExtResource("11_wohbm")])

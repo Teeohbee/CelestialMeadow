@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://dw6t1mq7v7ltb"]
+[gd_scene load_steps=6 format=3 uid="uid://dw6t1mq7v7ltb"]
 
 [ext_resource type="Script" path="res://space_station.gd" id="1_tpi0f"]
 [ext_resource type="Texture2D" uid="uid://6to4hoo5jbon" path="res://sprites/station.png" id="1_yn1n7"]
+[ext_resource type="Material" path="res://shaders/engraving_station_material.tres" id="2_brass_mat"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_f7t7u"]
 radius = 32.5615
@@ -14,6 +15,7 @@ scale = Vector2(1.5, 1.5)
 script = ExtResource("1_tpi0f")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+material = ExtResource("2_brass_mat")
 texture = ExtResource("1_yn1n7")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
