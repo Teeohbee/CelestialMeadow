@@ -1,7 +1,8 @@
 extends CanvasLayer
 
+const LifeStar = preload("res://life_star.gd")
+
 var player_containers: Array = []
-var life_icon_size: int = 20
 var corner_positions: Array = [
 	{"anchor": Control.PRESET_TOP_LEFT, "margin": Vector2(20, 20)},       # Player 0
 	{"anchor": Control.PRESET_BOTTOM_RIGHT, "margin": Vector2(-20, -20)}, # Player 1
@@ -55,7 +56,6 @@ func update_lives(player_number: int, lives: int):
 	
 	# Add life icons
 	for i in lives:
-		var icon = ColorRect.new()
-		icon.custom_minimum_size = Vector2(life_icon_size, life_icon_size)
+		var icon = LifeStar.new()
 		icon.color = GameConfig.PLAYER_COLORS[player_number]
 		container.add_child(icon)

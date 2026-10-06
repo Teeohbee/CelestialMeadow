@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://countdown123"]
+[gd_scene load_steps=3 format=3 uid="uid://countdown123"]
 
 [ext_resource type="Script" path="res://countdown.gd" id="1"]
+[ext_resource type="FontFile" path="res://fonts/IMFellEnglish-Regular.ttf" id="2_font"]
 
 [node name="Countdown" type="CanvasLayer"]
 script = ExtResource("1")
@@ -19,8 +20,9 @@ offset_right = 300.0
 offset_bottom = 150.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(1, 0.8, 0, 1)
-theme_override_colors/font_outline_color = Color(0.2, 0, 0.3, 1)
+theme_override_colors/font_color = Color(0.165, 0.125, 0.086, 1)
+theme_override_colors/font_outline_color = Color(0.91, 0.863, 0.753, 1)
+theme_override_fonts/font = ExtResource("2_font")
 theme_override_constants/outline_size = 12
 theme_override_font_sizes/font_size = 256
 text = "3"
