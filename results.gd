@@ -40,7 +40,7 @@ func show_result(winner_number: int):
 	rematch_button.grab_focus()
 
 func build_tally(winner_number: int):
-	for i in GameState.num_players:
+	for i in GameState.players:
 		var row = HBoxContainer.new()
 		row.add_theme_constant_override("separation", 6)
 		var name_label = Label.new()

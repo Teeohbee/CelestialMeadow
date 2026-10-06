@@ -42,6 +42,12 @@ const ASTEROID_SPAWN_COUNT: int = 2
 const ASTEROID_MIN_SPEED: float = 100.0
 const ASTEROID_MAX_SPEED: float = 200.0
 
+# Title Screen
+const TITLE_MIN_PLAYERS: int = 2
+const TITLE_LAUNCH_DELAY: float = 1.5
+const TITLE_ASTEROID_COUNT: int = 6
+const TITLE_ASTEROID_SPEED: float = 45.0
+
 # Camera Effects
 const CAMERA_SHAKE_EXPLOSION: float = 20.0
 const CAMERA_SHAKE_ASTEROID: float = 12.0

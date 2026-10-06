@@ -37,7 +37,7 @@ func _ready():
 		player_containers.append(container)
 		
 		# Hide containers for inactive players
-		if i >= GameState.num_players:
+		if i not in GameState.players:
 			container.hide()
 		else:
 			# Create initial life icons

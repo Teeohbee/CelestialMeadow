@@ -1,25 +1,131 @@
 extends Control
 
-var num_players: int = 2
+## Title screen and lobby. Each player takes a seat by pressing their own
+## shoot button, presses it again when ready, and rotates left to back out.
+## The round launches on its own once enough players are seated and all of
+## them are ready, so nobody has to drive a menu for everyone else.
+
+const SeatCard = preload("res://seat_card.gd")
+const SEAT_COUNT: int = 6
+
+## Debug builds let one player launch against an idle dummy ship, so a
+## round can be won and the results screen tested with one controller
+var debug_dummy: bool = OS.is_debug_build()
+
+var cards: Array = []
+var launch_countdown: float = GameConfig.TITLE_LAUNCH_DELAY
+var launching: bool = false
+
+@onready var seats_row: HBoxContainer = $Seats
+@onready var status: Label = $Status
+@onready var quit_confirm: Control = $QuitConfirm
+@onready var stay_button: Button = $QuitConfirm/Center/Panel/VBox/Buttons/StayButton
 
 func _ready():
-	$VBoxContainer/StartButton.grab_focus()
-	update_player_label()
+	for i in SEAT_COUNT:
+		var card = SeatCard.new(i)
+		seats_row.add_child(card)
+		cards.append(card)
+	# Coming back from a game, the same crew is still seated
+	for i in GameState.players:
+		if i not in GameState.dummies:
+			cards[i].set_state(SeatCard.State.JOINED)
+	spawn_asteroids()
+	quit_confirm.hide()
 
-func update_player_label():
-	$VBoxContainer/PlayerCount/Label.text = str(num_players)
+func spawn_asteroids():
+	var asteroid_scene = preload("res://asteroid.tscn")
+	var size = get_viewport_rect().size
+	for i in GameConfig.TITLE_ASTEROID_COUNT:
+		var asteroid = asteroid_scene.instantiate()
+		var velocity = Vector2.RIGHT.rotated(randf() * TAU) * GameConfig.TITLE_ASTEROID_SPEED * randf_range(0.6, 1.4)
+		asteroid.start(Vector2(randf() * size.x, randf() * size.y), velocity)
+		$Backdrop.add_child(asteroid)
 
-func _on_start_button_pressed():
-	GameState.start_session(num_players)
+func _process(delta):
+	var seated = seated_players()
+	var ready_count = cards.filter(func(c): return c.state == SeatCard.State.READY).size()
+	var solo_test = debug_dummy and seated.size() == 1
+	var enough = seated.size() >= GameConfig.TITLE_MIN_PLAYERS or solo_test
+	var can_launch = enough and ready_count == seated.size()
+
+	if can_launch and not launching:
+		launch_countdown -= delta
+		if launch_countdown <= 0.0:
+			launch(seated)
+	else:
+		launch_countdown = GameConfig.TITLE_LAUNCH_DELAY
+
+	if seated.is_empty():
+		status.text = "Press shoot to take a seat"
+	elif not enough:
+		status.text = "Waiting for another pilot"
+	elif not can_launch:
+		status.text = "%d of %d ready" % [ready_count, seated.size()]
+	elif solo_test:
+		status.text = "Launching in %d against a dummy (debug)" % ceili(launch_countdown)
+	else:
+		status.text = "Launching in %d" % ceili(launch_countdown)
+
+func seated_players() -> Array[int]:
+	var seated: Array[int] = []
+	for card in cards:
+		if card.state != SeatCard.State.EMPTY:
+			seated.append(card.seat)
+	return seated
+
+func _input(event):
+	if launching:
+		return
+	if quit_confirm.visible:
+		if event.is_action_pressed("ui_cancel"):
+			get_viewport().set_input_as_handled()
+			_on_stay_button_pressed()
+		return
+	if event.is_action_pressed("ui_cancel") or event.is_action_pressed("pause"):
+		get_viewport().set_input_as_handled()
+		_on_quit_button_pressed()
+		return
+	for i in SEAT_COUNT:
+		if event.is_action_pressed("shoot%d" % i):
+			get_viewport().set_input_as_handled()
+			advance(cards[i])
+			return
+		if event.is_action_pressed("rotate_left%d" % i):
+			get_viewport().set_input_as_handled()
+			back(cards[i])
+			return
+
+func advance(card):
+	if card.state == SeatCard.State.EMPTY:
+		card.set_state(SeatCard.State.JOINED)
+	elif card.state == SeatCard.State.JOINED:
+		card.set_state(SeatCard.State.READY)
+
+func back(card):
+	if card.state == SeatCard.State.READY:
+		card.set_state(SeatCard.State.JOINED)
+	elif card.state == SeatCard.State.JOINED:
+		card.set_state(SeatCard.State.EMPTY)
+
+func launch(seated: Array[int]):
+	launching = true
+	var dummy_seats: Array[int] = []
+	if seated.size() == 1:
+		for card in cards:
+			if card.state == SeatCard.State.EMPTY:
+				dummy_seats.append(card.seat)
+				break
+	GameState.start_session(seated, dummy_seats)
 	get_tree().change_scene_to_file("res://main.tscn")
 
 func _on_quit_button_pressed():
+	quit_confirm.show()
+	stay_button.grab_focus()
+
+func _on_stay_button_pressed():
+	quit_confirm.hide()
+	get_viewport().gui_release_focus()
+
+func _on_confirm_quit_button_pressed():
 	get_tree().quit()
-
-func _on_decrease_pressed():
-	num_players = max(1, num_players - 1)
-	update_player_label()
-
-func _on_increase_pressed():
-	num_players = min(6, num_players + 1)
-	update_player_label()

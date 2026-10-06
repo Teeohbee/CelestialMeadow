@@ -38,7 +38,7 @@ func _on_countdown_finished():
 	$AsteroidTimer.start()
 
 func spawn_players():
-	for i in GameState.num_players:
+	for i in GameState.players:
 		var player = player_scene.instantiate()
 		player.starting_position = player_configs[i].position
 		player.player_number = player_configs[i].number
@@ -102,7 +102,7 @@ func _on_player_respawn_requested(player):
 
 func initialize_hud():
 	var hud = $HUD
-	for i in GameState.num_players:
+	for i in GameState.players:
 		hud.update_lives(i, GameState.lives_per_player)
 
 func _on_player_lives_changed(player_number: int, lives: int):
