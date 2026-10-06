@@ -83,6 +83,7 @@ func shoot():
 
 func set_ship_colour():
 	$Ship.ink = GameConfig.PLAYER_COLORS[player_number]
+	$Explosion.ink = GameConfig.PLAYER_COLORS[player_number]
 
 func set_ship_starting_rotation():
 	# Original logic that works for corners

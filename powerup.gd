@@ -7,9 +7,11 @@ enum PowerupType { SHIELD, RAPID_FIRE, SPEED_BOOST }
 var rotation_speed: float = 2.0
 var despawn_time: float = GameConfig.POWERUP_DESPAWN_TIME
 var blink_warning_time: float = 5.0
+var orbit: float = 0.0
+
+const TOKEN_RADIUS: float = 16.0
 
 func _ready():
-	set_powerup_visual()
 	body_entered.connect(_on_body_entered)
 	
 	# Start despawn timer
@@ -29,22 +31,26 @@ func _ready():
 	blink_timer.start()
 
 func _process(delta):
-	rotation += rotation_speed * delta
+	orbit += rotation_speed * delta
+	queue_redraw()
 
-func set_powerup_visual():
-	# Hide all visuals first
-	$Shield.hide()
-	$RapidFire.hide()
-	$SpeedBoost.hide()
-	
-	# Show the correct one based on type
+## One cream token for every power-up; the glyph inside says which:
+## a ring for Shield, two bars for Rapid Fire, a chevron for Speed Boost
+func _draw():
+	var r = TOKEN_RADIUS
+	var hue = GameConfig.HUE
+	draw_circle(Vector2.ZERO, r * 1.35, GameConfig.CREAM)
+	draw_arc(Vector2.ZERO, r * 1.08, 0, TAU, 48, hue, 2.0, true)
+	draw_circle(Vector2.from_angle(orbit) * r * 1.08, 3.0, GameConfig.LIGHT)
 	match type:
 		PowerupType.SHIELD:
-			$Shield.show()
+			draw_arc(Vector2.ZERO, r * 0.5, 0, TAU, 32, hue, 4.0, true)
 		PowerupType.RAPID_FIRE:
-			$RapidFire.show()
+			for y in [-0.3, 0.3]:
+				Poster.bar(self, Vector2(-r * 0.45, r * y), Vector2(r * 0.45, r * y), 5.0, hue)
 		PowerupType.SPEED_BOOST:
-			$SpeedBoost.show()
+			for x in [-0.3, 0.15]:
+				draw_polyline(PackedVector2Array([Vector2(r * x, -r * 0.45), Vector2(r * (x + 0.3), 0), Vector2(r * x, r * 0.45)]), hue, 4.0, true)
 
 func _on_body_entered(body):
 	if body.is_in_group("players"):
@@ -64,16 +70,7 @@ func _on_despawn_timeout():
 	queue_free()
 
 func _on_blink_warning():
-	var icon_node
-	match type:
-		PowerupType.SHIELD:
-			icon_node = $Shield
-		PowerupType.RAPID_FIRE:
-			icon_node = $RapidFire
-		PowerupType.SPEED_BOOST:
-			icon_node = $SpeedBoost
-	
 	var tween = create_tween()
 	tween.set_loops()
-	tween.tween_property(icon_node, "modulate:a", 0.3, 0.3)
-	tween.tween_property(icon_node, "modulate:a", 1.0, 0.3)
+	tween.tween_property(self, "modulate:a", 0.3, 0.3)
+	tween.tween_property(self, "modulate:a", 1.0, 0.3)
