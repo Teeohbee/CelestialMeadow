@@ -8,6 +8,8 @@ const PLAYER_ENGINE_POWER: int = 500
 const PLAYER_SPIN_POWER: int = 4000
 const PLAYER_SHOOT_DELAY: float = 0.25
 const PLAYER_LIVES_DEFAULT: int = 3
+# Lives for modes where ships respawn forever
+const UNLIMITED_LIVES: int = -1
 const PLAYER_RESPAWN_DELAY: float = 3.0
 const PLAYER_INVINCIBILITY_DURATION: float = 2.0
 const PLAYER_INVINCIBILITY_BLINK_DURATION: float = 0.2

@@ -39,9 +39,6 @@ func _ready():
 		# Hide containers for inactive players
 		if i not in GameState.players:
 			container.hide()
-		else:
-			# Create initial life icons
-			update_lives(i, GameState.lives_per_player)
 
 func update_lives(player_number: int, lives: int):
 	if player_number >= player_containers.size():
@@ -53,8 +50,8 @@ func update_lives(player_number: int, lives: int):
 	for child in container.get_children():
 		child.queue_free()
 	
-	# Add life icons
-	for i in lives:
+	# Add life icons; none when lives are unlimited
+	for i in maxi(lives, 0):
 		var icon = ColorRect.new()
 		icon.custom_minimum_size = Vector2(life_icon_size, life_icon_size)
 		icon.color = GameConfig.PLAYER_COLORS[player_number]

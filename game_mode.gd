@@ -10,6 +10,10 @@ signal round_over(winners: Array[int])
 
 var ended: bool = false
 
+## Lives each ship starts with, or GameConfig.UNLIMITED_LIVES
+func starting_lives() -> int:
+	return GameState.lives_per_player
+
 ## The countdown has finished and play has begun
 func start():
 	pass
