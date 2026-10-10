@@ -16,9 +16,10 @@ var chosen: bool = false
 @onready var rematch_button: Button = $Center/Panel/Margin/VBox/Buttons/RematchButton
 @onready var menu_button: Button = $Center/Panel/Margin/VBox/Buttons/MenuButton
 
-## winner_number is the winning player, or -1 for a draw
-func show_result(winner_number: int):
-	if winner_number >= 0:
+## winners is every player credited with the round; empty for a draw
+func show_result(winners: Array[int]):
+	if winners.size() == 1:
+		var winner_number = winners[0]
 		var colour = GameConfig.PLAYER_COLORS[winner_number]
 		title.text = "%s Wins!" % GameConfig.PLAYER_COLOR_NAMES[winner_number]
 		title.add_theme_color_override("font_color", colour)
@@ -28,7 +29,7 @@ func show_result(winner_number: int):
 		title.text = "Draw!"
 		subtitle.text = "Everyone lost"
 		ship.hide()
-	build_tally(winner_number)
+	build_tally(winners)
 
 	get_tree().paused = true
 	set_buttons_disabled(true)
@@ -39,7 +40,7 @@ func show_result(winner_number: int):
 	set_buttons_disabled(false)
 	rematch_button.grab_focus()
 
-func build_tally(winner_number: int):
+func build_tally(winners: Array[int]):
 	for i in GameState.players:
 		var row = HBoxContainer.new()
 		row.add_theme_constant_override("separation", 6)
@@ -56,7 +57,7 @@ func build_tally(winner_number: int):
 			pip.color = GameConfig.PLAYER_COLORS[i]
 			row.add_child(pip)
 			# The win just earned fades in
-			if i == winner_number and w == GameState.wins[i] - 1:
+			if i in winners and w == GameState.wins[i] - 1:
 				pip.modulate.a = 0.0
 				var tween = create_tween()
 				tween.tween_interval(0.4)
