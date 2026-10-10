@@ -34,18 +34,23 @@ func _ready():
 	for i in GameState.players:
 		if i not in GameState.dummies:
 			cards[i].set_state(SeatCard.State.JOINED)
-	spawn_asteroids()
+	if GameState.join_on_arrival >= 0:
+		cards[GameState.join_on_arrival].set_state(SeatCard.State.JOINED)
+		GameState.join_on_arrival = -1
 	show_mode()
 	quit_confirm.hide()
+	fade_in()
 
-func spawn_asteroids():
-	var asteroid_scene = preload("res://asteroid.tscn")
-	var size = get_viewport_rect().size
-	for i in GameConfig.TITLE_ASTEROID_COUNT:
-		var asteroid = asteroid_scene.instantiate()
-		var velocity = Vector2.RIGHT.rotated(randf() * TAU) * GameConfig.TITLE_ASTEROID_SPEED * randf_range(0.6, 1.4)
-		asteroid.start(Vector2(randf() * size.x, randf() * size.y), velocity)
-		$Backdrop.add_child(asteroid)
+## Arrive from black, matching the title screen's fade out
+func fade_in():
+	var fade = ColorRect.new()
+	fade.color = Color.BLACK
+	fade.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	fade.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(fade)
+	var tween = create_tween()
+	tween.tween_property(fade, "modulate:a", 0.0, 0.3)
+	tween.tween_callback(fade.queue_free)
 
 func _process(delta):
 	var seated = seated_players()

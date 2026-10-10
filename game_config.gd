@@ -48,6 +48,8 @@ const ASTEROID_MAX_SPEED: float = 200.0
 const TIME_ATTACK_DURATION: float = 120.0
 
 # Title Screen
+# Presses are ignored this long after launch so the logo can land
+const TITLE_INTRO_TIME: float = 1.2
 const TITLE_MIN_PLAYERS: int = 2
 const TITLE_LAUNCH_DELAY: float = 1.5
 const TITLE_ASTEROID_COUNT: int = 6

@@ -20,6 +20,10 @@ var mode: Script = MODES[0].script
 const SOLO: int = -1
 var teams: Array[int] = [SOLO, SOLO, SOLO, SOLO, SOLO, SOLO]
 
+# A seat whose shoot button got past the title screen, to be seated in the
+# lobby on arrival; -1 for none
+var join_on_arrival: int = -1
+
 # Rounds won by each player since the session started from the main menu.
 # Rematches keep the tally; returning to the menu clears it.
 var wins: Array[int] = [0, 0, 0, 0, 0, 0]
