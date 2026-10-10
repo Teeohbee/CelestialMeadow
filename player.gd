@@ -24,7 +24,6 @@ func _ready():
 	screen_size = get_viewport_rect().size
 	position.x = screen_size.x * starting_position.x
 	position.y = screen_size.y * starting_position.y
-	lives = GameState.lives_per_player
 	$ShootTimer.wait_time = GameConfig.PLAYER_SHOOT_DELAY
 	set_ship_colour()
 	set_ship_starting_rotation()
@@ -77,7 +76,9 @@ func _physics_process(_delta):
 func shoot():
 	if can_shoot:
 		var bullet = bullet_scene.instantiate()
-		get_tree().root.add_child(bullet)
+		# Owned by the round, so a rematch or a trip to the menu clears shots
+		# still in flight
+		get_parent().add_child(bullet)
 		$LaserSound.play()
 		bullet.start($Muzzle.global_transform, player_number)
 		$ShootTimer.start()
@@ -110,14 +111,15 @@ func destroy(killer: int = -1):
 	if camera and camera.has_method("shake"):
 		camera.shake(GameConfig.CAMERA_SHAKE_EXPLOSION)
 	
-	lives -= 1
+	if lives != GameConfig.UNLIMITED_LIVES:
+		lives -= 1
 	killed.emit(player_number, killer)
 	emit_signal("lives_changed", player_number, lives)
 	
 	await $Explosion.animation_finished
 	$Explosion.hide()
 	
-	if lives <= 0:
+	if lives == 0:
 		queue_free()
 	else:
 		emit_signal("respawn_requested", self)

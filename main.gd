@@ -23,6 +23,7 @@ var player_configs = [
 func _ready():
 	screen_size = get_viewport().get_visible_rect().size
 	mode = GameState.mode.new()
+	mode.hud = $HUD
 	mode.round_over.connect(show_results)
 	add_child(mode)
 	spawn_players()
@@ -47,6 +48,7 @@ func spawn_players():
 		var player = player_scene.instantiate()
 		player.starting_position = player_configs[i].position
 		player.player_number = player_configs[i].number
+		player.lives = mode.starting_lives()
 		player.tree_exiting.connect(_on_player_eliminated.bind(player.player_number))
 		player.killed.connect(_on_player_killed)
 		player.respawn_requested.connect(_on_player_respawn_requested)
@@ -82,7 +84,7 @@ func show_results(winners: Array[int]):
 		GameState.record_win(winner)
 	var results = ResultsScene.instantiate()
 	add_child(results)
-	results.show_result(winners)
+	results.show_result(winners, mode.round_scores())
 
 func _on_player_respawn_requested(player):
 	var marker = SpawnMarker.new()
@@ -100,7 +102,7 @@ func _on_player_respawn_requested(player):
 func initialize_hud():
 	var hud = $HUD
 	for i in GameState.players:
-		hud.update_lives(i, GameState.lives_per_player)
+		hud.update_lives(i, mode.starting_lives())
 
 func _on_player_lives_changed(player_number: int, lives: int):
 	$HUD.update_lives(player_number, lives)
