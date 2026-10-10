@@ -74,5 +74,11 @@ const PLAYER_COLORS: Array[Color] = [
 # Player colour names, shown on the results screen
 const PLAYER_COLOR_NAMES: Array[String] = ["Red", "Green", "Blue", "Yellow", "Magenta", "Cyan"]
 
+# Teams, in the order the title screen cycles through them
+const TEAM_NAMES: Array[String] = ["Alpha", "Beta", "Gamma"]
+# Shown as a ring around each member's ship; picked to stand apart from
+# the player colours
+const TEAM_COLORS: Array[Color] = [Color.WHITE, Color(1.0, 0.6, 0.1), Color(0.7, 0.5, 1.0)]
+
 # Player Starting Rotation Adjustments (degrees)
 const PLAYER_ROTATION_ADJUSTMENTS: Array[int] = [30, 30, -30, -30, 0, 0]

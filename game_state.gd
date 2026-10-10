@@ -15,6 +15,11 @@ var mode_index: int = 0
 # The rules for this session's rounds, a GameMode script
 var mode: Script = MODES[0].script
 
+# Each seat's team, an index into GameConfig.TEAM_NAMES, or SOLO. Every
+# solo player is a side of their own, so free-for-all is everyone solo.
+const SOLO: int = -1
+var teams: Array[int] = [SOLO, SOLO, SOLO, SOLO, SOLO, SOLO]
+
 # Rounds won by each player since the session started from the main menu.
 # Rematches keep the tally; returning to the menu clears it.
 var wins: Array[int] = [0, 0, 0, 0, 0, 0]
@@ -24,8 +29,23 @@ func start_session(seats: Array[int], dummy_seats: Array[int] = []):
 	players.append_array(dummy_seats)
 	players.sort()
 	dummies = dummy_seats.duplicate()
+	for dummy in dummies:
+		teams[dummy] = SOLO
 	mode = MODES[mode_index].script
 	wins.fill(0)
+
+## Which side a player fights for: their team, or just themselves
+func side_of(player_number: int) -> int:
+	if teams[player_number] == SOLO:
+		return GameConfig.TEAM_NAMES.size() + player_number
+	return teams[player_number]
+
+func allies(a: int, b: int) -> bool:
+	return side_of(a) == side_of(b)
+
+## Everyone playing on a side, whether or not their ship is still flying
+func members_of(side: int) -> Array[int]:
+	return players.filter(func(p): return side_of(p) == side)
 
 func record_win(player_number: int):
 	wins[player_number] += 1

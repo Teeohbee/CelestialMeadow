@@ -1,8 +1,8 @@
 extends GameMode
 
-## Ships respawn forever and every kill scores. Most kills when the clock
-## runs out wins; a tie goes to sudden death, where only the tied ships
-## remain with one life each.
+## Ships respawn forever and every kill scores for the killer's side. Most
+## kills when the clock runs out wins; a tie goes to sudden death, where
+## only the tied sides' ships remain with one life each.
 
 var scores: Dictionary = {}
 var sudden_death: bool = false
@@ -45,14 +45,23 @@ func on_player_eliminated(_player: int):
 	if sudden_death:
 		end_if_last_standing()
 
+## Total kills for each side
+func side_scores() -> Dictionary:
+	var totals = {}
+	for player in scores:
+		var side = GameState.side_of(player)
+		totals[side] = totals.get(side, 0) + scores[player]
+	return totals
+
 func _on_time_up():
 	hud.set_clock(0)
-	var best = scores.values().max()
+	var totals = side_scores()
+	var best = totals.values().max()
 	var leaders: Array[int] = []
-	for player in scores:
-		if scores[player] == best:
-			leaders.append(player)
-	if leaders.size() == 1:
+	for side in totals:
+		if totals[side] == best:
+			leaders.append_array(GameState.members_of(side))
+	if totals.values().count(best) == 1:
 		end_round(leaders)
 	else:
 		start_sudden_death(leaders)
