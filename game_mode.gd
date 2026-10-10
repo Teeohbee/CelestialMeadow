@@ -33,7 +33,8 @@ func on_player_killed(_victim: int, _killer: int):
 func on_player_eliminated(_player: int):
 	pass
 
-## Ends the round once at most one ship is left flying
+## Ends the round once ships from at most one side are left flying. The
+## whole side wins, including members already shot down.
 func end_if_last_standing():
 	# Leaving the arena because the whole scene is going
 	if not is_inside_tree():
@@ -44,11 +45,13 @@ func end_if_last_standing():
 	if ended:
 		return
 
-	var remaining: Array[int] = []
+	var sides = {}
 	for player in get_tree().get_nodes_in_group("players"):
-		remaining.append(player.player_number)
-	if remaining.size() <= 1:
-		end_round(remaining)
+		sides[GameState.side_of(player.player_number)] = true
+	if sides.is_empty():
+		end_round([])
+	elif sides.size() == 1:
+		end_round(GameState.members_of(sides.keys()[0]))
 
 func end_round(winners: Array[int]):
 	if ended:
