@@ -44,6 +44,9 @@ const ASTEROID_SPAWN_COUNT: int = 2
 const ASTEROID_MIN_SPEED: float = 100.0
 const ASTEROID_MAX_SPEED: float = 200.0
 
+# Time Attack
+const TIME_ATTACK_DURATION: float = 120.0
+
 # Title Screen
 const TITLE_MIN_PLAYERS: int = 2
 const TITLE_LAUNCH_DELAY: float = 1.5

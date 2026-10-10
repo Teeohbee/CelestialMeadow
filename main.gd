@@ -23,6 +23,7 @@ var player_configs = [
 func _ready():
 	screen_size = get_viewport().get_visible_rect().size
 	mode = GameState.mode.new()
+	mode.hud = $HUD
 	mode.round_over.connect(show_results)
 	add_child(mode)
 	spawn_players()
