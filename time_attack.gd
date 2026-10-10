@@ -67,3 +67,7 @@ func start_sudden_death(leaders: Array[int]):
 		else:
 			ship.queue_free()
 			hud.hide_player(ship.player_number)
+	# Knocked-out pilots don't get a parting shot
+	for bullet in get_tree().get_nodes_in_group("bullets"):
+		if bullet.player_number not in leaders:
+			bullet.queue_free()

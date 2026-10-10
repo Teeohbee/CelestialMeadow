@@ -76,7 +76,9 @@ func _physics_process(_delta):
 func shoot():
 	if can_shoot:
 		var bullet = bullet_scene.instantiate()
-		get_tree().root.add_child(bullet)
+		# Owned by the round, so a rematch or a trip to the menu clears shots
+		# still in flight
+		get_parent().add_child(bullet)
 		$LaserSound.play()
 		bullet.start($Muzzle.global_transform, player_number)
 		$ShootTimer.start()
