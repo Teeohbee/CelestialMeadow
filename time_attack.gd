@@ -20,6 +20,7 @@ func _ready():
 	for player in GameState.players:
 		scores[player] = 0
 		hud.update_score(player, 0)
+	hud.set_team_scores(side_scores())
 	hud.set_clock(GameConfig.TIME_ATTACK_DURATION)
 
 func starting_lives() -> int:
@@ -40,6 +41,7 @@ func on_player_killed(victim: int, killer: int):
 		return
 	scores[killer] += 1
 	hud.update_score(killer, scores[killer])
+	hud.set_team_scores(side_scores())
 
 func on_player_eliminated(_player: int):
 	if sudden_death:

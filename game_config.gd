@@ -74,6 +74,11 @@ const PLAYER_COLORS: Array[Color] = [
 # Player colour names, shown on the results screen
 const PLAYER_COLOR_NAMES: Array[String] = ["Red", "Green", "Blue", "Yellow", "Magenta", "Cyan"]
 
+# Team ring drawn around each member's ship
+const TEAM_RING_RADIUS: float = 34.0
+const TEAM_RING_WIDTH: float = 3.0
+const TEAM_RING_SEGMENTS: int = 32
+
 # Teams, in the order the title screen cycles through them
 const TEAM_NAMES: Array[String] = ["Alpha", "Beta", "Gamma"]
 # Shown as a ring around each member's ship; picked to stand apart from
