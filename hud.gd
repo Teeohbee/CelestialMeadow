@@ -79,6 +79,8 @@ func _ready():
 	banner.add_theme_constant_override("outline_size", 12)
 	banner.add_theme_color_override("font_outline_color", Color.BLACK)
 	banner.hide()
+	# Finish fading even if the round ends and pauses mid-announcement
+	banner.process_mode = Node.PROCESS_MODE_ALWAYS
 	add_child(banner)
 
 func update_lives(player_number: int, lives: int):
@@ -122,7 +124,7 @@ func show_banner(text: String):
 	banner.modulate.a = 1.0
 	banner.pivot_offset = banner.size * 0.5
 	banner.scale = Vector2.ONE * 1.4
-	var tween = create_tween()
+	var tween = banner.create_tween()
 	tween.tween_property(banner, "scale", Vector2.ONE, 0.25).set_ease(Tween.EASE_OUT)
 	tween.tween_interval(1.5)
 	tween.tween_property(banner, "modulate:a", 0.0, 0.6)

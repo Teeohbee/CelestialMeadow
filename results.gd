@@ -16,8 +16,9 @@ var chosen: bool = false
 @onready var rematch_button: Button = $Center/Panel/Margin/VBox/Buttons/RematchButton
 @onready var menu_button: Button = $Center/Panel/Margin/VBox/Buttons/MenuButton
 
-## winners is every player credited with the round; empty for a draw
-func show_result(winners: Array[int]):
+## winners is every player credited with the round; empty for a draw.
+## scores is each player's score this round, if the mode keeps one.
+func show_result(winners: Array[int], scores: Dictionary = {}):
 	if winners.size() == 1:
 		var winner_number = winners[0]
 		var colour = GameConfig.PLAYER_COLORS[winner_number]
@@ -29,7 +30,7 @@ func show_result(winners: Array[int]):
 		title.text = "Draw!"
 		subtitle.text = "Everyone lost"
 		ship.hide()
-	build_tally(winners)
+	build_tally(winners, scores)
 
 	get_tree().paused = true
 	set_buttons_disabled(true)
@@ -40,7 +41,7 @@ func show_result(winners: Array[int]):
 	set_buttons_disabled(false)
 	rematch_button.grab_focus()
 
-func build_tally(winners: Array[int]):
+func build_tally(winners: Array[int], scores: Dictionary):
 	for i in GameState.players:
 		var row = HBoxContainer.new()
 		row.add_theme_constant_override("separation", 6)
@@ -50,6 +51,13 @@ func build_tally(winners: Array[int]):
 		name_label.add_theme_color_override("font_color", GameConfig.PLAYER_COLORS[i])
 		name_label.add_theme_font_size_override("font_size", 22)
 		row.add_child(name_label)
+		if i in scores:
+			var kills = Label.new()
+			kills.name = "Kills"
+			kills.text = "%d kill%s" % [scores[i], "" if scores[i] == 1 else "s"]
+			kills.custom_minimum_size.x = 100
+			kills.add_theme_font_size_override("font_size", 22)
+			row.add_child(kills)
 		for w in GameState.wins[i]:
 			var pip = ColorRect.new()
 			pip.custom_minimum_size = Vector2(PIP_SIZE, PIP_SIZE)

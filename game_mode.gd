@@ -16,6 +16,11 @@ var hud: CanvasLayer
 func starting_lives() -> int:
 	return GameState.lives_per_player
 
+## Each player's score this round, for the results; empty if the mode
+## doesn't keep score
+func round_scores() -> Dictionary:
+	return {}
+
 ## The countdown has finished and play has begun
 func start():
 	pass

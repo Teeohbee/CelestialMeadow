@@ -25,6 +25,9 @@ func _ready():
 func starting_lives() -> int:
 	return GameConfig.UNLIMITED_LIVES
 
+func round_scores() -> Dictionary:
+	return scores
+
 func start():
 	clock.start()
 
