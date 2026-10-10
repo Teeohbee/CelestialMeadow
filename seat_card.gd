@@ -15,6 +15,7 @@ var state: State = State.EMPTY
 
 var header: Label
 var ship: TextureRect
+var team_label: Label
 var status: Label
 var hint: Label
 
@@ -27,7 +28,7 @@ func _ready():
 
 	var box = VBoxContainer.new()
 	box.alignment = BoxContainer.ALIGNMENT_BEGIN
-	box.add_theme_constant_override("separation", 10)
+	box.add_theme_constant_override("separation", 6)
 	add_child(box)
 
 	header = Label.new()
@@ -38,10 +39,13 @@ func _ready():
 
 	ship = TextureRect.new()
 	ship.texture = SHIP_TEXTURE
-	ship.custom_minimum_size = Vector2(110, 110)
+	ship.custom_minimum_size = Vector2(80, 80)
 	ship.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	ship.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	box.add_child(ship)
+
+	team_label = _wrapping_label(24)
+	box.add_child(team_label)
 
 	status = _wrapping_label(30)
 	status.custom_minimum_size.y = 84  # room for two lines, so cards line up
@@ -98,9 +102,20 @@ func set_state(new_state: State):
 			status.add_theme_color_override("font_color", Color.WHITE)
 			hint.text = "%s to cancel" % action_label("rotate_left%d" % seat)
 	add_theme_stylebox_override("panel", style)
+	show_team()
 	if popped:
 		scale = Vector2.ONE * 1.06
 		create_tween().tween_property(self, "scale", Vector2.ONE, 0.18).set_ease(Tween.EASE_OUT)
+
+func show_team():
+	var team = GameState.teams[seat]
+	team_label.visible = state != State.EMPTY
+	if team == GameState.SOLO:
+		team_label.text = "Free for all"
+		team_label.add_theme_color_override("font_color", Color(0.7, 0.7, 0.78))
+	else:
+		team_label.text = "Team %s" % GameConfig.TEAM_NAMES[team]
+		team_label.add_theme_color_override("font_color", GameConfig.TEAM_COLORS[team])
 
 ## Every binding for an action, keyboard first, e.g. "Space / A"
 func action_label(action: String) -> String:
