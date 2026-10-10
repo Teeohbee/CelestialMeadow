@@ -2,6 +2,8 @@ extends RigidBody2D
 
 signal respawn_requested(player)
 signal lives_changed(player_number, lives)
+## killer is the player whose bullet did it, or -1 for nobody
+signal killed(victim, killer)
 
 @export var bullet_scene: PackedScene
 @export var starting_position: Vector2 = Vector2(0.1, 1)
@@ -97,7 +99,7 @@ func set_ship_starting_rotation():
 	
 	rotation_degrees += GameConfig.PLAYER_ROTATION_ADJUSTMENTS[player_number]
 
-func destroy():
+func destroy(killer: int = -1):
 	$CollisionShape2D.set_deferred("disabled", true)
 	dead = true
 	$Ship.hide()
@@ -109,6 +111,7 @@ func destroy():
 		camera.shake(GameConfig.CAMERA_SHAKE_EXPLOSION)
 	
 	lives -= 1
+	killed.emit(player_number, killer)
 	emit_signal("lives_changed", player_number, lives)
 	
 	await $Explosion.animation_finished
