@@ -66,6 +66,9 @@ func _process(delta):
 	else:
 		launch_countdown = GameConfig.TITLE_LAUNCH_DELAY
 
+	if not launching and not quit_confirm.visible:
+		pick_teams()
+
 	if seated.is_empty():
 		status.text = "Press shoot to take a seat"
 	elif not enough:
@@ -112,11 +115,6 @@ func _input(event):
 			if cards[i].state != SeatCard.State.EMPTY:
 				next_mode()
 			return
-		if event.is_action_pressed("thrust%d" % i):
-			get_viewport().set_input_as_handled()
-			if cards[i].state != SeatCard.State.EMPTY:
-				next_team(cards[i])
-			return
 
 func advance(card):
 	if card.state == SeatCard.State.EMPTY:
@@ -136,6 +134,13 @@ func next_mode():
 	GameState.mode_index = (GameState.mode_index + 1) % GameState.MODES.size()
 	unready_all()
 	show_mode()
+
+## Thrust is an analog trigger on pads, which sends a stream of motion
+## events per pull; polling the action catches each pull exactly once
+func pick_teams():
+	for card in cards:
+		if card.state != SeatCard.State.EMPTY and Input.is_action_just_pressed("thrust%d" % card.seat):
+			next_team(card)
 
 ## Solo, then each team in turn, then back to solo. Teams change the
 ## match for everyone, so everyone readies again.
