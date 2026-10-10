@@ -34,8 +34,23 @@ func _ready():
 	for i in GameState.players:
 		if i not in GameState.dummies:
 			cards[i].set_state(SeatCard.State.JOINED)
+	if GameState.join_on_arrival >= 0:
+		cards[GameState.join_on_arrival].set_state(SeatCard.State.JOINED)
+		GameState.join_on_arrival = -1
 	show_mode()
 	quit_confirm.hide()
+	fade_in()
+
+## Arrive from black, matching the title screen's fade out
+func fade_in():
+	var fade = ColorRect.new()
+	fade.color = Color.BLACK
+	fade.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	fade.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(fade)
+	var tween = create_tween()
+	tween.tween_property(fade, "modulate:a", 0.0, 0.3)
+	tween.tween_callback(fade.queue_free)
 
 func _process(delta):
 	var seated = seated_players()
