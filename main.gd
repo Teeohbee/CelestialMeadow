@@ -8,6 +8,7 @@ const SpawnMarker = preload("res://spawn_marker.gd")
 const ResultsScene = preload("res://results.tscn")
 
 var screen_size: Vector2
+var mode: GameMode
 var game_over: bool = false
 var game_started: bool = false
 var player_configs = [
@@ -21,6 +22,9 @@ var player_configs = [
 
 func _ready():
 	screen_size = get_viewport().get_visible_rect().size
+	mode = GameState.mode.new()
+	mode.round_over.connect(show_results)
+	add_child(mode)
 	spawn_players()
 	initialize_hud()
 	
@@ -36,13 +40,15 @@ func _on_countdown_finished():
 	game_started = true
 	# Start asteroid timer (asteroids already spawned)
 	$AsteroidTimer.start()
+	mode.start()
 
 func spawn_players():
 	for i in GameState.players:
 		var player = player_scene.instantiate()
 		player.starting_position = player_configs[i].position
 		player.player_number = player_configs[i].number
-		player.tree_exiting.connect(_on_player_destroyed)
+		player.tree_exiting.connect(_on_player_eliminated.bind(player.player_number))
+		player.killed.connect(_on_player_killed)
 		player.respawn_requested.connect(_on_player_respawn_requested)
 		player.lives_changed.connect(_on_player_lives_changed)
 		add_child(player)
@@ -61,31 +67,22 @@ func _on_asteroid_timer_timeout():
 		for i in GameConfig.ASTEROID_SPAWN_COUNT:
 			spawn_asteroid()
 
-func _on_player_destroyed():
-	if game_over:
-		return
-	
-	await get_tree().create_timer(GameConfig.END_GAME_CHECK_DELAY).timeout
-	# Several players can die at once; only the first check to finish ends
-	# the round
-	if game_over:
-		return
-	
-	var remaining_players = get_tree().get_nodes_in_group("players")
-	
-	if remaining_players.size() == 1:
-		game_over = true
-		show_results(remaining_players[0].player_number)
-	elif remaining_players.size() == 0:
-		game_over = true
-		show_results(-1)
+func _on_player_killed(victim: int, killer: int):
+	if not game_over:
+		mode.on_player_killed(victim, killer)
 
-func show_results(winner_number: int):
-	if winner_number >= 0:
-		GameState.record_win(winner_number)
+func _on_player_eliminated(player_number: int):
+	if not game_over:
+		mode.on_player_eliminated(player_number)
+
+## winners is every player credited with the round; empty for a draw
+func show_results(winners: Array[int]):
+	game_over = true
+	for winner in winners:
+		GameState.record_win(winner)
 	var results = ResultsScene.instantiate()
 	add_child(results)
-	results.show_result(winner_number)
+	results.show_result(winners)
 
 func _on_player_respawn_requested(player):
 	var marker = SpawnMarker.new()

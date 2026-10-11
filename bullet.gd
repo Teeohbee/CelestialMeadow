@@ -25,5 +25,5 @@ func _on_body_entered(body):
 	if body.is_in_group("players"):
 		if player_number == body.player_number:
 			return
-		body.destroy()
+		body.destroy(player_number)
 		queue_free()

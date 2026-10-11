@@ -6,6 +6,8 @@ var players: Array[int] = []
 # Seats filled by idle dummy ships for solo testing; nobody controls them
 var dummies: Array[int] = []
 var lives_per_player: int = GameConfig.PLAYER_LIVES_DEFAULT
+# The rules for this session's rounds, a GameMode script
+var mode: Script = preload("res://last_ship_standing.gd")
 
 # Rounds won by each player since the session started from the main menu.
 # Rematches keep the tally; returning to the menu clears it.
