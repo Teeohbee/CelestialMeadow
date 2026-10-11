@@ -5,6 +5,9 @@ extends Area2D
 var velocity: Vector2 = Vector2.ZERO
 var player_number: int
 
+func _ready():
+	add_to_group("bullets")
+
 func start(_transform, _player_number):
 	transform = _transform
 	velocity = transform.x * speed

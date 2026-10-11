@@ -3,7 +3,8 @@ extends Control
 ## Title screen and lobby. Each player takes a seat by pressing their own
 ## shoot button, presses it again when ready, and rotates left to back out.
 ## The round launches on its own once enough players are seated and all of
-## them are ready, so nobody has to drive a menu for everyone else.
+## them are ready, so nobody has to drive a menu for everyone else. Any
+## seated player can rotate right to change the mode.
 
 const SeatCard = preload("res://seat_card.gd")
 const SEAT_COUNT: int = 6
@@ -18,6 +19,8 @@ var launching: bool = false
 
 @onready var seats_row: HBoxContainer = $Seats
 @onready var status: Label = $Status
+@onready var mode_label: Label = $ModeLabel
+@onready var mode_blurb: Label = $ModeBlurb
 @onready var quit_confirm: Control = $QuitConfirm
 @onready var stay_button: Button = $QuitConfirm/Center/Panel/VBox/Buttons/StayButton
 
@@ -31,6 +34,7 @@ func _ready():
 		if i not in GameState.dummies:
 			cards[i].set_state(SeatCard.State.JOINED)
 	spawn_asteroids()
+	show_mode()
 	quit_confirm.hide()
 
 func spawn_asteroids():
@@ -95,6 +99,11 @@ func _input(event):
 			get_viewport().set_input_as_handled()
 			back(cards[i])
 			return
+		if event.is_action_pressed("rotate_right%d" % i):
+			get_viewport().set_input_as_handled()
+			if cards[i].state != SeatCard.State.EMPTY:
+				next_mode()
+			return
 
 func advance(card):
 	if card.state == SeatCard.State.EMPTY:
@@ -107,6 +116,19 @@ func back(card):
 		card.set_state(SeatCard.State.JOINED)
 	elif card.state == SeatCard.State.JOINED:
 		card.set_state(SeatCard.State.EMPTY)
+
+## Everyone readied up for the old mode, so they ready again for the new one
+func next_mode():
+	GameState.mode_index = (GameState.mode_index + 1) % GameState.MODES.size()
+	for card in cards:
+		if card.state == SeatCard.State.READY:
+			card.set_state(SeatCard.State.JOINED)
+	show_mode()
+
+func show_mode():
+	var mode = GameState.MODES[GameState.mode_index]
+	mode_label.text = "Mode:  %s" % mode.name
+	mode_blurb.text = "%s  Seated pilots rotate right to change mode." % mode.blurb
 
 func launch(seated: Array[int]):
 	launching = true
