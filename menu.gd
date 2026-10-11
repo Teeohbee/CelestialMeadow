@@ -3,7 +3,9 @@ extends Control
 ## Title screen and lobby. Each player takes a seat by pressing their own
 ## shoot button, presses it again when ready, and rotates left to back out.
 ## The round launches on its own once enough players are seated and all of
-## them are ready, so nobody has to drive a menu for everyone else.
+## them are ready, so nobody has to drive a menu for everyone else. Any
+## seated player can rotate right to change the mode, and thrusts to pick
+## their team.
 
 const SeatCard = preload("res://seat_card.gd")
 const SEAT_COUNT: int = 6
@@ -18,6 +20,8 @@ var launching: bool = false
 
 @onready var seats_row: HBoxContainer = $Seats
 @onready var status: Label = $Status
+@onready var mode_label: Label = $ModeLabel
+@onready var mode_blurb: Label = $ModeBlurb
 @onready var quit_confirm: Control = $QuitConfirm
 @onready var stay_button: Button = $QuitConfirm/Center/Panel/VBox/Buttons/StayButton
 
@@ -30,24 +34,35 @@ func _ready():
 	for i in GameState.players:
 		if i not in GameState.dummies:
 			cards[i].set_state(SeatCard.State.JOINED)
-	spawn_asteroids()
+	if GameState.join_on_arrival >= 0:
+		cards[GameState.join_on_arrival].set_state(SeatCard.State.JOINED)
+		GameState.join_on_arrival = -1
+	show_mode()
 	quit_confirm.hide()
+	fade_in()
 
-func spawn_asteroids():
-	var asteroid_scene = preload("res://asteroid.tscn")
-	var size = get_viewport_rect().size
-	for i in GameConfig.TITLE_ASTEROID_COUNT:
-		var asteroid = asteroid_scene.instantiate()
-		var velocity = Vector2.RIGHT.rotated(randf() * TAU) * GameConfig.TITLE_ASTEROID_SPEED * randf_range(0.6, 1.4)
-		asteroid.start(Vector2(randf() * size.x, randf() * size.y), velocity)
-		$Backdrop.add_child(asteroid)
+## Arrive from black, matching the title screen's fade out
+func fade_in():
+	var fade = ColorRect.new()
+	fade.color = Color.BLACK
+	fade.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	fade.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(fade)
+	var tween = create_tween()
+	tween.tween_property(fade, "modulate:a", 0.0, 0.3)
+	tween.tween_callback(fade.queue_free)
 
 func _process(delta):
 	var seated = seated_players()
 	var ready_count = cards.filter(func(c): return c.state == SeatCard.State.READY).size()
 	var solo_test = debug_dummy and seated.size() == 1
 	var enough = seated.size() >= GameConfig.TITLE_MIN_PLAYERS or solo_test
-	var can_launch = enough and ready_count == seated.size()
+	var sides = {}
+	for seat in seated:
+		sides[GameState.side_of(seat)] = true
+	# The debug dummy always flies solo, so a lone tester has an opponent
+	var one_side = sides.size() < 2 and not solo_test
+	var can_launch = enough and not one_side and ready_count == seated.size()
 
 	if can_launch and not launching:
 		launch_countdown -= delta
@@ -56,10 +71,15 @@ func _process(delta):
 	else:
 		launch_countdown = GameConfig.TITLE_LAUNCH_DELAY
 
+	if not launching and not quit_confirm.visible:
+		pick_teams()
+
 	if seated.is_empty():
 		status.text = "Press shoot to take a seat"
 	elif not enough:
 		status.text = "Waiting for another pilot"
+	elif one_side:
+		status.text = "Pick at least two sides"
 	elif not can_launch:
 		status.text = "%d of %d ready" % [ready_count, seated.size()]
 	elif solo_test:
@@ -95,6 +115,11 @@ func _input(event):
 			get_viewport().set_input_as_handled()
 			back(cards[i])
 			return
+		if event.is_action_pressed("rotate_right%d" % i):
+			get_viewport().set_input_as_handled()
+			if cards[i].state != SeatCard.State.EMPTY:
+				next_mode()
+			return
 
 func advance(card):
 	if card.state == SeatCard.State.EMPTY:
@@ -106,7 +131,41 @@ func back(card):
 	if card.state == SeatCard.State.READY:
 		card.set_state(SeatCard.State.JOINED)
 	elif card.state == SeatCard.State.JOINED:
+		GameState.teams[card.seat] = GameState.SOLO
 		card.set_state(SeatCard.State.EMPTY)
+
+## Everyone readied up for the old mode, so they ready again for the new one
+func next_mode():
+	GameState.mode_index = (GameState.mode_index + 1) % GameState.MODES.size()
+	unready_all()
+	show_mode()
+
+## Thrust is an analog trigger on pads, which sends a stream of motion
+## events per pull; polling the action catches each pull exactly once
+func pick_teams():
+	for card in cards:
+		if card.state != SeatCard.State.EMPTY and Input.is_action_just_pressed("thrust%d" % card.seat):
+			next_team(card)
+
+## Solo, then each team in turn, then back to solo. Teams change the
+## match for everyone, so everyone readies again.
+func next_team(card):
+	var team = GameState.teams[card.seat] + 1
+	if team >= GameConfig.TEAM_NAMES.size():
+		team = GameState.SOLO
+	GameState.teams[card.seat] = team
+	unready_all()
+	card.show_team()
+
+func unready_all():
+	for card in cards:
+		if card.state == SeatCard.State.READY:
+			card.set_state(SeatCard.State.JOINED)
+
+func show_mode():
+	var mode = GameState.MODES[GameState.mode_index]
+	mode_label.text = "Mode:  %s" % mode.name
+	mode_blurb.text = "%s  Rotate right to change mode, thrust to pick a team." % mode.blurb
 
 func launch(seated: Array[int]):
 	launching = true

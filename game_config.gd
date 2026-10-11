@@ -8,6 +8,8 @@ const PLAYER_ENGINE_POWER: int = 500
 const PLAYER_SPIN_POWER: int = 4000
 const PLAYER_SHOOT_DELAY: float = 0.25
 const PLAYER_LIVES_DEFAULT: int = 3
+# Lives for modes where ships respawn forever
+const UNLIMITED_LIVES: int = -1
 const PLAYER_RESPAWN_DELAY: float = 3.0
 const PLAYER_INVINCIBILITY_DURATION: float = 2.0
 const PLAYER_INVINCIBILITY_BLINK_DURATION: float = 0.2
@@ -42,7 +44,12 @@ const ASTEROID_SPAWN_COUNT: int = 2
 const ASTEROID_MIN_SPEED: float = 100.0
 const ASTEROID_MAX_SPEED: float = 200.0
 
+# Time Attack
+const TIME_ATTACK_DURATION: float = 120.0
+
 # Title Screen
+# Presses are ignored this long after launch so the logo can land
+const TITLE_INTRO_TIME: float = 1.2
 const TITLE_MIN_PLAYERS: int = 2
 const TITLE_LAUNCH_DELAY: float = 1.5
 const TITLE_ASTEROID_COUNT: int = 6
@@ -68,6 +75,17 @@ const PLAYER_COLORS: Array[Color] = [
 
 # Player colour names, shown on the results screen
 const PLAYER_COLOR_NAMES: Array[String] = ["Red", "Green", "Blue", "Yellow", "Magenta", "Cyan"]
+
+# Team ring drawn around each member's ship
+const TEAM_RING_RADIUS: float = 34.0
+const TEAM_RING_WIDTH: float = 3.0
+const TEAM_RING_SEGMENTS: int = 32
+
+# Teams, in the order the title screen cycles through them
+const TEAM_NAMES: Array[String] = ["Alpha", "Beta", "Gamma"]
+# Shown as a ring around each member's ship; picked to stand apart from
+# the player colours
+const TEAM_COLORS: Array[Color] = [Color.WHITE, Color(1.0, 0.6, 0.1), Color(0.7, 0.5, 1.0)]
 
 # Player Starting Rotation Adjustments (degrees)
 const PLAYER_ROTATION_ADJUSTMENTS: Array[int] = [30, 30, -30, -30, 0, 0]
