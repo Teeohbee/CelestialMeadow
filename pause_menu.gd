@@ -2,6 +2,7 @@ extends Control
 
 func _ready():
 	hide()
+	$Panel/VBoxContainer/TitleLabel.add_theme_font_override("font", Poster.font(700, 10))
 	process_mode = Node.PROCESS_MODE_ALWAYS
 
 func _input(event):

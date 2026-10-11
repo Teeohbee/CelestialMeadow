@@ -2,19 +2,16 @@ extends RigidBody2D
 
 signal powerup_dropped(powerup_position, powerup_type)
 
-@export var sprites: Array[CompressedTexture2D] = []
-
 var screen_size: Vector2
 var radius: int
 var drop_chance: float = GameConfig.POWERUP_DROP_CHANCE
 
 func _ready():
 	screen_size = get_viewport_rect().size
-	$Sprite2D.texture = sprites[randi() % sprites.size()]
 	var asteroid_scale = randf_range(0.8, 1.5)
-	$Sprite2D.scale = Vector2(asteroid_scale, asteroid_scale)
+	$Art.scale = Vector2(asteroid_scale, asteroid_scale)
 	$CollisionShape2D.scale = Vector2(asteroid_scale, asteroid_scale)
-	radius = int($Sprite2D.texture.get_size().x / 2 * asteroid_scale)
+	radius = int(64 * asteroid_scale)
 	
 func start(_position, _velocity):
 	position = _position
@@ -29,7 +26,7 @@ func _integrate_forces(physics_state):
 	
 func destroy():
 	$CollisionShape2D.set_deferred("disabled", true)
-	$Sprite2D.hide()
+	$Art.hide()
 	$Explosion.show()
 	$Explosion.play("explode")
 	$ExplosionSound.play()

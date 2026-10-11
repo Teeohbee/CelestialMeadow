@@ -10,6 +10,7 @@ var is_counting = false
 
 func _ready():
 	countdown_label.visible = false
+	countdown_label.add_theme_font_override("font", Poster.font(700, 12))
 
 func start_countdown():
 	is_counting = true

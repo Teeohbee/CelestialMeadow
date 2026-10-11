@@ -32,8 +32,6 @@ const POWERUP_DESPAWN_TIME: float = 15.0
 
 # Shield Visual
 const SHIELD_RADIUS: int = 40
-const SHIELD_SEGMENTS: int = 32
-const SHIELD_COLOR: Color = Color(0, 0.8, 1.0, 0.3)
 
 # Asteroid Settings
 const ASTEROID_INITIAL_COUNT: int = 10
@@ -56,18 +54,40 @@ const CAMERA_SHAKE_ASTEROID: float = 12.0
 const END_GAME_CHECK_DELAY: float = 0.5
 const RESULTS_INPUT_LOCK: float = 1.0
 
-# Player Colors
+# Grand Tour palette, after the NASA/JPL poster's print-master inks
+const GROUND: Color = Color("#16121F")
+const DEEP: Color = Color("#231B30")
+const MID: Color = Color("#3A2C48")
+const HUE: Color = Color("#27867F")
+const LIGHT: Color = Color("#F0A748")
+const CREAM: Color = Color("#F3E7D2")
+const ENV_INKS: Array[Color] = [
+	Color("#C13944"), Color("#E85E3B"), Color("#F0A748"), Color("#8EBB4B"),
+	Color("#187A4E"), Color("#27867F"), Color("#76365E")
+]
+
+# Background speed bars and film grain; 0 grain hides the overlay
+const SPEED_BAR_COUNT: int = 14
+const SPEED_BAR_ALPHA: float = 0.5
+const GRAIN_STRENGTH: float = 0.22
+
+const PLANET_NAMES: Array[String] = [
+	"Ostara", "Verdant", "Halcyon", "Marigold", "Tamsin", "Brisa",
+	"Cobalt", "Lanterne", "Odessa", "Perihelion", "Saffra", "Wren"
+]
+
+# Player inks; each seat keeps its nearest hue from the old pure colours
 const PLAYER_COLORS: Array[Color] = [
-	Color.RED,
-	Color.GREEN,
-	Color.BLUE,
-	Color.YELLOW,
-	Color.MAGENTA,
-	Color.CYAN
+	Color("#E8453C"),
+	Color("#8CC63F"),
+	Color("#F5862A"),
+	Color("#F4C430"),
+	Color("#C86FC9"),
+	Color("#2EC4B6")
 ]
 
 # Player colour names, shown on the results screen
-const PLAYER_COLOR_NAMES: Array[String] = ["Red", "Green", "Blue", "Yellow", "Magenta", "Cyan"]
+const PLAYER_COLOR_NAMES: Array[String] = ["Red", "Lime", "Tangerine", "Marigold", "Orchid", "Lagoon"]
 
 # Player Starting Rotation Adjustments (degrees)
 const PLAYER_ROTATION_ADJUSTMENTS: Array[int] = [30, 30, -30, -30, 0, 0]

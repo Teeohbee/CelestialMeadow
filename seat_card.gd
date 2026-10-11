@@ -8,13 +8,13 @@ enum State { EMPTY, JOINED, READY }
 
 const JOYPAD_BUTTON_NAMES: Dictionary = {0: "A", 1: "B", 2: "X", 3: "Y", 6: "Start", 13: "D-pad Left", 14: "D-pad Right"}
 const JOYPAD_AXIS_NAMES: Dictionary = {4: "LT", 5: "RT"}
-const SHIP_TEXTURE = preload("res://sprites/player.png")
+const ShipIcon = preload("res://art/ship_icon.gd")
 
 var seat: int = 0
 var state: State = State.EMPTY
 
 var header: Label
-var ship: TextureRect
+var ship: Control
 var status: Label
 var hint: Label
 
@@ -34,20 +34,19 @@ func _ready():
 	header.text = "P%d  %s" % [seat + 1, GameConfig.PLAYER_COLOR_NAMES[seat]]
 	header.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	header.add_theme_font_size_override("font_size", 32)
+	header.add_theme_font_override("font", Poster.font(700))
 	box.add_child(header)
 
-	ship = TextureRect.new()
-	ship.texture = SHIP_TEXTURE
+	ship = ShipIcon.new()
 	ship.custom_minimum_size = Vector2(110, 110)
-	ship.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	ship.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	ship.ink = GameConfig.PLAYER_COLORS[seat]
 	box.add_child(ship)
 
 	status = _wrapping_label(30)
 	status.custom_minimum_size.y = 84  # room for two lines, so cards line up
 	box.add_child(status)
 	hint = _wrapping_label(24)
-	hint.add_theme_color_override("font_color", Color(0.7, 0.7, 0.78))
+	hint.add_theme_color_override("font_color", Color(GameConfig.CREAM, 0.6))
 	box.add_child(hint)
 
 	set_state(state)
@@ -64,38 +63,36 @@ func set_state(new_state: State):
 	var popped = new_state > state
 	state = new_state
 	var colour = GameConfig.PLAYER_COLORS[seat]
-	# Pure blue and red are too dark to read as text on the dark cards
-	var readable = colour.lightened(0.35)
 	var style = StyleBoxFlat.new()
-	style.set_corner_radius_all(12)
+	style.set_corner_radius_all(20)
 	style.set_content_margin_all(18)
 	match state:
 		State.EMPTY:
-			style.bg_color = Color(0.05, 0.05, 0.08, 0.94)
+			style.bg_color = Color(GameConfig.GROUND, 0.94)
 			style.set_border_width_all(2)
-			style.border_color = Color(0.3, 0.3, 0.36)
-			header.add_theme_color_override("font_color", Color(readable, 0.75))
-			ship.modulate = Color(colour, 0.25)
+			style.border_color = Color(GameConfig.CREAM, 0.2)
+			header.add_theme_color_override("font_color", Color(colour, 0.75))
+			ship.modulate = Color(1, 1, 1, 0.25)
 			status.text = "Press %s to join" % action_label("shoot%d" % seat)
 			status.remove_theme_color_override("font_color")
 			hint.text = device_label()
 		State.JOINED:
-			style.bg_color = Color(0.08, 0.08, 0.12, 0.96)
+			style.bg_color = Color(GameConfig.DEEP, 0.96)
 			style.set_border_width_all(4)
-			style.border_color = readable
-			header.add_theme_color_override("font_color", readable)
-			ship.modulate = colour
+			style.border_color = colour
+			header.add_theme_color_override("font_color", colour)
+			ship.modulate = Color.WHITE
 			status.text = "Press %s when ready" % action_label("shoot%d" % seat)
 			status.remove_theme_color_override("font_color")
 			hint.text = "%s to leave" % action_label("rotate_left%d" % seat)
 		State.READY:
-			style.bg_color = colour.darkened(0.55)
+			style.bg_color = colour.lerp(GameConfig.GROUND, 0.6)
 			style.set_border_width_all(6)
-			style.border_color = colour.lightened(0.25)
-			header.add_theme_color_override("font_color", colour.lightened(0.3))
-			ship.modulate = colour.lightened(0.15)
+			style.border_color = colour
+			header.add_theme_color_override("font_color", GameConfig.CREAM)
+			ship.modulate = Color.WHITE
 			status.text = "READY!"
-			status.add_theme_color_override("font_color", Color.WHITE)
+			status.add_theme_color_override("font_color", GameConfig.CREAM)
 			hint.text = "%s to cancel" % action_label("rotate_left%d" % seat)
 	add_theme_stylebox_override("panel", style)
 	if popped:
