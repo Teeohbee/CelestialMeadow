@@ -4,6 +4,7 @@ var player_containers: Array = []
 var lives_boxes: Array = []
 var score_labels: Array = []
 var clock: Label
+var side_scores: Label
 var banner: Label
 var life_icon_size: int = 20
 var corner_positions: Array = [
@@ -69,6 +70,17 @@ func _ready():
 	clock.hide()
 	add_child(clock)
 
+	side_scores = Label.new()
+	side_scores.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
+	side_scores.position.y = 64
+	side_scores.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	side_scores.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	side_scores.add_theme_font_size_override("font_size", 28)
+	side_scores.add_theme_constant_override("outline_size", 6)
+	side_scores.add_theme_color_override("font_outline_color", Color.BLACK)
+	side_scores.hide()
+	add_child(side_scores)
+
 	banner = Label.new()
 	banner.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
 	banner.grow_horizontal = Control.GROW_DIRECTION_BOTH
@@ -107,15 +119,34 @@ func update_score(player_number: int, score: int):
 	score_labels[player_number].text = str(score)
 	score_labels[player_number].show()
 
+## Team totals under the clock, e.g. "Alpha 3  -  Beta 2"
+func set_team_scores(totals: Dictionary):
+	var parts: Array[String] = []
+	for team in GameConfig.TEAM_NAMES.size():
+		if team in totals:
+			parts.append("%s %d" % [GameConfig.TEAM_NAMES[team], totals[team]])
+	side_scores.text = "  -  ".join(parts)
+	side_scores.visible = not parts.is_empty()
+	place_top_centre_player()
+
 ## Shows the time left as m:ss, top centre
 func set_clock(seconds: float):
 	if not clock.visible:
 		clock.show()
-		# Player 5's lives sit top centre too; move them below the clock
-		player_containers[4].position.y += 56
+		place_top_centre_player()
 	var whole = ceili(seconds)
 	clock.text = "%d:%02d" % [whole / 60, whole % 60]
 	clock.modulate = Color(1, 0.4, 0.3) if seconds <= 10 else Color.WHITE
+
+## Player 5's corner is top centre, shared with the clock and team totals;
+## keep it below whichever of those are showing
+func place_top_centre_player():
+	var y = corner_positions[4].margin.y
+	if clock.visible:
+		y += 56
+	if side_scores.visible:
+		y += 40
+	player_containers[4].position.y = y
 
 ## Big centred announcement that fades after a moment
 func show_banner(text: String):

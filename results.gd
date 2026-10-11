@@ -19,7 +19,14 @@ var chosen: bool = false
 ## winners is every player credited with the round; empty for a draw.
 ## scores is each player's score this round, if the mode keeps one.
 func show_result(winners: Array[int], scores: Dictionary = {}):
-	if winners.size() == 1:
+	var team = GameState.teams[winners[0]] if not winners.is_empty() else GameState.SOLO
+	if team != GameState.SOLO:
+		var colour = GameConfig.TEAM_COLORS[team]
+		title.text = "Team %s Wins!" % GameConfig.TEAM_NAMES[team]
+		title.add_theme_color_override("font_color", colour)
+		subtitle.text = names(winners)
+		ship.self_modulate = colour
+	elif winners.size() == 1:
 		var winner_number = winners[0]
 		var colour = GameConfig.PLAYER_COLORS[winner_number]
 		title.text = "%s Wins!" % GameConfig.PLAYER_COLOR_NAMES[winner_number]
@@ -40,6 +47,13 @@ func show_result(winners: Array[int], scores: Dictionary = {}):
 	locked = false
 	set_buttons_disabled(false)
 	rematch_button.grab_focus()
+
+## "Red", "Red & Green", "Red, Green & Blue"
+func names(players: Array[int]) -> String:
+	var colour_names = players.map(func(p): return GameConfig.PLAYER_COLOR_NAMES[p])
+	if colour_names.size() == 1:
+		return colour_names[0]
+	return "%s & %s" % [", ".join(colour_names.slice(0, -1)), colour_names[-1]]
 
 func build_tally(winners: Array[int], scores: Dictionary):
 	for i in GameState.players:

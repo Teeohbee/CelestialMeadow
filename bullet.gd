@@ -26,7 +26,8 @@ func _on_body_entered(body):
 	if body.is_in_group("space_stations"):
 		queue_free()
 	if body.is_in_group("players"):
-		if player_number == body.player_number:
+		# Your own shots and your teammates' pass straight through
+		if GameState.allies(player_number, body.player_number):
 			return
 		body.destroy(player_number)
 		queue_free()
