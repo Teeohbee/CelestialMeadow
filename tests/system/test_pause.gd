@@ -2,6 +2,8 @@ extends GameSuite
 # The pause menu in a round: Start (Menu) on any pad or Esc opens a poster panel over a dim, grainy wash, it
 # pops in, the music ducks and Resume has focus. The panel wears the ink of the seat whose pad paused and
 # names them; anyone can resume. Start again or Resume carries on. Pausing during the countdown holds it.
+# Losing window focus (alt-tab, the Steam overlay) pauses a round, but never unpauses one, and leaves the
+# results screen and a screen change alone.
 
 var pause_menu: Control
 
@@ -112,3 +114,47 @@ func test_the_next_pause_forgets_who_paused_last() -> void:
 	await pad(JOY_BUTTON_START, 2)
 	await key(KEY_ESCAPE)
 	assert_object(pause_menu.panel.get_theme_stylebox("panel").border_color).is_equal(GameConfig.CREAM)
+
+func lose_focus() -> void:
+	get_tree().root.propagate_notification(NOTIFICATION_APPLICATION_FOCUS_OUT)
+	await frames(1)
+
+func test_losing_focus_pauses_the_round() -> void:
+	await start_round([0, 1])
+	pause_menu = scene().get_node("PauseMenu/UI")
+	await lose_focus()
+	assert_bool(pause_menu.visible).is_true()
+	assert_bool(get_tree().paused).is_true()
+	assert_bool(pause_menu.paused_by.visible).is_false()
+
+func test_losing_focus_while_paused_stays_paused() -> void:
+	await paused_round()
+	await lose_focus()
+	assert_bool(pause_menu.visible).is_true()
+	assert_bool(get_tree().paused).is_true()
+
+func test_getting_focus_back_doesnt_resume() -> void:
+	await start_round([0, 1])
+	pause_menu = scene().get_node("PauseMenu/UI")
+	await lose_focus()
+	get_tree().root.propagate_notification(NOTIFICATION_APPLICATION_FOCUS_IN)
+	await frames(1)
+	assert_bool(get_tree().paused).is_true()
+
+func test_losing_focus_on_results_leaves_them_be() -> void:
+	await start_round([0, 1])
+	pause_menu = scene().get_node("PauseMenu/UI")
+	kill([1])
+	await results()
+	await lose_focus()
+	assert_bool(pause_menu.visible).is_false()
+	assert_bool(get_tree().paused).is_true()
+
+func test_losing_focus_mid_change_does_nothing() -> void:
+	var round := await start_round([0, 1])
+	SceneManager.go_to("res://main.tscn")
+	await frames(1)
+	await lose_focus()
+	assert_bool(round.get_node("PauseMenu/UI").visible).is_false()
+	await settle()
+	assert_bool(get_tree().paused).is_false()

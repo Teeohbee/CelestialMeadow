@@ -97,6 +97,15 @@ func _input(event):
 			return
 		toggle_pause(seat_of(event))
 
+## Alt-tab or the Steam overlay pauses a round. Getting focus back doesn't
+## resume it: whoever comes back presses Start when they're ready.
+func _notification(what):
+	if what != NOTIFICATION_APPLICATION_FOCUS_OUT:
+		return
+	if visible or get_tree().paused or SceneManager.is_changing_scene:
+		return
+	toggle_pause()
+
 ## seat is whoever paused, or -1 for nobody in particular
 func toggle_pause(seat: int = -1):
 	visible = !visible
