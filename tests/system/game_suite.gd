@@ -8,8 +8,12 @@ extends GdUnitTestSuite
 # One file per process, so suites running side by side in other checkouts don't share it
 var scratch_path := "user://test_settings_%d.json" % OS.get_process_id()
 var real_path: String
+# How many times the scene has changed this test
+var swaps := 0
 
 func before_test() -> void:
+	swaps = 0
+	get_tree().scene_changed.connect(_count_swap)
 	reset_game_state()
 	real_path = GameSettings.save_file_path
 	GameSettings.save_file_path = scratch_path
@@ -18,6 +22,7 @@ func before_test() -> void:
 
 func after_test() -> void:
 	await settle()
+	get_tree().scene_changed.disconnect(_count_swap)
 	get_tree().unload_current_scene()
 	get_tree().paused = false
 	Engine.time_scale = 1.0
@@ -32,6 +37,9 @@ func after_test() -> void:
 	GameSettings.load_from_disk()
 	reset_game_state()
 	await get_tree().process_frame
+
+func _count_swap() -> void:
+	swaps += 1
 
 # Every GameState variable back to what a fresh copy of the script starts with
 func reset_game_state() -> void:
