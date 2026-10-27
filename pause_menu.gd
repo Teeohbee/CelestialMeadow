@@ -3,8 +3,9 @@ extends Control
 ## The pause menu in a round. Start on any pad (or Esc) dims the arena under
 ## a grainy wash and pops in a poster panel: Resume, Restart, Main Menu. The
 ## music ducks while it's open. The panel wears the ink of whoever paused
-## and names them, though anyone can resume. The results screen pauses the
-## game itself, so Start does nothing there.
+## and names them, though anyone can resume. Unplugging a pilot's pad
+## pauses too, and asks for it back. The results screen pauses the game
+## itself, so Start does nothing there.
 
 const POP_IN_TIME: float = 0.3
 const PANEL_WIDTH: float = 560.0
@@ -18,6 +19,10 @@ var paused_by: Label
 var hint: ButtonPrompt
 var resume_button: Button
 var pop_in: Tween
+## Whoever paused, or -1
+var paused_seat: int = -1
+## Pilots whose pads are unplugged, in the order they went
+var missing: Array[int] = []
 
 func _ready():
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -69,6 +74,7 @@ func _ready():
 	box.add_child(hint)
 	wear_ink_of(-1)
 	hide()
+	Input.joy_connection_changed.connect(_on_joy_connection_changed)
 
 func panel_style(ink: Color) -> StyleBoxFlat:
 	var style = StyleBoxFlat.new()
@@ -106,6 +112,20 @@ func _notification(what):
 		return
 	toggle_pause()
 
+## A pilot's pad going pauses the round and asks for it back. Plugging it in
+## clears the ask but doesn't resume: they may still be fumbling with it.
+func _on_joy_connection_changed(device: int, connected: bool):
+	var seat = GameState.seat_of_device(device)
+	if not seat in GameState.players or seat in GameState.dummies:
+		return
+	if connected:
+		missing.erase(seat)
+	elif not seat in missing:
+		missing.append(seat)
+		if not visible and not get_tree().paused and not SceneManager.is_changing_scene:
+			toggle_pause()
+	wear_ink_of(paused_seat)
+
 ## seat is whoever paused, or -1 for nobody in particular
 func toggle_pause(seat: int = -1):
 	visible = !visible
@@ -126,14 +146,28 @@ func seat_of(event: InputEvent) -> int:
 		return seat
 	return -1
 
+## The panel takes the ink of the first missing pilot, or else whoever paused
 func wear_ink_of(seat: int):
-	var ink = GameConfig.CREAM if seat < 0 else GameConfig.PLAYER_COLORS[seat]
+	paused_seat = seat
+	var shown = missing[0] if not missing.is_empty() else seat
+	var ink = GameConfig.CREAM if shown < 0 else GameConfig.PLAYER_COLORS[shown]
 	panel.add_theme_stylebox_override("panel", panel_style(ink))
-	heading.add_theme_color_override("font_shadow_color", GameConfig.HUE if seat < 0 else ink)
-	paused_by.visible = seat >= 0
-	if seat >= 0:
+	heading.add_theme_color_override("font_shadow_color", GameConfig.HUE if shown < 0 else ink)
+	paused_by.visible = shown >= 0
+	paused_by.add_theme_color_override("font_color", ink)
+	if not missing.is_empty():
+		paused_by.text = plug_in_text()
+	elif seat >= 0:
 		paused_by.text = "%s paused" % GameConfig.PLAYER_COLOR_NAMES[seat]
-		paused_by.add_theme_color_override("font_color", ink)
+	else:
+		paused_by.text = ""
+
+## "Plug in Red's controller", "Plug in Red's & Lime's controllers"
+func plug_in_text() -> String:
+	var owners = missing.map(func(s): return "%s's" % GameConfig.PLAYER_COLOR_NAMES[s])
+	if owners.size() == 1:
+		return "Plug in %s controller" % owners[0]
+	return "Plug in %s & %s controllers" % [", ".join(owners.slice(0, -1)), owners[-1]]
 
 ## The panel grows from a little small with a slight overshoot, as the
 ## countdown numbers do

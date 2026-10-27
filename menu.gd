@@ -5,7 +5,8 @@ extends Control
 ## The round launches on its own once enough players are seated and all of
 ## them are ready, so nobody has to drive a menu for everyone else. Any
 ## seated player can rotate right to change the mode, and thrusts to pick
-## their team. Any pad's View button opens the options.
+## their team. Any pad's View button opens the options. Unplugging a seated
+## pad empties its seat.
 
 const SeatCard = preload("res://seat_card.gd")
 const Options = preload("res://options.gd")
@@ -56,6 +57,7 @@ func _ready():
 		cards[GameState.join_on_arrival].set_state(SeatCard.State.JOINED)
 		GameState.join_on_arrival = -1
 	show_mode()
+	Input.joy_connection_changed.connect(_on_joy_connection_changed)
 	quit_confirm.hide()
 	quit_prompt = label_button($QuitButton, "%s Quit" % SeatCard.action_glyph("pause"))
 	options_prompt = label_button($OptionsButton, "%s Options" % SeatCard.action_glyph("options"))
@@ -177,6 +179,16 @@ func back(card):
 		GameState.teams[card.seat] = GameState.SOLO
 		card.set_state(SeatCard.State.EMPTY)
 		Sound.play("back")
+
+func _on_joy_connection_changed(device: int, connected: bool):
+	var seat = GameState.seat_of_device(device)
+	if connected or launching or seat < 0 or cards[seat].state == SeatCard.State.EMPTY:
+		return
+	GameState.teams[seat] = GameState.SOLO
+	cards[seat].set_state(SeatCard.State.EMPTY)
+	Sound.play("back")
+	notice = "%s's controller unplugged" % GameConfig.PLAYER_COLOR_NAMES[seat]
+	notice_until = Time.get_ticks_msec() + NOTICE_MS
 
 ## Everyone readied up for the old mode, so they ready again for the new one
 func next_mode():
