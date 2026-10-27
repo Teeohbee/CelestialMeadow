@@ -5,8 +5,8 @@ extends CanvasLayer
 ## sweep on to uncover it. Both scenes are frozen and nothing can be pressed
 ## while it moves, so a double press changes scene once.
 
-const COVER_TIME: float = 0.35
-const UNCOVER_TIME: float = 0.4
+const COVER_TIME: float = 0.45
+const UNCOVER_TIME: float = 0.5
 
 const BAND_SKEW: float = 260.0
 const BAND_STAGGER: float = 0.18
