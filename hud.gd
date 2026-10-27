@@ -19,12 +19,14 @@ var lives: Dictionary = {}
 var pill_slots: Dictionary = {}
 var scores: Dictionary = {}
 var hidden: Dictionary = {}
-var canvas := Node2D.new()
+var canvas: Node2D
 var clock: Label
 var side_scores: Label
 var banner: Label
 
 func _ready():
+	# Made here, not when the script loads, so an HUD freed before it's ever in the tree leaks nothing
+	canvas = Node2D.new()
 	add_child(canvas)
 	canvas.draw.connect(_draw_hud)
 
