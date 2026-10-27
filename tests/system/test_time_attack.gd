@@ -3,6 +3,9 @@ extends RoundSuite
 # crashes don't. Most kills at time up wins; a tie goes to sudden death with one life each. The lobby remembers
 # the mode.
 
+func speed() -> float:
+	return 4.0
+
 func mode_label() -> String:
 	return scene().mode_label.text
 
