@@ -5,9 +5,10 @@ extends Control
 ## The round launches on its own once enough players are seated and all of
 ## them are ready, so nobody has to drive a menu for everyone else. Any
 ## seated player can rotate right to change the mode, and thrusts to pick
-## their team.
+## their team. Any pad's View button opens the options.
 
 const SeatCard = preload("res://seat_card.gd")
+const Options = preload("res://options.gd")
 const SEAT_COUNT: int = 6
 
 ## Rotate left, right, left, right on an empty seat's pad toggles the dummy
@@ -28,6 +29,7 @@ var launch_countdown: float = GameConfig.TITLE_LAUNCH_DELAY
 var launching: bool = false
 ## The countdown second last ticked, so each one ticks once
 var ticked_second: int = 0
+var options: Control
 
 @onready var seats_row: HBoxContainer = $Seats
 @onready var status: Label = $Status
@@ -51,6 +53,9 @@ func _ready():
 		GameState.join_on_arrival = -1
 	show_mode()
 	quit_confirm.hide()
+	options = Options.new()
+	options.name = "Options"
+	add_child(options)
 
 func _process(delta):
 	var seated = seated_players()
@@ -62,7 +67,7 @@ func _process(delta):
 		sides[GameState.side_of(seat)] = true
 	# The debug dummy always flies solo, so a lone tester has an opponent
 	var one_side = sides.size() < 2 and not solo_test
-	var can_launch = enough and not one_side and ready_count == seated.size()
+	var can_launch = enough and not one_side and ready_count == seated.size() and not options.visible
 
 	if can_launch and not launching:
 		if ceili(launch_countdown) != ticked_second:
@@ -75,7 +80,7 @@ func _process(delta):
 		launch_countdown = GameConfig.TITLE_LAUNCH_DELAY
 		ticked_second = 0
 
-	if not launching and not quit_confirm.visible:
+	if not launching and not quit_confirm.visible and not options.visible:
 		pick_teams()
 
 	if seated.is_empty():
@@ -111,6 +116,10 @@ func _input(event):
 	if event.is_action_pressed("ui_cancel") or event.is_action_pressed("pause"):
 		get_viewport().set_input_as_handled()
 		_on_quit_button_pressed()
+		return
+	if event.is_action_pressed("options"):
+		get_viewport().set_input_as_handled()
+		open_options()
 		return
 	for i in SEAT_COUNT:
 		if event.is_action_pressed("shoot%d" % i):
@@ -209,6 +218,10 @@ func launch(seated: Array[int]):
 				break
 	GameState.start_session(seated, dummy_seats)
 	SceneManager.go_to("res://main.tscn")
+
+func open_options():
+	get_viewport().gui_release_focus()
+	options.open()
 
 func _on_quit_button_pressed():
 	quit_confirm.show()
