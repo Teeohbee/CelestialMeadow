@@ -10,9 +10,23 @@ var scratch_path := "user://test_settings_%d.json" % OS.get_process_id()
 var real_path: String
 # How many times the scene has changed this test
 var swaps := 0
+var real_ticks: int
+var real_max_steps: int
+
+# How much faster than real time a suite runs; override to speed one up. Physics ticks go up by the same
+# factor, so every physics step is still 1/60s of game time: more steps, not bigger ones. SceneManager's
+# curtain ignores time scale, so it's sped up to match.
+func speed() -> float:
+	return 1.0
 
 func before_test() -> void:
 	swaps = 0
+	real_ticks = Engine.physics_ticks_per_second
+	real_max_steps = Engine.max_physics_steps_per_frame
+	Engine.time_scale = speed()
+	Engine.physics_ticks_per_second = roundi(real_ticks * speed())
+	Engine.max_physics_steps_per_frame = roundi(real_max_steps * speed())
+	SceneManager.speed_scale = speed()
 	get_tree().scene_changed.connect(_count_swap)
 	reset_game_state()
 	real_path = GameSettings.save_file_path
@@ -26,6 +40,9 @@ func after_test() -> void:
 	get_tree().unload_current_scene()
 	get_tree().paused = false
 	Engine.time_scale = 1.0
+	Engine.physics_ticks_per_second = real_ticks
+	Engine.max_physics_steps_per_frame = real_max_steps
+	SceneManager.speed_scale = 1.0
 	Music.stop()
 	if Music.duck_tween:
 		Music.duck_tween.kill()
@@ -67,8 +84,7 @@ func frames(n: int) -> void:
 	for i in n:
 		await get_tree().process_frame
 
-# Game time, so it speeds up with Engine.time_scale. SceneManager's curtain ignores time scale; wait for it
-# with settle().
+# Game time, so it speeds up with speed(). Wait for SceneManager's curtain with settle().
 func seconds(duration: float) -> void:
 	var waited := 0.0
 	while waited < duration:

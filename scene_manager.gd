@@ -12,6 +12,8 @@ const BAND_SKEW: float = 260.0
 const BAND_STAGGER: float = 0.18
 
 var is_changing_scene: bool = false
+## How fast the curtain sweeps. Always 1 in the game; tests turn it up
+var speed_scale: float = 1.0
 ## 0 = clear, 1 = covered, 2 = clear again; the curtain leaves the way it came
 var progress: float = 0.0:
 	set(value):
@@ -59,7 +61,7 @@ func change_scene_behind_curtain(scene_path: String):
 	is_changing_scene = false
 
 func tween_progress_to(target: float, seconds: float):
-	var tween = create_tween().set_ignore_time_scale(true)
+	var tween = create_tween().set_ignore_time_scale(true).set_speed_scale(speed_scale)
 	tween.tween_property(self, "progress", target, seconds) \
 		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	await tween.finished

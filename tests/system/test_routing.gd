@@ -2,6 +2,9 @@ extends GameSuite
 # Every way between screens goes through SceneManager, and pressing a button twice still changes scene once:
 # title to lobby, lobby launch, the pause menu's Main Menu and Restart, and the results' Rematch and Main Menu.
 
+func speed() -> float:
+	return 4.0
+
 # Runs a step, then says whether it went through SceneManager and how many times the scene changed by the
 # time everything settled
 func through_manager(step: Callable) -> Array:

@@ -3,6 +3,9 @@ extends GameSuite
 # rotate left. Once two or more are seated and all ready, the round launches with exactly those seats. Esc
 # asks before quitting. In debug, one pilot can launch against a dummy.
 
+func speed() -> float:
+	return 4.0
+
 func seats() -> Array:
 	return scene().cards.map(func(c): return c.state)
 
