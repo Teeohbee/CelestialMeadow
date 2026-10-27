@@ -1,7 +1,8 @@
 extends GameSuite
 # SceneManager: one screen change at a time behind the curtain. Both scenes are frozen and input is swallowed
 # while it moves, it works from a paused tree and leaves it unpaused, it ignores time scale, and a scene freed
-# behind its back doesn't wedge it.
+# behind its back doesn't wedge it. The curtain's inks sweep in and stay under the ground band, and only the
+# ground slides away to uncover, so the new screen never sees the inks.
 
 # Waits until the curtain has swapped the scene underneath, before it uncovers
 func swapped_from(leaving: Node) -> void:
@@ -106,3 +107,32 @@ func test_a_higher_speed_scale_sweeps_the_curtain_faster() -> void:
 	await settle()
 	SceneManager.speed_scale = 1.0
 	assert_int(Time.get_ticks_msec() - started).is_less(500)
+
+const SCREEN := Vector2(1920, 1080)
+
+func colours(bands: Array) -> Array:
+	return bands.map(func(band): return band.colour)
+
+func test_nothing_is_drawn_when_clear() -> void:
+	assert_array(SceneManager.bands_at(0.0, SCREEN)).is_empty()
+	assert_array(SceneManager.bands_at(2.0, SCREEN)).is_empty()
+
+func test_the_inks_lead_in_while_covering() -> void:
+	var drawn := colours(SceneManager.bands_at(0.4, SCREEN))
+	assert_array(drawn).contains([GameConfig.ENV_INKS[0], GameConfig.ENV_INKS[2]])
+
+func test_the_ground_covers_the_screen_halfway() -> void:
+	var bands: Array = SceneManager.bands_at(1.0, SCREEN)
+	var ground: Dictionary = bands[-1]
+	assert_object(ground.colour).is_equal(GameConfig.GROUND)
+	assert_float(ground.left).is_less_equal(-SceneManager.BAND_SKEW)
+	assert_float(ground.right).is_greater_equal(SCREEN.x + SceneManager.BAND_SKEW)
+
+func test_only_the_ground_uncovers() -> void:
+	for at in [1.05, 1.3, 1.6, 1.95]:
+		assert_array(colours(SceneManager.bands_at(at, SCREEN))).is_equal([GameConfig.GROUND])
+
+func test_the_ground_slides_off_to_the_right() -> void:
+	var early: float = SceneManager.bands_at(1.2, SCREEN)[0].left
+	var late: float = SceneManager.bands_at(1.8, SCREEN)[0].left
+	assert_float(late).is_greater(early)

@@ -1,12 +1,12 @@
 extends CanvasLayer
 
 ## Every screen change goes through here. Bands of the palette's inks sweep
-## across to cover the screen, the scene swaps underneath, and the bands
-## sweep on to uncover it. Both scenes are frozen and nothing can be pressed
+## across with the ground colour close behind, the scene swaps underneath,
+## and the ground alone slides on to uncover it. Both scenes are frozen and nothing can be pressed
 ## while it moves, so a double press changes scene once.
 
-const COVER_TIME: float = 0.45
-const UNCOVER_TIME: float = 0.5
+const COVER_TIME: float = 0.7
+const UNCOVER_TIME: float = 0.6
 
 const BAND_SKEW: float = 260.0
 const BAND_STAGGER: float = 0.18
@@ -14,7 +14,7 @@ const BAND_STAGGER: float = 0.18
 var is_changing_scene: bool = false
 ## How fast the curtain sweeps. Always 1 in the game; tests turn it up
 var speed_scale: float = 1.0
-## 0 = clear, 1 = covered, 2 = clear again; the curtain leaves the way it came
+## 0 = clear, 1 = covered, 2 = clear again
 var progress: float = 0.0:
 	set(value):
 		progress = value
@@ -66,30 +66,33 @@ func tween_progress_to(target: float, seconds: float):
 		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	await tween.finished
 
-## The bands sweep in from the left, the ground last; on the way out the
-## ground leaves first and the inks follow it
+## The bands sweep in from the left, the ground last, and the inks stay
+## under it. Only the ground uncovers, so the new screen never sees them.
 func draw_curtain():
-	if progress <= 0.0 or progress >= 2.0:
-		return
-	var screen = curtain.size
+	for band in bands_at(progress, curtain.size):
+		curtain.draw_colored_polygon(PackedVector2Array([
+			Vector2(band.left, 0), Vector2(band.right + BAND_SKEW, 0),
+			Vector2(band.right, curtain.size.y), Vector2(band.left - BAND_SKEW, curtain.size.y),
+		]), band.colour)
+
+## Each band to draw at this progress, bottom first: its colour and the top
+## of its left and right edges (the bottom sits BAND_SKEW further left)
+func bands_at(at: float, screen: Vector2) -> Array:
+	var bands = []
+	if at <= 0.0 or at >= 2.0:
+		return bands
+	var travel = screen.x + BAND_SKEW * 2.0
+	if at > 1.0:
+		bands.append({"colour": band_colours[-1], "left": -BAND_SKEW + travel * (at - 1.0), "right": screen.x + BAND_SKEW})
+		return bands
 	var count = band_colours.size()
 	var span = 1.0 - BAND_STAGGER * (count - 1)
-	var travel = screen.x + BAND_SKEW * 2.0
 	for i in count:
-		var left = -BAND_SKEW
-		var right = screen.x + BAND_SKEW
-		if progress <= 1.0:
-			var own = clampf((progress - BAND_STAGGER * i) / span, 0.0, 1.0)
-			right = -BAND_SKEW + travel * own
-		else:
-			var own = clampf((progress - 1.0 - BAND_STAGGER * (count - 1 - i)) / span, 0.0, 1.0)
-			left = -BAND_SKEW + travel * own
-		if right - left <= 0.0:
-			continue
-		curtain.draw_colored_polygon(PackedVector2Array([
-			Vector2(left, 0), Vector2(right + BAND_SKEW, 0),
-			Vector2(right, screen.y), Vector2(left - BAND_SKEW, screen.y),
-		]), band_colours[i])
+		var own = clampf((at - BAND_STAGGER * i) / span, 0.0, 1.0)
+		var right = -BAND_SKEW + travel * own
+		if right > -BAND_SKEW:
+			bands.append({"colour": band_colours[i], "left": -BAND_SKEW, "right": right})
+	return bands
 
 func freeze(scene: Node):
 	if scene != null:
