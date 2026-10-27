@@ -1,5 +1,5 @@
 extends GameSuite
-# The splash sting: the game boots to it, the pilots' inks sweep in under a credit, and after a couple of
+# The splash sting: the game boots to it, the pilots' inks sweep in, and after a couple of
 # seconds it hands over to the title card through SceneManager. Any button skips it, once; moving a stick or
 # the mouse doesn't.
 
@@ -14,9 +14,9 @@ func splash() -> Node:
 func test_the_game_boots_to_the_splash() -> void:
 	assert_str(ProjectSettings.get_setting("application/run/main_scene")).is_equal("res://splash.tscn")
 
-func test_it_credits_the_maker() -> void:
+func test_it_has_no_text() -> void:
 	var shown := await splash()
-	assert_str(shown.credit.text).is_equal("A TOBY CLARKE GAME")
+	assert_array(shown.find_children("*", "Label", true, false)).is_empty()
 
 func test_the_inks_sweep_in() -> void:
 	var shown := await splash()
