@@ -1,8 +1,7 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://title.gd" id="1_title"]
 [ext_resource type="PackedScene" path="res://backdrop.tscn" id="2_backdrop"]
-[ext_resource type="Theme" path="res://ui/menu_theme.tres" id="3_theme"]
 [ext_resource type="Script" path="res://art/arena_backdrop.gd" id="4_arena"]
 [ext_resource type="Script" path="res://art/grain.gd" id="5_grain"]
 [ext_resource type="FontFile" path="res://fonts/JosefinSans-Variable.ttf" id="6_josefin"]
@@ -34,7 +33,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme = ExtResource("3_theme")
 script = ExtResource("1_title")
 
 [node name="ArenaBackdrop" type="Node2D" parent="."]

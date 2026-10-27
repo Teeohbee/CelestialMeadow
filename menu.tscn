@@ -1,8 +1,7 @@
-[gd_scene load_steps=9 format=3 uid="uid://bh5j3ywxnw7yk"]
+[gd_scene load_steps=7 format=3 uid="uid://bh5j3ywxnw7yk"]
 
 [ext_resource type="Script" path="res://menu.gd" id="1_menu"]
 [ext_resource type="PackedScene" path="res://backdrop.tscn" id="2_backdrop"]
-[ext_resource type="Theme" path="res://ui/menu_theme.tres" id="8_theme"]
 
 [ext_resource type="Script" path="res://art/arena_backdrop.gd" id="9_backdrop"]
 [ext_resource type="Script" path="res://art/grain.gd" id="10_grain"]
@@ -18,8 +17,6 @@ base_font = ExtResource("11_josefin")
 variation_opentype = {2003265652: 700}
 spacing_glyph = 18
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_none"]
-
 [node name="Menu" type="Control"]
 layout_mode = 3
 anchors_preset = 15
@@ -27,7 +24,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme = ExtResource("8_theme")
 script = ExtResource("1_menu")
 
 [node name="ArenaBackdrop" type="Node2D" parent="."]
