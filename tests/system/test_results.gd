@@ -3,6 +3,9 @@ extends GameSuite
 # buttons for a moment so mashed shoots can't skip it. Then any player rotates to choose and shoots to
 # confirm: Rematch keeps the session's wins, Main Menu goes back to the lobby.
 
+func speed() -> float:
+	return 4.0
+
 # A three-player round where everyone in losers has just died
 func round_over(losers: Array[int]) -> void:
 	await start_round([0, 1, 2])
