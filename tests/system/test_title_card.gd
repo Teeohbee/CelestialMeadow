@@ -1,5 +1,5 @@
 extends GameSuite
-# The title screen: the game boots to it on the arena backdrop, ignores presses until the intro is done, then
+# The title screen: after the splash it sits on the arena backdrop, ignores presses until the intro is done, then
 # any press goes to the lobby, and a player's shoot button takes their seat on the way.
 
 func speed() -> float:
@@ -15,9 +15,6 @@ func asteroids() -> int:
 func ready_title() -> void:
 	await open("res://title.tscn")
 	await seconds(GameConfig.TITLE_INTRO_TIME + 0.2)
-
-func test_the_game_boots_to_the_title_screen() -> void:
-	assert_str(ProjectSettings.get_setting("application/run/main_scene")).is_equal("res://title.tscn")
 
 func test_no_godot_logo_on_boot() -> void:
 	assert_bool(ProjectSettings.get_setting("application/boot_splash/show_image")).is_false()
