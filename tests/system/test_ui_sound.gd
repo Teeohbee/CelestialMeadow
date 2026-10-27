@@ -2,6 +2,9 @@ extends GameSuite
 # UI sounds: each press in the title, lobby and results plays the sound for what it did - confirm, seat,
 # ready, back, focus, a tick a second for the launch countdown - and a press that does nothing is silent.
 
+func speed() -> float:
+	return 4.0
+
 var mark := 0
 
 func before_test() -> void:
