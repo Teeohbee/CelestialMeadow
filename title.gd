@@ -14,6 +14,7 @@ var leaving: bool = false
 @onready var fade: ColorRect = $Fade
 
 func _ready():
+	Music.play_track("menu")
 	prompt.hide()
 	fade.modulate.a = 1.0
 	create_tween().tween_property(fade, "modulate:a", 0.0, FADE_IN_TIME)
@@ -51,5 +52,6 @@ func _input(event):
 
 func leave():
 	leaving = true
+	Sound.play("confirm")
 	prompt.modulate.a = 1.0
 	SceneManager.go_to("res://menu.tscn")

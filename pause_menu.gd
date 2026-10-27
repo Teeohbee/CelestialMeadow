@@ -15,8 +15,14 @@ func _input(event):
 func toggle_pause():
 	visible = !visible
 	get_tree().paused = visible
+	Music.duck(visible)
 	if visible:
 		$Panel/VBoxContainer/ResumeButton.grab_focus()
+
+# Leaving for the lobby or a restart from here mustn't leave the music ducked
+func _exit_tree():
+	if visible:
+		Music.duck(false)
 
 func _on_resume_button_pressed():
 	toggle_pause()
