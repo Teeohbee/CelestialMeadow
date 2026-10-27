@@ -17,6 +17,8 @@ var debug_dummy: bool = OS.is_debug_build()
 var cards: Array = []
 var launch_countdown: float = GameConfig.TITLE_LAUNCH_DELAY
 var launching: bool = false
+## The countdown second last ticked, so each one ticks once
+var ticked_second: int = 0
 
 @onready var seats_row: HBoxContainer = $Seats
 @onready var status: Label = $Status
@@ -54,11 +56,15 @@ func _process(delta):
 	var can_launch = enough and not one_side and ready_count == seated.size()
 
 	if can_launch and not launching:
+		if ceili(launch_countdown) != ticked_second:
+			ticked_second = ceili(launch_countdown)
+			Sound.play("tick")
 		launch_countdown -= delta
 		if launch_countdown <= 0.0:
 			launch(seated)
 	else:
 		launch_countdown = GameConfig.TITLE_LAUNCH_DELAY
+		ticked_second = 0
 
 	if not launching and not quit_confirm.visible:
 		pick_teams()
@@ -113,19 +119,24 @@ func _input(event):
 func advance(card):
 	if card.state == SeatCard.State.EMPTY:
 		card.set_state(SeatCard.State.JOINED)
+		Sound.play("seat")
 	elif card.state == SeatCard.State.JOINED:
 		card.set_state(SeatCard.State.READY)
+		Sound.play("ready")
 
 func back(card):
 	if card.state == SeatCard.State.READY:
 		card.set_state(SeatCard.State.JOINED)
+		Sound.play("back")
 	elif card.state == SeatCard.State.JOINED:
 		GameState.teams[card.seat] = GameState.SOLO
 		card.set_state(SeatCard.State.EMPTY)
+		Sound.play("back")
 
 ## Everyone readied up for the old mode, so they ready again for the new one
 func next_mode():
 	GameState.mode_index = (GameState.mode_index + 1) % GameState.MODES.size()
+	Sound.play("focus")
 	unready_all()
 	show_mode()
 
@@ -143,6 +154,7 @@ func next_team(card):
 	if team >= GameConfig.TEAM_NAMES.size():
 		team = GameState.SOLO
 	GameState.teams[card.seat] = team
+	Sound.play("focus")
 	unready_all()
 	card.show_team()
 
@@ -158,6 +170,7 @@ func show_mode():
 
 func launch(seated: Array[int]):
 	launching = true
+	Sound.play("confirm")
 	var dummy_seats: Array[int] = []
 	if seated.size() == 1:
 		for card in cards:

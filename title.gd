@@ -52,5 +52,6 @@ func _input(event):
 
 func leave():
 	leaving = true
+	Sound.play("confirm")
 	prompt.modulate.a = 1.0
 	SceneManager.go_to("res://menu.tscn")

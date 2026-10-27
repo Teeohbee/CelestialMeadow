@@ -130,11 +130,16 @@ func _input(event):
 				focused.pressed.emit()
 			return
 		if event.is_action_pressed("rotate_left%d" % i):
-			rematch_button.grab_focus()
+			move_focus(rematch_button)
 			return
 		if event.is_action_pressed("rotate_right%d" % i):
-			menu_button.grab_focus()
+			move_focus(menu_button)
 			return
+
+func move_focus(button: Button):
+	if not button.has_focus():
+		button.grab_focus()
+		Sound.play("focus")
 
 func is_player_event(event: InputEvent) -> bool:
 	for i in GameConfig.PLAYER_COLORS.size():
@@ -147,10 +152,12 @@ func _on_rematch_button_pressed():
 	if chosen:
 		return
 	chosen = true
+	Sound.play("confirm")
 	SceneManager.go_to(get_tree().current_scene.scene_file_path)
 
 func _on_menu_button_pressed():
 	if chosen:
 		return
 	chosen = true
+	Sound.play("confirm")
 	SceneManager.go_to("res://menu.tscn")
