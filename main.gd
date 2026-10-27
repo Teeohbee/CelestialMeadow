@@ -21,6 +21,7 @@ var player_configs = [
 ]
 
 func _ready():
+	Music.play_track("round")
 	screen_size = get_viewport().get_visible_rect().size
 	mode = GameState.mode.new()
 	mode.hud = $HUD

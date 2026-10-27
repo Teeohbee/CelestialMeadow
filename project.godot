@@ -26,6 +26,7 @@ boot_splash/show_image=false
 GameState="*res://game_state.gd"
 GameConfig="*res://game_config.gd"
 SceneManager="*res://scene_manager.gd"
+Music="*res://music.gd"
 
 [display]
 

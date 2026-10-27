@@ -26,6 +26,7 @@ var launching: bool = false
 @onready var stay_button: Button = $QuitConfirm/Center/Panel/VBox/Buttons/StayButton
 
 func _ready():
+	Music.stop()
 	for i in SEAT_COUNT:
 		var card = SeatCard.new(i)
 		seats_row.add_child(card)
