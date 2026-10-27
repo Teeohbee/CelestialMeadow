@@ -2,6 +2,9 @@ extends RoundSuite
 # The Grand Tour HUD: team colours stand apart from the pilots' inks and each other, and in a busy time attack
 # round every pilot block is on screen and clear of the clock and team totals.
 
+func speed() -> float:
+	return 4.0
+
 func distance(a: Color, b: Color) -> float:
 	return Vector3(a.r - b.r, a.g - b.g, a.b - b.b).length()
 
