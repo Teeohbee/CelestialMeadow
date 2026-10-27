@@ -226,3 +226,35 @@ func test_launching_crossfades_into_the_round() -> void:
 	await crossfade()
 	assert_int(playing().size()).is_equal(1)
 	assert_object(playing()[0]).is_not_same(menu_player)
+
+# Boot, on a fresh copy of the autoload: the suites run long after the real one booted
+func boot_music() -> Node:
+	var music: Node = load("res://music.gd").new()
+	add_child(music)
+	return music
+
+# Frees a fresh copy, waiting for its composition, and takes its duck effect back off the bus
+func shut_down(music: Node) -> void:
+	var bus := AudioServer.get_bus_index("Music")
+	for i in AudioServer.get_bus_effect_count(bus):
+		if AudioServer.get_bus_effect(bus, i) == music.duck_effect:
+			AudioServer.remove_bus_effect(bus, i)
+			break
+	music.free()
+
+func test_music_is_silent_at_boot() -> void:
+	var music := boot_music()
+	assert_str(music.current_track).is_empty()
+	for player in music.players:
+		assert_bool(player.playing).is_false()
+		assert_float(player.volume_db).is_equal(Music.SILENT_DB)
+	shut_down(music)
+
+func test_composing_doesnt_block_the_main_thread() -> void:
+	var started := Time.get_ticks_msec()
+	var music := boot_music()
+	var took := Time.get_ticks_msec() - started
+	assert_int(music.compose_task).is_not_equal(-1)
+	assert_object(music.tracks.menu.stream).is_null()
+	assert_int(took).is_less(100)
+	shut_down(music)
