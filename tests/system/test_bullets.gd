@@ -2,6 +2,9 @@ extends RoundSuite
 # Bullets belong to the round, so a rematch clears shots in flight, and when sudden death knocks a pilot out
 # their shots go with them.
 
+func speed() -> float:
+	return 4.0
+
 func bullets() -> Array[Node]:
 	return get_tree().get_nodes_in_group("bullets")
 
