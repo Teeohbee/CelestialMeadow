@@ -4,6 +4,9 @@ extends RoundSuite
 
 var deaths: Array = []
 
+func speed() -> float:
+	return 4.0
+
 func watch_deaths() -> void:
 	deaths.clear()
 	for flying in ships():
