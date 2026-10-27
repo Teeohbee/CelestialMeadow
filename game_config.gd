@@ -78,13 +78,11 @@ const SPEED_BAR_COUNT: int = 14
 const SPEED_BAR_ALPHA: float = 0.5
 const GRAIN_STRENGTH: float = 0.22
 
-# Depth: planets fade towards the ground colour so they sit behind the play,
-# and things you can hit cast a flat drop shadow; 0 turns either off
+# Depth: planets fade towards the ground colour so they sit behind the play;
+# 0 turns it off
 const PLANET_HAZE: float = 0.4
 # Plum asteroids are the dimmest thing in play; lift them clear of the planets
 const PLUM_LIFT: float = 0.15
-const DROP_SHADOW: Vector2 = Vector2(8, 12)
-const DROP_SHADOW_ALPHA: float = 0.6
 
 const PLANET_NAMES: Array[String] = [
 	"Ostara", "Verdant", "Halcyon", "Marigold", "Tamsin", "Brisa",
