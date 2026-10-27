@@ -1,6 +1,9 @@
 extends GameSuite
 # The lobby opens on the mode last played, saved when a round launches, not when someone flicks through modes.
 
+func speed() -> float:
+	return 4.0
+
 var menu: Node
 
 # A lobby whose saved mode is Time Attack, with the dummy on so one pilot can launch
