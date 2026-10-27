@@ -58,8 +58,9 @@ func free_spot() -> Vector2:
 			break
 	return spot
 
+## Hazed towards the ground so planets read as far behind the play
 func ink(i: int) -> Color:
-	return GameConfig.ENV_INKS[i]
+	return GameConfig.ENV_INKS[i].lerp(GameConfig.GROUND, GameConfig.PLANET_HAZE)
 
 func _draw():
 	var inks = INKS[design]
