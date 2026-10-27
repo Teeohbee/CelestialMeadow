@@ -49,6 +49,7 @@ curve = SubResource("Curve2D_1lhca")
 stream = ExtResource("5_t5cjv")
 volume_db = -10.0
 autoplay = true
+bus = &"Music"
 
 [node name="SpaceStation" parent="." instance=ExtResource("6_vfkaa")]
 position = Vector2(960, 540)
