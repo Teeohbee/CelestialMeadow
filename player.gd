@@ -130,6 +130,9 @@ func destroy(killer: int = -1):
 	if camera and camera.has_method("shake"):
 		camera.shake(GameConfig.CAMERA_SHAKE_EXPLOSION)
 	
+	rumble(player_number, GameConfig.RUMBLE_DEATH)
+	if killer >= 0 and killer != player_number:
+		rumble(killer, GameConfig.RUMBLE_TICK)
 	if lives != GameConfig.UNLIMITED_LIVES:
 		lives -= 1
 	killed.emit(player_number, killer)
@@ -142,6 +145,13 @@ func destroy(killer: int = -1):
 		queue_free()
 	else:
 		emit_signal("respawn_requested", self)
+
+## Shakes a pilot's pad; a dummy's pad is nobody's, so it stays still
+static func rumble(seat: int, feel: Dictionary):
+	var device = GameState.device_of(seat)
+	if device < 0 or seat in GameState.dummies:
+		return
+	Input.start_joy_vibration(device, feel.weak, feel.strong, feel.seconds)
 
 func _on_timer_timeout():
 	can_shoot = true

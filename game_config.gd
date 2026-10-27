@@ -57,6 +57,10 @@ const TITLE_ASTEROID_SPEED: float = 45.0
 const CAMERA_SHAKE_EXPLOSION: float = 20.0
 const CAMERA_SHAKE_ASTEROID: float = 12.0
 
+# Pad rumble: weak and strong motor strength (0-1) and seconds
+const RUMBLE_DEATH: Dictionary = {"weak": 0.6, "strong": 1.0, "seconds": 0.4}
+const RUMBLE_TICK: Dictionary = {"weak": 0.4, "strong": 0.0, "seconds": 0.08}
+
 # Game Flow Timing
 const END_GAME_CHECK_DELAY: float = 0.5
 const RESULTS_INPUT_LOCK: float = 1.0
