@@ -4,6 +4,7 @@ extends Node
 ## stops the game: it starts from the defaults and says so in the log. Only
 ## settings we know about are read, only of the right type, and numbers are
 ## clamped. Volumes are applied to the Music and Sounds buses as they change.
+## The game launches fullscreen; turning that off gives a maximised window.
 
 signal setting_changed(setting_name: String, new_value: Variant)
 
@@ -47,8 +48,12 @@ func load_from_disk():
 			push_warning("Settings file %s couldn't be read, starting from defaults" % save_file_path)
 		else:
 			copy_known_values(parser.data.get("settings", {}))
-	for setting_name in settings:
+	for setting_name in VOLUME_BUSES:
 		apply(setting_name)
+	# The game launches fullscreen already; only a saved "off" changes that,
+	# so --windowed and the editor's game window are left alone
+	if not settings.fullscreen:
+		apply("fullscreen")
 
 ## Only names we know about, and only values of the same kind as the default
 func copy_known_values(saved: Variant):
@@ -83,3 +88,7 @@ func apply(setting_name: String):
 		var volume = settings[setting_name]
 		AudioServer.set_bus_mute(bus_index, volume == 0)
 		AudioServer.set_bus_volume_db(bus_index, linear_to_db(volume / 10.0))
+	elif setting_name == "fullscreen":
+		var mode = DisplayServer.WINDOW_MODE_FULLSCREEN if settings.fullscreen else DisplayServer.WINDOW_MODE_MAXIMIZED
+		if DisplayServer.window_get_mode() != mode:
+			DisplayServer.window_set_mode(mode)
