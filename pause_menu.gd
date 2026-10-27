@@ -22,9 +22,7 @@ func _on_resume_button_pressed():
 	toggle_pause()
 
 func _on_restart_button_pressed():
-	get_tree().paused = false
-	get_tree().reload_current_scene()
+	SceneManager.go_to(get_tree().current_scene.scene_file_path)
 
 func _on_main_menu_button_pressed():
-	get_tree().paused = false
-	get_tree().change_scene_to_file("res://menu.tscn")
+	SceneManager.go_to("res://menu.tscn")

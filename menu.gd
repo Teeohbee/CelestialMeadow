@@ -39,18 +39,6 @@ func _ready():
 		GameState.join_on_arrival = -1
 	show_mode()
 	quit_confirm.hide()
-	fade_in()
-
-## Arrive from the ground colour, matching the title screen's fade out
-func fade_in():
-	var fade = ColorRect.new()
-	fade.color = GameConfig.GROUND
-	fade.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	fade.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(fade)
-	var tween = create_tween()
-	tween.tween_property(fade, "modulate:a", 0.0, 0.3)
-	tween.tween_callback(fade.queue_free)
 
 func _process(delta):
 	var seated = seated_players()
@@ -176,7 +164,7 @@ func launch(seated: Array[int]):
 				dummy_seats.append(card.seat)
 				break
 	GameState.start_session(seated, dummy_seats)
-	get_tree().change_scene_to_file("res://main.tscn")
+	SceneManager.go_to("res://main.tscn")
 
 func _on_quit_button_pressed():
 	quit_confirm.show()

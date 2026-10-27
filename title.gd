@@ -5,7 +5,6 @@ extends Control
 ## lobby, so the first press isn't wasted.
 
 const FADE_IN_TIME: float = 0.8
-const FADE_OUT_TIME: float = 0.35
 
 var accepting: bool = false
 var leaving: bool = false
@@ -53,7 +52,4 @@ func _input(event):
 func leave():
 	leaving = true
 	prompt.modulate.a = 1.0
-	var out = create_tween()
-	out.tween_property(fade, "modulate:a", 1.0, FADE_OUT_TIME)
-	await out.finished
-	get_tree().change_scene_to_file("res://menu.tscn")
+	SceneManager.go_to("res://menu.tscn")
