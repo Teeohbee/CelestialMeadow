@@ -97,3 +97,12 @@ func test_it_recovers_when_the_new_scene_is_freed_mid_change() -> void:
 	await settle()
 	assert_bool(SceneManager.is_changing_scene).is_false()
 	assert_bool(SceneManager.go_to("res://menu.tscn")).is_true()
+
+func test_a_higher_speed_scale_sweeps_the_curtain_faster() -> void:
+	await open("res://menu.tscn")
+	SceneManager.speed_scale = 4.0
+	var started := Time.get_ticks_msec()
+	SceneManager.go_to("res://title.tscn")
+	await settle()
+	SceneManager.speed_scale = 1.0
+	assert_int(Time.get_ticks_msec() - started).is_less(500)
