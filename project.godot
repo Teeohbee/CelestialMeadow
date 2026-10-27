@@ -29,6 +29,7 @@ GameSettings="*res://game_settings.gd"
 SceneManager="*res://scene_manager.gd"
 Music="*res://music.gd"
 Sound="*res://sound.gd"
+Cursor="*res://cursor.gd"
 
 [display]
 
