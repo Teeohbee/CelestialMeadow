@@ -4,27 +4,6 @@ extends GameSuite
 # Base for suites that play rounds: finding ships, firing a test shot at one, and waiting for ships to leave
 # the arena or come back.
 
-var real_ticks: int
-var real_max_steps: int
-
-# How much faster than real time a suite's rounds run; override to speed one up. Physics ticks go up by the
-# same factor, so every physics step is still 1/60s of game time: more steps, not bigger ones.
-func speed() -> float:
-	return 1.0
-
-func before_test() -> void:
-	super()
-	real_ticks = Engine.physics_ticks_per_second
-	real_max_steps = Engine.max_physics_steps_per_frame
-	Engine.time_scale = speed()
-	Engine.physics_ticks_per_second = roundi(real_ticks * speed())
-	Engine.max_physics_steps_per_frame = roundi(real_max_steps * speed())
-
-func after_test() -> void:
-	await super()
-	Engine.physics_ticks_per_second = real_ticks
-	Engine.max_physics_steps_per_frame = real_max_steps
-
 func ship(number: int) -> Node:
 	for flying in ships():
 		if flying.player_number == number:

@@ -9,6 +9,9 @@ func test_a_test_saves_a_mode_and_leaves_a_change_in_flight() -> void:
 	GameState.players.assign([0, 3])
 	GameState.join_on_arrival = 2
 	get_tree().paused = true
+	Engine.time_scale = 3.0
+	Engine.physics_ticks_per_second = 180
+	SceneManager.speed_scale = 3.0
 	SceneManager.go_to("res://title.tscn")
 	assert_bool(SceneManager.is_changing_scene).is_true()
 
@@ -24,6 +27,11 @@ func test_the_next_test_starts_with_no_screen_and_nothing_moving() -> void:
 	assert_object(scene()).is_null()
 	assert_bool(SceneManager.is_changing_scene).is_false()
 	assert_bool(get_tree().paused).is_false()
+
+func test_the_next_test_runs_at_real_speed() -> void:
+	assert_float(Engine.time_scale).is_equal(1.0)
+	assert_int(Engine.physics_ticks_per_second).is_equal(60)
+	assert_float(SceneManager.speed_scale).is_equal(1.0)
 
 func test_settings_save_to_a_scratch_file_not_the_players() -> void:
 	assert_str(GameSettings.save_file_path).is_equal(scratch_path)
