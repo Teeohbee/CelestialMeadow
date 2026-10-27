@@ -2,6 +2,9 @@ extends GameSuite
 # The title screen: the game boots to it on the arena backdrop, ignores presses until the intro is done, then
 # any press goes to the lobby, and a player's shoot button takes their seat on the way.
 
+func speed() -> float:
+	return 4.0
+
 func seats() -> Array:
 	return scene().cards.map(func(c): return c.state)
 
