@@ -1,8 +1,8 @@
 extends GameSuite
 # SceneManager: one screen change at a time behind the curtain. Both scenes are frozen and input is swallowed
 # while it moves, it works from a paused tree and leaves it unpaused, it ignores time scale, and a scene freed
-# behind its back doesn't wedge it. The curtain's inks sweep in and stay under the ground band, and only the
-# ground slides away to uncover, so the new screen never sees the inks.
+# behind its back doesn't wedge it. The curtain is red, amber and teal as one block of equal stripes, red
+# leading, sweeping straight across; the scene swaps only while the block covers the whole screen.
 
 # Waits until the curtain has swapped the scene underneath, before it uncovers
 func swapped_from(leaving: Node) -> void:
@@ -109,6 +109,7 @@ func test_a_higher_speed_scale_sweeps_the_curtain_faster() -> void:
 	assert_int(Time.get_ticks_msec() - started).is_less(500)
 
 const SCREEN := Vector2(1920, 1080)
+const INKS := [GameConfig.ENV_INKS[0], GameConfig.ENV_INKS[2], GameConfig.ENV_INKS[5]]
 
 func colours(bands: Array) -> Array:
 	return bands.map(func(band): return band.colour)
@@ -117,22 +118,36 @@ func test_nothing_is_drawn_when_clear() -> void:
 	assert_array(SceneManager.bands_at(0.0, SCREEN)).is_empty()
 	assert_array(SceneManager.bands_at(2.0, SCREEN)).is_empty()
 
-func test_the_inks_lead_in_while_covering() -> void:
-	var drawn := colours(SceneManager.bands_at(0.4, SCREEN))
-	assert_array(drawn).contains([GameConfig.ENV_INKS[0], GameConfig.ENV_INKS[2]])
+func test_the_curtain_is_the_three_inks_all_the_way() -> void:
+	for at in [0.2, 0.6, 1.0, 1.4, 1.8]:
+		assert_array(colours(SceneManager.bands_at(at, SCREEN))).is_equal(INKS)
 
-func test_the_ground_covers_the_screen_halfway() -> void:
-	var bands: Array = SceneManager.bands_at(1.0, SCREEN)
-	var ground: Dictionary = bands[-1]
-	assert_object(ground.colour).is_equal(GameConfig.GROUND)
-	assert_float(ground.left).is_less_equal(-SceneManager.BAND_SKEW)
-	assert_float(ground.right).is_greater_equal(SCREEN.x + SceneManager.BAND_SKEW)
+func test_the_stripes_are_equal() -> void:
+	var widths: Array = SceneManager.bands_at(0.7, SCREEN).map(func(band): return band.right - band.left)
+	assert_float(widths[0]).is_equal_approx(widths[1], 0.01)
+	assert_float(widths[1]).is_equal_approx(widths[2], 0.01)
 
-func test_only_the_ground_uncovers() -> void:
-	for at in [1.05, 1.3, 1.6, 1.95]:
-		assert_array(colours(SceneManager.bands_at(at, SCREEN))).is_equal([GameConfig.GROUND])
+func test_red_leads_and_teal_trails() -> void:
+	var bands: Array = SceneManager.bands_at(0.7, SCREEN)
+	assert_float(bands[0].left).is_greater(bands[1].left)
+	assert_float(bands[1].left).is_greater(bands[2].left)
 
-func test_the_ground_slides_off_to_the_right() -> void:
-	var early: float = SceneManager.bands_at(1.2, SCREEN)[0].left
-	var late: float = SceneManager.bands_at(1.8, SCREEN)[0].left
-	assert_float(late).is_greater(early)
+func test_the_screen_is_covered_halfway() -> void:
+	assert_bool(SceneManager.fully_covered(1.0, SCREEN)).is_true()
+	assert_bool(SceneManager.fully_covered(0.5, SCREEN)).is_false()
+	assert_bool(SceneManager.fully_covered(1.5, SCREEN)).is_false()
+
+func test_the_block_keeps_moving_through_the_middle() -> void:
+	var before: float = SceneManager.bands_at(0.98, SCREEN)[2].left
+	var after: float = SceneManager.bands_at(1.02, SCREEN)[2].left
+	assert_float(after).is_greater(before)
+
+func test_the_scene_only_swaps_under_full_cover() -> void:
+	await open("res://menu.tscn")
+	var covered_at_swap := []
+	var check := func(): covered_at_swap.append(SceneManager.fully_covered(SceneManager.progress, SceneManager.curtain.size))
+	get_tree().scene_changed.connect(check)
+	SceneManager.go_to("res://main.tscn")
+	await settle()
+	get_tree().scene_changed.disconnect(check)
+	assert_array(covered_at_swap).is_equal([true])
