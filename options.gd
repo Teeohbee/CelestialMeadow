@@ -20,6 +20,7 @@ const ROWS: Array[Dictionary] = [
 ]
 
 var panel: PanelContainer
+var hint: ButtonPrompt
 var rows: Array[PanelContainer] = []
 var labels: Array[Label] = []
 ## Each row's volume bars, or null
@@ -55,11 +56,10 @@ func _ready():
 		rows.append(make_row(row))
 		box.add_child(rows[-1])
 
-	var hint = Label.new()
-	hint.text = "D-pad to change  -  B to close"
-	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	hint.add_theme_font_size_override("font_size", 24)
-	hint.add_theme_color_override("font_color", Color(GameConfig.CREAM, 0.6))
+	hint = ButtonPrompt.new()
+	hint.font_size = 24
+	hint.ink = Color(GameConfig.CREAM, 0.6)
+	hint.text = "{dpad} to change,  {b} to close"
 	box.add_child(hint)
 	hide()
 

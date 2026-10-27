@@ -1,13 +1,14 @@
 extends PanelContainer
 
 ## One seat on the title screen. Shows the seat's colour and ship, whether
-## it's empty, joined or ready, and the controls that drive it, read from
+## it's empty, joined or ready, and the pad buttons that drive it, read from
 ## the input map so it stays right if bindings change.
 
 enum State { EMPTY, JOINED, READY }
 
-const JOYPAD_BUTTON_NAMES: Dictionary = {0: "A", 1: "B", 2: "X", 3: "Y", 6: "Start", 13: "D-pad Left", 14: "D-pad Right"}
-const JOYPAD_AXIS_NAMES: Dictionary = {4: "LT", 5: "RT"}
+## Pad buttons and triggers as ButtonPrompt tokens
+const JOYPAD_BUTTON_GLYPHS: Dictionary = {0: "a", 1: "b", 2: "x", 3: "y", 4: "view", 6: "menu", 11: "dpad_up", 12: "dpad_down", 13: "dpad_left", 14: "dpad_right"}
+const JOYPAD_AXIS_GLYPHS: Dictionary = {4: "lt", 5: "rt"}
 const ShipIcon = preload("res://art/ship_icon.gd")
 
 var seat: int = 0
@@ -16,8 +17,8 @@ var state: State = State.EMPTY
 var header: Label
 var ship: Control
 var team_label: Label
-var status: Label
-var hint: Label
+var status: ButtonPrompt
+var hint: ButtonPrompt
 
 func _init(seat_number: int):
 	seat = seat_number
@@ -46,11 +47,11 @@ func _ready():
 	team_label = _wrapping_label(24)
 	box.add_child(team_label)
 
-	status = _wrapping_label(30)
+	status = _prompt(30)
 	status.custom_minimum_size.y = 84  # room for two lines, so cards line up
 	box.add_child(status)
-	hint = _wrapping_label(24)
-	hint.add_theme_color_override("font_color", Color(GameConfig.CREAM, 0.6))
+	hint = _prompt(24)
+	hint.ink = Color(GameConfig.CREAM, 0.6)
 	box.add_child(hint)
 
 	set_state(state)
@@ -62,6 +63,12 @@ func _wrapping_label(font_size: int) -> Label:
 	label.custom_minimum_size.x = 230
 	label.add_theme_font_size_override("font_size", font_size)
 	return label
+
+func _prompt(font_size: int) -> ButtonPrompt:
+	var prompt = ButtonPrompt.new()
+	prompt.custom_minimum_size.x = 230
+	prompt.font_size = font_size
+	return prompt
 
 func set_state(new_state: State):
 	var popped = new_state > state
@@ -77,8 +84,8 @@ func set_state(new_state: State):
 			style.border_color = Color(GameConfig.CREAM, 0.2)
 			header.add_theme_color_override("font_color", Color(colour, 0.75))
 			ship.modulate = Color(1, 1, 1, 0.25)
-			status.text = "Press %s to join" % action_label("shoot%d" % seat)
-			status.remove_theme_color_override("font_color")
+			status.ink = GameConfig.CREAM
+			status.text = "Press %s to join" % action_glyph("shoot%d" % seat)
 			hint.text = device_label()
 		State.JOINED:
 			style.bg_color = Color(GameConfig.DEEP, 0.96)
@@ -86,18 +93,18 @@ func set_state(new_state: State):
 			style.border_color = colour
 			header.add_theme_color_override("font_color", colour)
 			ship.modulate = Color.WHITE
-			status.text = "Press %s when ready" % action_label("shoot%d" % seat)
-			status.remove_theme_color_override("font_color")
-			hint.text = "%s to leave" % action_label("rotate_left%d" % seat)
+			status.ink = GameConfig.CREAM
+			status.text = "Press %s when ready" % action_glyph("shoot%d" % seat)
+			hint.text = "%s to leave" % action_glyph("rotate_left%d" % seat)
 		State.READY:
 			style.bg_color = colour.lerp(GameConfig.GROUND, 0.6)
 			style.set_border_width_all(6)
 			style.border_color = colour
 			header.add_theme_color_override("font_color", GameConfig.CREAM)
 			ship.modulate = Color.WHITE
+			status.ink = GameConfig.CREAM
 			status.text = "READY!"
-			status.add_theme_color_override("font_color", GameConfig.CREAM)
-			hint.text = "%s to cancel" % action_label("rotate_left%d" % seat)
+			hint.text = "%s to cancel" % action_glyph("rotate_left%d" % seat)
 	add_theme_stylebox_override("panel", style)
 	show_team()
 	if popped:
@@ -114,31 +121,19 @@ func show_team():
 		team_label.text = "Team %s" % GameConfig.TEAM_NAMES[team]
 		team_label.add_theme_color_override("font_color", GameConfig.TEAM_COLORS[team])
 
-## Every binding for an action, keyboard first, e.g. "Space / A"
-func action_label(action: String) -> String:
-	var keys: Array[String] = []
-	var pads: Array[String] = []
+## The pad button for an action as a prompt token, e.g. "{a}". Keyboard
+## keys still work but aren't shown: the game is played on pads.
+static func action_glyph(action: String) -> String:
 	for event in InputMap.action_get_events(action):
-		if event is InputEventKey:
-			keys.append(OS.get_keycode_string(event.physical_keycode if event.physical_keycode else event.keycode))
-		elif event is InputEventJoypadButton:
-			pads.append(JOYPAD_BUTTON_NAMES.get(event.button_index, "Button %d" % event.button_index))
-		elif event is InputEventJoypadMotion:
-			pads.append(JOYPAD_AXIS_NAMES.get(event.axis, "Stick"))
-	return " / ".join(keys + pads)
+		if event is InputEventJoypadButton and JOYPAD_BUTTON_GLYPHS.has(event.button_index):
+			return "{%s}" % JOYPAD_BUTTON_GLYPHS[event.button_index]
+		if event is InputEventJoypadMotion and JOYPAD_AXIS_GLYPHS.has(event.axis):
+			return "{%s}" % JOYPAD_AXIS_GLYPHS[event.axis]
+	return action
 
-## Which devices drive this seat, e.g. "Keyboard or Pad 1"
+## Which pad drives this seat, e.g. "Pad 1"
 func device_label() -> String:
-	var has_keyboard = false
-	var pad = -1
 	for event in InputMap.action_get_events("shoot%d" % seat):
-		if event is InputEventKey:
-			has_keyboard = true
-		elif event is InputEventJoypadButton and event.device >= 0:
-			pad = event.device
-	var parts: Array[String] = []
-	if has_keyboard:
-		parts.append("Keyboard")
-	if pad >= 0:
-		parts.append("Pad %d" % (pad + 1))
-	return " or ".join(parts)
+		if event is InputEventJoypadButton and event.device >= 0:
+			return "Pad %d" % (event.device + 1)
+	return ""
