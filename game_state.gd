@@ -56,3 +56,19 @@ func members_of(side: int) -> Array[int]:
 
 func record_win(player_number: int):
 	wins[player_number] += 1
+
+## The pad that drives a seat, from its shoot action; -1 if none is bound
+func device_of(seat: int) -> int:
+	for event in InputMap.action_get_events("shoot%d" % seat):
+		if event is InputEventJoypadButton and event.device >= 0:
+			return event.device
+	return -1
+
+## The seat a pad drives, or -1 for the keyboard or a pad with no seat
+func seat_of_device(device: int) -> int:
+	if device < 0:
+		return -1
+	for seat in teams.size():
+		if device_of(seat) == device:
+			return seat
+	return -1

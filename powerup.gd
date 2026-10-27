@@ -55,6 +55,7 @@ func _draw():
 func _on_body_entered(body):
 	if body.is_in_group("players"):
 		apply_powerup(body)
+		body.rumble(body.player_number, GameConfig.RUMBLE_TICK)
 		queue_free()
 
 func apply_powerup(player):
