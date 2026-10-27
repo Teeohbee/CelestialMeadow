@@ -89,3 +89,38 @@ func key(code: Key) -> void:
 	up.pressed = false
 	Input.parse_input_event(up)
 	await get_tree().process_frame
+
+# Waits up to timeout seconds of game time for condition to hold, and says whether it did
+func wait_until(condition: Callable, timeout := 10.0) -> bool:
+	var waited := 0.0
+	while not condition.call():
+		if waited >= timeout:
+			return false
+		await get_tree().process_frame
+		waited += get_process_delta_time()
+	return true
+
+func ships() -> Array[Node]:
+	return get_tree().get_nodes_in_group("players")
+
+# Waits out the countdown until the ships are flying
+func ships_launched() -> bool:
+	return await wait_until(func(): return not ships().is_empty())
+
+# Opens a round straight away with these seats, past its countdown
+func start_round(seats: Array[int], dummies: Array[int] = []) -> Node:
+	GameState.start_session(seats, dummies)
+	var round := await open("res://main.tscn")
+	await ships_launched()
+	return round
+
+func kill(numbers: Array[int]) -> void:
+	for ship in ships():
+		if ship.player_number in numbers:
+			ship.lives = 1
+			ship.destroy()
+
+# Waits for the round's results to show and take input
+func results() -> Node:
+	await wait_until(func(): return scene().has_node("Results") and not scene().get_node("Results").locked)
+	return scene().get_node_or_null("Results")
