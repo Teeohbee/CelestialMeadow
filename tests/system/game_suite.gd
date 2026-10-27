@@ -102,6 +102,19 @@ func press(action: String) -> void:
 	Input.parse_input_event(up)
 	await get_tree().process_frame
 
+# A real pad button, so every action bound to it fires together
+func pad(button: JoyButton, device := 0) -> void:
+	var down := InputEventJoypadButton.new()
+	down.device = device
+	down.button_index = button
+	down.pressed = true
+	Input.parse_input_event(down)
+	await get_tree().process_frame
+	var up: InputEventJoypadButton = down.duplicate()
+	up.pressed = false
+	Input.parse_input_event(up)
+	await get_tree().process_frame
+
 func key(code: Key) -> void:
 	var down := InputEventKey.new()
 	down.keycode = code

@@ -6,19 +6,6 @@ extends GameSuite
 var menu: Node
 var options: Control
 
-# A real pad button, so every action bound to it fires together
-func pad(button: JoyButton, device := 0) -> void:
-	var down := InputEventJoypadButton.new()
-	down.device = device
-	down.button_index = button
-	down.pressed = true
-	Input.parse_input_event(down)
-	await get_tree().process_frame
-	var up: InputEventJoypadButton = down.duplicate()
-	up.pressed = false
-	Input.parse_input_event(up)
-	await get_tree().process_frame
-
 func bus_db(bus_name: String) -> float:
 	return AudioServer.get_bus_volume_db(AudioServer.get_bus_index(bus_name))
 
