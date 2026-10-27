@@ -48,6 +48,8 @@ func _ready():
 	for i in GameState.players:
 		if i not in GameState.dummies:
 			cards[i].set_state(SeatCard.State.JOINED)
+	# The lobby opens on the mode last played, this session or the last
+	GameState.mode_index = GameSettings.get_setting("last_mode")
 	if GameState.join_on_arrival >= 0:
 		cards[GameState.join_on_arrival].set_state(SeatCard.State.JOINED)
 		GameState.join_on_arrival = -1
@@ -217,6 +219,7 @@ func launch(seated: Array[int]):
 				dummy_seats.append(card.seat)
 				break
 	GameState.start_session(seated, dummy_seats)
+	GameSettings.set_setting("last_mode", GameState.mode_index)
 	SceneManager.go_to("res://main.tscn")
 
 func open_options():
