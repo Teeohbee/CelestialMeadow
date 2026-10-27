@@ -5,6 +5,9 @@ extends Node
 var players: Array[int] = []
 # Seats filled by idle dummy ships for solo testing; nobody controls them
 var dummies: Array[int] = []
+# Whether one pilot can launch against a dummy. On in debug builds; the
+# lobby's secret combo toggles it for the session on any build
+var dummy_pilot: bool = OS.is_debug_build()
 var lives_per_player: int = GameConfig.PLAYER_LIVES_DEFAULT
 const MODES: Array[Dictionary] = [
 	{"name": "Last Ship Standing", "blurb": "Three lives each. Last ship flying wins.", "script": preload("res://last_ship_standing.gd")},

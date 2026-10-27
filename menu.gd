@@ -10,9 +10,18 @@ extends Control
 const SeatCard = preload("res://seat_card.gd")
 const SEAT_COUNT: int = 6
 
-## Debug builds let one player launch against an idle dummy ship, so a
-## round can be won and the results screen tested with one controller
-var debug_dummy: bool = OS.is_debug_build()
+## Rotate left, right, left, right on an empty seat's pad toggles the dummy
+## pilot (GameState.dummy_pilot), so one controller can test a round on a
+## release build. Empty seats ignore rotation, so it can't happen by accident.
+const DUMMY_COMBO: Array[String] = ["rotate_left", "rotate_right", "rotate_left", "rotate_right"]
+const DUMMY_COMBO_WINDOW_MS: int = 2000
+const NOTICE_MS: int = 2000
+
+## How far each seat is through the combo, and when it started
+var combo_steps: Array[int] = [0, 0, 0, 0, 0, 0]
+var combo_started_at: Array[int] = [0, 0, 0, 0, 0, 0]
+var notice: String = ""
+var notice_until: int = 0
 
 var cards: Array = []
 var launch_countdown: float = GameConfig.TITLE_LAUNCH_DELAY
@@ -43,7 +52,7 @@ func _ready():
 func _process(delta):
 	var seated = seated_players()
 	var ready_count = cards.filter(func(c): return c.state == SeatCard.State.READY).size()
-	var solo_test = debug_dummy and seated.size() == 1
+	var solo_test = GameState.dummy_pilot and seated.size() == 1
 	var enough = seated.size() >= GameConfig.TITLE_MIN_PLAYERS or solo_test
 	var sides = {}
 	for seat in seated:
@@ -71,9 +80,11 @@ func _process(delta):
 	elif not can_launch:
 		status.text = "%d of %d ready" % [ready_count, seated.size()]
 	elif solo_test:
-		status.text = "Launching in %d against a dummy (debug)" % ceili(launch_countdown)
+		status.text = "Launching in %d against a dummy" % ceili(launch_countdown)
 	else:
 		status.text = "Launching in %d" % ceili(launch_countdown)
+	if Time.get_ticks_msec() < notice_until:
+		status.text = notice
 
 func seated_players() -> Array[int]:
 	var seated: Array[int] = []
@@ -101,13 +112,32 @@ func _input(event):
 			return
 		if event.is_action_pressed("rotate_left%d" % i):
 			get_viewport().set_input_as_handled()
+			if cards[i].state == SeatCard.State.EMPTY:
+				dummy_combo(i, "rotate_left")
 			back(cards[i])
 			return
 		if event.is_action_pressed("rotate_right%d" % i):
 			get_viewport().set_input_as_handled()
-			if cards[i].state != SeatCard.State.EMPTY:
+			if cards[i].state == SeatCard.State.EMPTY:
+				dummy_combo(i, "rotate_right")
+			else:
 				next_mode()
 			return
+
+func dummy_combo(seat: int, step: String):
+	var now = Time.get_ticks_msec()
+	if now - combo_started_at[seat] > DUMMY_COMBO_WINDOW_MS or DUMMY_COMBO[combo_steps[seat]] != step:
+		combo_steps[seat] = 0
+	if DUMMY_COMBO[combo_steps[seat]] != step:
+		return
+	if combo_steps[seat] == 0:
+		combo_started_at[seat] = now
+	combo_steps[seat] += 1
+	if combo_steps[seat] == DUMMY_COMBO.size():
+		combo_steps[seat] = 0
+		GameState.dummy_pilot = not GameState.dummy_pilot
+		notice = "Dummy pilot on" if GameState.dummy_pilot else "Dummy pilot off"
+		notice_until = now + NOTICE_MS
 
 func advance(card):
 	if card.state == SeatCard.State.EMPTY:
