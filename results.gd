@@ -12,30 +12,46 @@ var chosen: bool = false
 @onready var ship: Control = $Center/Panel/Margin/VBox/Ship
 @onready var title: Label = $Center/Panel/Margin/VBox/Title
 @onready var subtitle: Label = $Center/Panel/Margin/VBox/Subtitle
+@onready var heading: Label = $Center/Panel/Margin/VBox/TallyHeading
 @onready var tally: VBoxContainer = $Center/Panel/Margin/VBox/Tally
 @onready var rematch_button: Button = $Center/Panel/Margin/VBox/Buttons/RematchButton
 @onready var menu_button: Button = $Center/Panel/Margin/VBox/Buttons/MenuButton
+
+func _ready():
+	# Poster type: a cream title offset in the winner's ink, like the HUD
+	# banner; the small print is tracked capitals like the pilot labels
+	title.add_theme_font_override("font", Poster.font(700))
+	title.add_theme_color_override("font_color", GameConfig.CREAM)
+	title.add_theme_constant_override("shadow_offset_x", 5)
+	title.add_theme_constant_override("shadow_offset_y", 5)
+	subtitle.add_theme_font_override("font", Poster.font(600, 6))
+	subtitle.add_theme_color_override("font_color", Color(GameConfig.CREAM, 0.8))
+	heading.add_theme_font_override("font", Poster.font(600, 6))
+	heading.add_theme_color_override("font_color", GameConfig.LIGHT)
 
 ## winners is every player credited with the round; empty for a draw.
 ## scores is each player's score this round, if the mode keeps one.
 func show_result(winners: Array[int], scores: Dictionary = {}):
 	var team = GameState.teams[winners[0]] if not winners.is_empty() else GameState.SOLO
-	title.add_theme_font_override("font", Poster.font(700))
 	if team != GameState.SOLO:
 		var colour = GameConfig.TEAM_COLORS[team]
+		# Alpha's cream would vanish against the cream title and hull
+		if colour == GameConfig.CREAM:
+			colour = GameConfig.HUE
 		title.text = "Team %s Wins!" % GameConfig.TEAM_NAMES[team]
-		title.add_theme_color_override("font_color", colour)
+		title.add_theme_color_override("font_shadow_color", colour)
 		subtitle.text = names(winners)
 		ship.ink = colour
 	elif winners.size() == 1:
 		var winner_number = winners[0]
 		var colour = GameConfig.PLAYER_COLORS[winner_number]
 		title.text = "%s Wins!" % GameConfig.PLAYER_COLOR_NAMES[winner_number]
-		title.add_theme_color_override("font_color", colour)
+		title.add_theme_color_override("font_shadow_color", colour)
 		subtitle.text = "Player %d" % (winner_number + 1)
 		ship.ink = colour
 	else:
 		title.text = "Draw!"
+		title.add_theme_color_override("font_shadow_color", GameConfig.HUE)
 		subtitle.text = "Everyone lost"
 		ship.hide()
 	build_tally(winners, scores)
@@ -62,7 +78,8 @@ func build_tally(winners: Array[int], scores: Dictionary):
 		row.add_theme_constant_override("separation", 6)
 		var name_label = Label.new()
 		name_label.text = GameConfig.PLAYER_COLOR_NAMES[i]
-		name_label.custom_minimum_size.x = 110
+		name_label.custom_minimum_size.x = 130
+		name_label.add_theme_font_override("font", Poster.font(600))
 		name_label.add_theme_color_override("font_color", GameConfig.PLAYER_COLORS[i])
 		name_label.add_theme_font_size_override("font_size", 22)
 		row.add_child(name_label)
@@ -71,6 +88,8 @@ func build_tally(winners: Array[int], scores: Dictionary):
 			kills.name = "Kills"
 			kills.text = "%d kill%s" % [scores[i], "" if scores[i] == 1 else "s"]
 			kills.custom_minimum_size.x = 100
+			kills.add_theme_font_override("font", Poster.font(700))
+			kills.add_theme_color_override("font_color", GameConfig.PLAYER_COLORS[i])
 			kills.add_theme_font_size_override("font_size", 22)
 			row.add_child(kills)
 		for w in GameState.wins[i]:
