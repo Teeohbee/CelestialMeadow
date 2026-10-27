@@ -15,7 +15,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 [application]
 
 config/name="Celestial Meadow"
-run/main_scene="res://title.tscn"
+run/main_scene="res://splash.tscn"
 config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://icon.svg"
 boot_splash/bg_color=Color(0.0863, 0.0706, 0.122, 1)

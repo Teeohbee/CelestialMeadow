@@ -45,6 +45,9 @@ const ASTEROID_MAX_SPEED: float = 200.0
 # Time Attack
 const TIME_ATTACK_DURATION: float = 120.0
 
+# Splash sting: how long it shows before handing over to the title
+const SPLASH_TIME: float = 2.0
+
 # Title Screen
 # Presses are ignored this long after launch so the logo can land
 const TITLE_INTRO_TIME: float = 1.2
