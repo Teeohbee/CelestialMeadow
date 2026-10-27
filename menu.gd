@@ -30,11 +30,13 @@ var launching: bool = false
 ## The countdown second last ticked, so each one ticks once
 var ticked_second: int = 0
 var options: Control
+var quit_prompt: ButtonPrompt
+var options_prompt: ButtonPrompt
 
 @onready var seats_row: HBoxContainer = $Seats
-@onready var status: Label = $Status
+@onready var status: ButtonPrompt = $Status
 @onready var mode_label: Label = $ModeLabel
-@onready var mode_blurb: Label = $ModeBlurb
+@onready var mode_blurb: ButtonPrompt = $ModeBlurb
 @onready var quit_confirm: Control = $QuitConfirm
 @onready var stay_button: Button = $QuitConfirm/Center/Panel/VBox/Buttons/StayButton
 
@@ -55,6 +57,8 @@ func _ready():
 		GameState.join_on_arrival = -1
 	show_mode()
 	quit_confirm.hide()
+	quit_prompt = label_button($QuitButton, "%s Quit" % SeatCard.action_glyph("pause"))
+	options_prompt = label_button($OptionsButton, "%s Options" % SeatCard.action_glyph("options"))
 	options = Options.new()
 	options.name = "Options"
 	add_child(options)
@@ -86,7 +90,7 @@ func _process(delta):
 		pick_teams()
 
 	if seated.is_empty():
-		status.text = "Press shoot to take a seat"
+		status.text = "Press %s to take a seat" % SeatCard.action_glyph("shoot0")
 	elif not enough:
 		status.text = "Waiting for another pilot"
 	elif one_side:
@@ -207,7 +211,7 @@ func unready_all():
 func show_mode():
 	var mode = GameState.MODES[GameState.mode_index]
 	mode_label.text = "Mode:  %s" % mode.name
-	mode_blurb.text = "%s  Rotate right to change mode, thrust to pick a team." % mode.blurb
+	mode_blurb.text = "%s  %s to change mode, %s to pick a team." % [mode.blurb, SeatCard.action_glyph("rotate_right0"), SeatCard.action_glyph("thrust0")]
 
 func launch(seated: Array[int]):
 	launching = true
@@ -221,6 +225,20 @@ func launch(seated: Array[int]):
 	GameState.start_session(seated, dummy_seats)
 	GameSettings.set_setting("last_mode", GameState.mode_index)
 	SceneManager.go_to("res://main.tscn")
+
+## A corner button's face: its pad button and what it does
+func label_button(button: Button, prompt_text: String) -> ButtonPrompt:
+	var centre = CenterContainer.new()
+	centre.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	centre.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	button.add_child(centre)
+	var prompt = ButtonPrompt.new()
+	prompt.font_size = 28
+	# The whole width, or the centre box squeezes it onto two lines
+	prompt.custom_minimum_size.x = button.size.x - 16
+	prompt.text = prompt_text
+	centre.add_child(prompt)
+	return prompt
 
 func open_options():
 	get_viewport().gui_release_focus()
