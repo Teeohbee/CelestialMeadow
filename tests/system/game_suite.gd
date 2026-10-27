@@ -111,9 +111,10 @@ func wait_until(condition: Callable, timeout := 10.0) -> bool:
 func ships() -> Array[Node]:
 	return get_tree().get_nodes_in_group("players")
 
-# Waits out the countdown until the ships are flying
+# Waits out the countdown until the ships are flying. They spawn frozen as the round opens, so being there
+# isn't enough.
 func ships_launched() -> bool:
-	return await wait_until(func(): return not ships().is_empty())
+	return await wait_until(func(): return scene().get("game_started") == true and not ships().is_empty())
 
 # Opens a round straight away with these seats, past its countdown
 func start_round(seats: Array[int], dummies: Array[int] = []) -> Node:
