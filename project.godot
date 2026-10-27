@@ -27,6 +27,7 @@ GameState="*res://game_state.gd"
 GameConfig="*res://game_config.gd"
 SceneManager="*res://scene_manager.gd"
 Music="*res://music.gd"
+Sound="*res://sound.gd"
 
 [display]
 
