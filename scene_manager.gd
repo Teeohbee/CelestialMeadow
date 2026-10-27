@@ -93,6 +93,7 @@ func freeze(scene: Node):
 	if scene != null:
 		scene.process_mode = Node.PROCESS_MODE_DISABLED
 
-func unfreeze(scene: Node):
+## Untyped: a freed scene would fail a Node type check before the validity check
+func unfreeze(scene):
 	if is_instance_valid(scene):
 		scene.process_mode = Node.PROCESS_MODE_INHERIT
