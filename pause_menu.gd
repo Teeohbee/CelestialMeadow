@@ -121,12 +121,9 @@ func toggle_pause(seat: int = -1):
 func seat_of(event: InputEvent) -> int:
 	if not event is InputEventJoypadButton:
 		return -1
-	for seat in GameState.players:
-		if seat in GameState.dummies:
-			continue
-		for bound in InputMap.action_get_events("shoot%d" % seat):
-			if bound is InputEventJoypadButton and bound.device == event.device:
-				return seat
+	var seat = GameState.seat_of_device(event.device)
+	if seat in GameState.players and not seat in GameState.dummies:
+		return seat
 	return -1
 
 func wear_ink_of(seat: int):

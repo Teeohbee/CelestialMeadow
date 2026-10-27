@@ -133,7 +133,5 @@ static func action_glyph(action: String) -> String:
 
 ## Which pad drives this seat, e.g. "Pad 1"
 func device_label() -> String:
-	for event in InputMap.action_get_events("shoot%d" % seat):
-		if event is InputEventJoypadButton and event.device >= 0:
-			return "Pad %d" % (event.device + 1)
-	return ""
+	var device = GameState.device_of(seat)
+	return "" if device < 0 else "Pad %d" % (device + 1)
