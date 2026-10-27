@@ -41,10 +41,10 @@ func _ready():
 	quit_confirm.hide()
 	fade_in()
 
-## Arrive from black, matching the title screen's fade out
+## Arrive from the ground colour, matching the title screen's fade out
 func fade_in():
 	var fade = ColorRect.new()
-	fade.color = Color.BLACK
+	fade.color = GameConfig.GROUND
 	fade.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	fade.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(fade)

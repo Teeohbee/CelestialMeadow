@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://dw6t1mq7v7ltb"]
 
 [ext_resource type="Script" path="res://space_station.gd" id="1_tpi0f"]
-[ext_resource type="Texture2D" uid="uid://6to4hoo5jbon" path="res://sprites/station.png" id="1_yn1n7"]
+[ext_resource type="Script" path="res://art/station_art.gd" id="2_art"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_f7t7u"]
 radius = 32.5615
@@ -13,8 +13,8 @@ size = Vector2(20, 54.4472)
 scale = Vector2(1.5, 1.5)
 script = ExtResource("1_tpi0f")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-texture = ExtResource("1_yn1n7")
+[node name="Art" type="Node2D" parent="."]
+script = ExtResource("2_art")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_f7t7u")
