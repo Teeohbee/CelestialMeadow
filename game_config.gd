@@ -96,16 +96,17 @@ const PLAYER_COLORS: Array[Color] = [
 # Player colour names, shown on the results screen
 const PLAYER_COLOR_NAMES: Array[String] = ["Red", "Lime", "Tangerine", "Marigold", "Orchid", "Lagoon"]
 
-# Team ring drawn around each member's ship
+# Team ring drawn around each member's ship, in arcs with gaps between
 const TEAM_RING_RADIUS: float = 34.0
-const TEAM_RING_WIDTH: float = 3.0
-const TEAM_RING_SEGMENTS: int = 32
+const TEAM_RING_WIDTH: float = 4.0
+const TEAM_RING_ARCS: int = 3
+const TEAM_RING_GAP: float = 0.45  # radians between arcs
 
 # Teams, in the order the title screen cycles through them
 const TEAM_NAMES: Array[String] = ["Alpha", "Beta", "Gamma"]
-# Shown as a ring around each member's ship; picked to stand apart from
-# the player colours
-const TEAM_COLORS: Array[Color] = [Color.WHITE, Color(1.0, 0.6, 0.1), Color(0.7, 0.5, 1.0)]
+# Shown as a ring around each member's ship; cream, cornflower and pink,
+# hues no pilot ink uses
+const TEAM_COLORS: Array[Color] = [Color("#F3E7D2"), Color("#5C8EE6"), Color("#FF8FB8")]
 
 # Player Starting Rotation Adjustments (degrees)
 const PLAYER_ROTATION_ADJUSTMENTS: Array[int] = [30, 30, -30, -30, 0, 0]

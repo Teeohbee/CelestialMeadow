@@ -89,22 +89,21 @@ func set_ship_colour():
 	$Ship.ink = GameConfig.PLAYER_COLORS[player_number]
 	$Explosion.ink = GameConfig.PLAYER_COLORS[player_number]
 
-## A ring in the team's colour so teammates can spot each other. It sits on
-## the ship sprite, so it hides and blinks along with it.
+## A ring of arcs in the team's colour so teammates can spot each other,
+## unlike the shield's dashes. It sits on the ship, so it hides and blinks
+## along with it.
 func add_team_ring():
 	var team = GameState.teams[player_number]
 	if team == GameState.SOLO:
 		return
-	var ring = Line2D.new()
+	var ring = Node2D.new()
 	ring.name = "TeamRing"
-	ring.closed = true
-	ring.default_color = GameConfig.TEAM_COLORS[team]
-	# The sprite is scaled; draw in its units so the ring comes out right
-	var scale_factor = 1.0 / $Ship.scale.x
-	ring.width = GameConfig.TEAM_RING_WIDTH * scale_factor
-	for i in GameConfig.TEAM_RING_SEGMENTS:
-		var angle = i * TAU / GameConfig.TEAM_RING_SEGMENTS
-		ring.add_point(Vector2.from_angle(angle) * GameConfig.TEAM_RING_RADIUS * scale_factor)
+	var colour = GameConfig.TEAM_COLORS[team]
+	var arc = TAU / GameConfig.TEAM_RING_ARCS
+	ring.draw.connect(func():
+		for i in GameConfig.TEAM_RING_ARCS:
+			var a = i * arc + GameConfig.TEAM_RING_GAP * 0.5
+			ring.draw_arc(Vector2.ZERO, GameConfig.TEAM_RING_RADIUS, a, a + arc - GameConfig.TEAM_RING_GAP, 24, colour, GameConfig.TEAM_RING_WIDTH, true))
 	$Ship.add_child(ring)
 
 func set_ship_starting_rotation():

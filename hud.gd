@@ -5,6 +5,9 @@ extends CanvasLayer
 ## when lives are unlimited.
 
 const MARGIN: float = 34.0
+const BLOCK_H: float = 56.0
+const NUMERAL_GAP: float = 46.0
+const PILL_STEP: float = 26.0
 ## Where each seat's block sits: x anchor (0 left, 0.5 centre, 1 right), top or bottom
 const SLOTS: Array = [
 	[0.0, true], [1.0, false], [0.0, false], [1.0, true], [0.5, true], [0.5, false],
@@ -25,41 +28,45 @@ func _ready():
 	add_child(canvas)
 	canvas.draw.connect(_draw_hud)
 
-	clock = Label.new()
+	clock = poster_label(52, 700, 4, 4)
 	clock.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
-	clock.position.y = 12
+	clock.position.y = 18
 	clock.grow_horizontal = Control.GROW_DIRECTION_BOTH
-	clock.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	clock.add_theme_font_size_override("font_size", 44)
-	clock.add_theme_constant_override("outline_size", 8)
-	clock.add_theme_color_override("font_outline_color", Color.BLACK)
 	clock.hide()
 	add_child(clock)
 
-	side_scores = Label.new()
+	side_scores = poster_label(24, 600, 6, 0)
 	side_scores.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
-	side_scores.position.y = 64
+	side_scores.position.y = 84
 	side_scores.grow_horizontal = Control.GROW_DIRECTION_BOTH
-	side_scores.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	side_scores.add_theme_font_size_override("font_size", 28)
-	side_scores.add_theme_constant_override("outline_size", 6)
-	side_scores.add_theme_color_override("font_outline_color", Color.BLACK)
+	side_scores.uppercase = true
+	side_scores.add_theme_color_override("font_color", Color(GameConfig.CREAM, 0.85))
 	side_scores.hide()
 	add_child(side_scores)
 
-	banner = Label.new()
+	banner = poster_label(120, 700, 14, 10)
 	banner.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
 	banner.grow_horizontal = Control.GROW_DIRECTION_BOTH
 	banner.grow_vertical = Control.GROW_DIRECTION_BOTH
-	banner.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	banner.add_theme_font_size_override("font_size", 96)
-	banner.add_theme_color_override("font_color", Color(1, 0.35, 0.25))
-	banner.add_theme_constant_override("outline_size", 12)
-	banner.add_theme_color_override("font_outline_color", Color.BLACK)
+	banner.add_theme_color_override("font_shadow_color", GameConfig.ENV_INKS[1])
 	banner.hide()
 	# Finish fading even if the round ends and pauses mid-announcement
 	banner.process_mode = Node.PROCESS_MODE_ALWAYS
 	add_child(banner)
+
+## Cream Josefin type with a flat teal offset, like the title logo; no offset
+## when it's 0
+func poster_label(font_size: int, weight: int, tracking: int, offset: int) -> Label:
+	var label = Label.new()
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.add_theme_font_override("font", Poster.font(weight, tracking))
+	label.add_theme_font_size_override("font_size", font_size)
+	label.add_theme_color_override("font_color", GameConfig.CREAM)
+	if offset > 0:
+		label.add_theme_color_override("font_shadow_color", GameConfig.HUE)
+		label.add_theme_constant_override("shadow_offset_x", offset)
+		label.add_theme_constant_override("shadow_offset_y", offset)
+	return label
 
 func update_lives(player_number: int, remaining: int):
 	lives[player_number] = remaining
@@ -95,7 +102,7 @@ func set_clock(seconds: float):
 		canvas.queue_redraw()
 	var whole = ceili(seconds)
 	clock.text = "%d:%02d" % [whole / 60, whole % 60]
-	clock.modulate = Color(1, 0.4, 0.3) if seconds <= 10 else Color.WHITE
+	clock.add_theme_color_override("font_color", GameConfig.ENV_INKS[1] if seconds <= 10 else GameConfig.CREAM)
 
 ## Big centred announcement that fades after a moment
 func show_banner(text: String):
@@ -110,52 +117,66 @@ func show_banner(text: String):
 	tween.tween_property(banner, "modulate:a", 0.0, 0.6)
 	tween.tween_callback(banner.hide)
 
-## Player 5's corner is top centre, shared with the clock and team totals;
-## keep it below whichever of those are showing
-func top_centre_offset() -> float:
-	var y = 0.0
-	if clock.visible:
-		y += 56.0
-	if side_scores.visible:
-		y += 40.0
-	return y
+## Where pilot i's block sits: left edge, top, width, and whether it's mirrored
+## so the numeral sits nearest the right-hand corner
+func block_layout(i: int) -> Dictionary:
+	var size = canvas.get_viewport_rect().size
+	var slot = SLOTS[i]
+	var label_w = Poster.font(600, 4).get_string_size("PILOT %d" % (i + 1), HORIZONTAL_ALIGNMENT_LEFT, -1, 14).x
+	var w = NUMERAL_GAP + maxf(label_w, row_width(i))
+	var right = slot[0] == 1.0
+	var top = MARGIN if slot[1] else size.y - MARGIN - BLOCK_H
+	var x0 = MARGIN + 12.0
+	if right:
+		x0 = size.x - MARGIN - 12.0 - w
+	elif slot[0] == 0.5:
+		x0 = (size.x - w) * 0.5
+		# Pilot 5 shares the top centre with the clock and team totals; step
+		# aside to the right of them rather than down into the arena
+		if slot[1] and clock.visible:
+			var half = clock.get_minimum_size().x * 0.5
+			if side_scores.visible:
+				half = maxf(half, side_scores.get_minimum_size().x * 0.5)
+			x0 = size.x * 0.5 + half + 40.0
+	return {"x0": x0, "top": top, "w": w, "right": right}
+
+func block_rect(i: int) -> Rect2:
+	var b = block_layout(i)
+	return Rect2(b.x0, b.top, b.w, BLOCK_H)
+
+## Width of the pills plus the kill count beside them
+func row_width(i: int) -> float:
+	var w = PILL_STEP * pill_slots.get(i, 0)
+	if i in scores:
+		if w > 0:
+			w += 8.0
+		w += Poster.font(700).get_string_size(str(scores[i]), HORIZONTAL_ALIGNMENT_LEFT, -1, 30).x
+	return w
 
 func _draw_hud():
-	var size = canvas.get_viewport_rect().size
 	var numeral_font = Poster.font(700)
 	var label_font = Poster.font(600, 4)
 	for i in shown_players():
-		var slot = SLOTS[i]
+		var b = block_layout(i)
 		var ink = GameConfig.PLAYER_COLORS[i]
-		var top = MARGIN if slot[1] else size.y - MARGIN - 56.0
-		if i == 4:
-			top += top_centre_offset()
+		var top = b.top
 		var numeral = str(i + 1)
 		var label = "PILOT %d" % (i + 1)
-		var score = str(scores[i]) if i in scores else ""
-		var slots = pill_slots[i]
 		var numeral_w = numeral_font.get_string_size(numeral, HORIZONTAL_ALIGNMENT_LEFT, -1, 58).x
 		var label_w = label_font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, 14).x
-		var score_w = label_font.get_string_size(score, HORIZONTAL_ALIGNMENT_LEFT, -1, 28).x
-		var pills_w = 26.0 * slots
-		var row_w = pills_w + (score_w + (8.0 if slots > 0 else 0.0) if score else 0.0)
-		var block_w = 46.0 + maxf(label_w, row_w)
-		# Mirror on the right so the numeral always sits nearest the corner
-		var right = slot[0] == 1.0
-		var x0 = MARGIN + 12.0
-		if right:
-			x0 = size.x - MARGIN - 12.0 - block_w
-		elif slot[0] == 0.5:
-			x0 = (size.x - block_w) * 0.5
-		var num_x = x0 + block_w - numeral_w if right else x0
-		var text_x = x0 if right else x0 + 46.0
+		var row_w = row_width(i)
+		# Mirrored blocks run right to left from the inner edge of the numeral
+		var inner = b.x0 + b.w - NUMERAL_GAP if b.right else b.x0 + NUMERAL_GAP
+		var num_x = b.x0 + b.w - numeral_w if b.right else b.x0
 		canvas.draw_string_outline(numeral_font, Vector2(num_x, top + numeral_font.get_ascent(58) - 8), numeral, HORIZONTAL_ALIGNMENT_LEFT, -1, 58, 3, ink)
-		var label_x = x0 + block_w - 46.0 - label_w if right else text_x
+		var label_x = inner - label_w if b.right else inner
 		canvas.draw_string(label_font, Vector2(label_x, top + 8 + label_font.get_ascent(14)), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color(GameConfig.CREAM, 0.8))
-		for n in slots:
-			var px = x0 + block_w - 46.0 - 20.0 - n * 26.0 if right else text_x + n * 26.0
+		for n in pill_slots[i]:
+			var px = inner - 20.0 - n * PILL_STEP if b.right else inner + n * PILL_STEP
 			var colour = ink if n < lives[i] else Color(GameConfig.CREAM, 0.18)
 			Poster.bar(canvas, Vector2(px + 4, top + 36), Vector2(px + 16, top + 36), 8, colour)
-		if score:
-			var sx = x0 + block_w - 46.0 - row_w if right else text_x + row_w - score_w
-			canvas.draw_string(label_font, Vector2(sx, top + 46), score, HORIZONTAL_ALIGNMENT_LEFT, -1, 28, ink)
+		if i in scores:
+			var score = str(scores[i])
+			var score_w = numeral_font.get_string_size(score, HORIZONTAL_ALIGNMENT_LEFT, -1, 30).x
+			var sx = inner - row_w if b.right else inner + row_w - score_w
+			canvas.draw_string(numeral_font, Vector2(sx, top + 48), score, HORIZONTAL_ALIGNMENT_LEFT, -1, 30, ink)
