@@ -5,6 +5,9 @@ extends RoundSuite
 
 const S := GameState.SOLO
 
+func speed() -> float:
+	return 4.0
+
 func card_team(seat: int) -> String:
 	return scene().cards[seat].team_label.text
 
