@@ -1,7 +1,7 @@
 extends GameSuite
 # The pause menu in a round: Start (Menu) on any pad or Esc opens a poster panel over a dim, grainy wash, it
-# pops in, the music ducks and Resume has focus. Start again or Resume carries on. Pausing during the
-# countdown holds it.
+# pops in, the music ducks and Resume has focus. The panel wears the ink of the seat whose pad paused and
+# names them; anyone can resume. Start again or Resume carries on. Pausing during the countdown holds it.
 
 var pause_menu: Control
 
@@ -73,3 +73,42 @@ func test_pausing_during_the_countdown_holds_it() -> void:
 	assert_int(scene().get_node("Countdown").count).is_equal(3)
 	await pad(JOY_BUTTON_START, 0)
 	assert_bool(await ships_launched()).is_true()
+
+func test_the_panel_wears_the_pausing_seats_ink() -> void:
+	await start_round([0, 2])
+	pause_menu = scene().get_node("PauseMenu/UI")
+	await pad(JOY_BUTTON_START, 2)
+	var ink: Color = GameConfig.PLAYER_COLORS[2]
+	assert_object(pause_menu.panel.get_theme_stylebox("panel").border_color).is_equal(ink)
+	assert_object(pause_menu.heading.get_theme_color("font_shadow_color")).is_equal(ink)
+	assert_str(pause_menu.paused_by.text).is_equal("Tangerine paused")
+
+func test_another_pad_can_resume() -> void:
+	await start_round([0, 2])
+	pause_menu = scene().get_node("PauseMenu/UI")
+	await pad(JOY_BUTTON_START, 2)
+	await pad(JOY_BUTTON_START, 0)
+	assert_bool(get_tree().paused).is_false()
+
+func test_a_pad_without_a_seat_pauses_in_cream() -> void:
+	await start_round([0, 1])
+	pause_menu = scene().get_node("PauseMenu/UI")
+	await pad(JOY_BUTTON_START, 4)
+	assert_object(pause_menu.panel.get_theme_stylebox("panel").border_color).is_equal(GameConfig.CREAM)
+	assert_bool(pause_menu.paused_by.visible).is_false()
+
+func test_the_keyboard_pauses_in_cream() -> void:
+	await start_round([0, 1])
+	pause_menu = scene().get_node("PauseMenu/UI")
+	await key(KEY_ESCAPE)
+	assert_bool(get_tree().paused).is_true()
+	assert_object(pause_menu.panel.get_theme_stylebox("panel").border_color).is_equal(GameConfig.CREAM)
+	assert_bool(pause_menu.paused_by.visible).is_false()
+
+func test_the_next_pause_forgets_who_paused_last() -> void:
+	await start_round([0, 2])
+	pause_menu = scene().get_node("PauseMenu/UI")
+	await pad(JOY_BUTTON_START, 2)
+	await pad(JOY_BUTTON_START, 2)
+	await key(KEY_ESCAPE)
+	assert_object(pause_menu.panel.get_theme_stylebox("panel").border_color).is_equal(GameConfig.CREAM)
