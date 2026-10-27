@@ -14,7 +14,7 @@ var leaving: bool = false
 @onready var fade: ColorRect = $Fade
 
 func _ready():
-	Music.stop()
+	Music.play_track("menu")
 	prompt.hide()
 	fade.modulate.a = 1.0
 	create_tween().tween_property(fade, "modulate:a", 0.0, FADE_IN_TIME)
