@@ -1,8 +1,9 @@
 extends Control
 
 ## The first screen: the logo over drifting space and a prompt to press any
-## button. Pressing a player's shoot button also takes their seat in the
-## lobby, so the first press isn't wasted.
+## button, which goes on to the match setup. Pressing a player's shoot button
+## also takes their seat in the lobby, so the first press isn't wasted. B or
+## Menu asks before quitting the game.
 
 const FADE_IN_TIME: float = 0.8
 
@@ -12,9 +13,12 @@ var leaving: bool = false
 @onready var logo: Control = $Logo
 @onready var prompt: Label = $Prompt
 @onready var fade: ColorRect = $Fade
+@onready var quit_confirm: Control = $QuitConfirm
+@onready var stay_button: Button = $QuitConfirm/Center/Panel/VBox/Buttons/StayButton
 
 func _ready():
 	Music.play_track("menu")
+	quit_confirm.hide()
 	prompt.hide()
 	fade.modulate.a = 1.0
 	create_tween().tween_property(fade, "modulate:a", 0.0, FADE_IN_TIME)
@@ -39,10 +43,19 @@ func _ready():
 func _input(event):
 	if event is InputEventMouseMotion or event is InputEventJoypadMotion:
 		return
+	# The dialog's buttons take every other press
+	if quit_confirm.visible:
+		if event.is_action_pressed("ui_cancel"):
+			get_viewport().set_input_as_handled()
+			_on_stay_button_pressed()
+		return
 	if not event.is_pressed() or event.is_echo():
 		return
 	get_viewport().set_input_as_handled()
-	if not accepting or leaving or event.is_action("ui_cancel"):
+	if not accepting or leaving:
+		return
+	if event.is_action("ui_cancel") or event.is_action("pause"):
+		_on_quit_button_pressed()
 		return
 	for i in GameConfig.PLAYER_COLORS.size():
 		if event.is_action("shoot%d" % i):
@@ -54,4 +67,15 @@ func leave():
 	leaving = true
 	Sound.play("confirm")
 	prompt.modulate.a = 1.0
-	SceneManager.go_to("res://menu.tscn")
+	SceneManager.go_to("res://match_setup.tscn")
+
+func _on_quit_button_pressed():
+	quit_confirm.show()
+	stay_button.grab_focus()
+
+func _on_stay_button_pressed():
+	quit_confirm.hide()
+	get_viewport().gui_release_focus()
+
+func _on_confirm_quit_button_pressed():
+	get_tree().quit()

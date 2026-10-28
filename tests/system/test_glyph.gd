@@ -66,15 +66,15 @@ func test_the_mode_blurb_shows_the_d_pad_and_trigger() -> void:
 	await lobby()
 	assert_str(menu.mode_blurb.text).contains("{dpad_right}").contains("{rt}")
 
-func test_the_corners_show_menu_and_view() -> void:
+func test_the_corners_show_b_and_view() -> void:
 	await lobby()
-	assert_str(menu.quit_prompt.text).contains("{menu}")
+	assert_str(menu.back_prompt.text).contains("{b}")
 	assert_str(menu.options_prompt.text).contains("{view}")
 
 func test_each_corner_fits_on_one_line() -> void:
 	await lobby()
 	await frames(1)
-	for corner in [menu.quit_prompt, menu.options_prompt]:
+	for corner in [menu.back_prompt, menu.options_prompt]:
 		var middles: Array = corner.get_children().map(func(piece): return piece.position.y + piece.size.y / 2)
 		assert_float(middles.max() - middles.min()) \
 			.override_failure_message("%s wraps: %s" % [corner.text, middles]).is_less(4.0)

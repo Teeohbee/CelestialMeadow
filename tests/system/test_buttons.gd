@@ -1,7 +1,7 @@
 extends GameSuite
 # Every button on every screen draws with the project theme, and no scene carries its own copy of it.
 
-const SCREENS: Array[String] = ["res://title.tscn", "res://menu.tscn", "res://pause_menu.tscn", "res://results.tscn"]
+const SCREENS: Array[String] = ["res://title.tscn", "res://match_setup.tscn", "res://menu.tscn", "res://pause_menu.tscn", "res://results.tscn"]
 
 func buttons(node: Node) -> Array[Button]:
 	var found: Array[Button] = []

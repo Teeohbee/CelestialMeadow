@@ -1,7 +1,7 @@
 extends GameSuite
 # The lobby: each player takes a seat with their own shoot button, readies with it again and backs out with
-# rotate left. Once two or more are seated and all ready, the round launches with exactly those seats. Esc
-# asks before quitting. In debug, one pilot can launch against a dummy.
+# rotate left. Once two or more are seated and all ready, the round launches with exactly those seats. B goes
+# back to the match setup while every seat is empty. In debug, one pilot can launch against a dummy.
 
 func speed() -> float:
 	return 4.0
@@ -63,23 +63,29 @@ func test_it_counts_ready_players() -> void:
 	await frames(1)
 	assert_str(status()).is_equal("2 of 3 ready")
 
-func test_esc_asks_before_quitting_with_stay_focused() -> void:
-	var menu := await lobby()
-	await press("ui_cancel")
-	assert_bool(menu.quit_confirm.visible).is_true()
-	assert_object(get_viewport().gui_get_focus_owner()).is_same(menu.stay_button)
-
-func test_seats_ignore_input_while_confirming() -> void:
+func test_b_in_an_empty_room_goes_back_to_match_setup() -> void:
 	await lobby()
-	await press("ui_cancel")
-	await press("shoot1")
-	assert_int(seats()[1]).is_equal(0)
+	await pad(JOY_BUTTON_B, 4)
+	await settle()
+	assert_str(scene().name).is_equal("MatchSetup")
 
-func test_cancel_closes_the_quit_confirmation() -> void:
+func test_b_does_nothing_once_anyone_is_seated() -> void:
 	var menu := await lobby()
-	await press("ui_cancel")
-	await press("ui_cancel")
-	assert_bool(menu.quit_confirm.visible).is_false()
+	await press("shoot0")
+	await pad(JOY_BUTTON_B, 4)
+	await settle()
+	assert_object(scene()).is_same(menu)
+
+func test_the_back_corner_does_the_same() -> void:
+	var menu := await lobby()
+	await press("shoot0")
+	menu.get_node("BackButton").pressed.emit()
+	await settle()
+	assert_object(scene()).is_same(menu)
+	await press("rotate_left0")
+	menu.get_node("BackButton").pressed.emit()
+	await settle()
+	assert_str(scene().name).is_equal("MatchSetup")
 
 func test_all_ready_starts_the_launch() -> void:
 	await lobby()

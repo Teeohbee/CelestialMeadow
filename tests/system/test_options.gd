@@ -122,17 +122,17 @@ func test_tab_opens_options() -> void:
 	await press("options")
 	assert_bool(options.visible).is_true()
 
-func test_b_closes_options_without_asking_to_quit() -> void:
+func test_b_closes_options_without_leaving_the_lobby() -> void:
 	await opened()
 	await pad(JOY_BUTTON_B, 5)
 	assert_bool(options.visible).is_false()
-	assert_bool(menu.quit_confirm.visible).is_false()
+	assert_bool(SceneManager.is_changing_scene).is_false()
 
 func test_esc_closes_options_only() -> void:
 	await opened()
 	await press("ui_cancel")
 	assert_bool(options.visible).is_false()
-	assert_bool(menu.quit_confirm.visible).is_false()
+	assert_bool(SceneManager.is_changing_scene).is_false()
 
 func test_view_again_closes_options() -> void:
 	await lobby()

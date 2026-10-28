@@ -1,6 +1,6 @@
 extends GameSuite
 # Every way between screens goes through SceneManager, and pressing a button twice still changes scene once:
-# title to lobby, lobby launch, the pause menu's Main Menu and Restart, and the results' Rematch and Main Menu.
+# title to match setup, lobby launch, the pause menu's Main Menu and Restart, and the results' Rematch and Main Menu.
 
 func speed() -> float:
 	return 4.0
@@ -24,10 +24,16 @@ func round_results() -> Node:
 	kill([1])
 	return await results()
 
-func test_the_title_goes_to_the_lobby_through_scene_manager() -> void:
+func test_the_title_goes_to_match_setup_through_scene_manager() -> void:
 	await open("res://title.tscn")
 	await seconds(GameConfig.TITLE_INTRO_TIME + 0.2)
 	assert_array(await through_manager(func(): await press("shoot2"))).is_equal([true, 1])
+	assert_str(scene().name).is_equal("MatchSetup")
+
+func test_match_setup_goes_to_the_lobby_through_scene_manager() -> void:
+	await open("res://match_setup.tscn")
+	await frames(1)
+	assert_array(await through_manager(func(): await press("ui_accept"))).is_equal([true, 1])
 	assert_str(scene().name).is_equal("Menu")
 
 func test_the_lobby_has_no_hand_rolled_fade() -> void:

@@ -5,8 +5,9 @@ extends Control
 ## The round launches on its own once enough players are seated and all of
 ## them are ready, so nobody has to drive a menu for everyone else. Any
 ## seated player can rotate right to change the mode, and thrusts to pick
-## their team. Any pad's View button opens the options. Unplugging a seated
-## pad empties its seat.
+## their team. Any pad's View button opens the options, and B goes back to
+## the match setup while every seat is empty. Unplugging a seated pad
+## empties its seat.
 
 const SeatCard = preload("res://seat_card.gd")
 const Options = preload("res://options.gd")
@@ -28,18 +29,17 @@ var notice_until: int = 0
 var cards: Array = []
 var launch_countdown: float = GameConfig.TITLE_LAUNCH_DELAY
 var launching: bool = false
+var leaving: bool = false
 ## The countdown second last ticked, so each one ticks once
 var ticked_second: int = 0
 var options: Control
-var quit_prompt: ButtonPrompt
+var back_prompt: ButtonPrompt
 var options_prompt: ButtonPrompt
 
 @onready var seats_row: HBoxContainer = $Seats
 @onready var status: ButtonPrompt = $Status
 @onready var mode_label: Label = $ModeLabel
 @onready var mode_blurb: ButtonPrompt = $ModeBlurb
-@onready var quit_confirm: Control = $QuitConfirm
-@onready var stay_button: Button = $QuitConfirm/Center/Panel/VBox/Buttons/StayButton
 
 func _ready():
 	Music.play_track("menu")
@@ -58,8 +58,7 @@ func _ready():
 		GameState.join_on_arrival = -1
 	show_mode()
 	Input.joy_connection_changed.connect(_on_joy_connection_changed)
-	quit_confirm.hide()
-	quit_prompt = ButtonPrompt.on_button($QuitButton, "%s Quit" % SeatCard.action_glyph("pause"))
+	back_prompt = ButtonPrompt.on_button($BackButton, "%s Back" % SeatCard.action_glyph("ui_cancel"))
 	options_prompt = ButtonPrompt.on_button($OptionsButton, "%s Options" % SeatCard.action_glyph("options"))
 	options = Options.new()
 	options.name = "Options"
@@ -88,7 +87,7 @@ func _process(delta):
 		launch_countdown = GameConfig.TITLE_LAUNCH_DELAY
 		ticked_second = 0
 
-	if not launching and not quit_confirm.visible and not options.visible:
+	if not launching and not options.visible:
 		pick_teams()
 
 	if seated.is_empty():
@@ -114,16 +113,11 @@ func seated_players() -> Array[int]:
 	return seated
 
 func _input(event):
-	if launching:
+	if launching or leaving:
 		return
-	if quit_confirm.visible:
-		if event.is_action_pressed("ui_cancel"):
-			get_viewport().set_input_as_handled()
-			_on_stay_button_pressed()
-		return
-	if event.is_action_pressed("ui_cancel") or event.is_action_pressed("pause"):
+	if event.is_action_pressed("ui_cancel"):
 		get_viewport().set_input_as_handled()
-		_on_quit_button_pressed()
+		back_to_setup()
 		return
 	if event.is_action_pressed("options"):
 		get_viewport().set_input_as_handled()
@@ -242,13 +236,10 @@ func open_options():
 	get_viewport().gui_release_focus()
 	options.open()
 
-func _on_quit_button_pressed():
-	quit_confirm.show()
-	stay_button.grab_focus()
-
-func _on_stay_button_pressed():
-	quit_confirm.hide()
-	get_viewport().gui_release_focus()
-
-func _on_confirm_quit_button_pressed():
-	get_tree().quit()
+## Only from an empty room, so a stray press can't pull everyone out
+func back_to_setup():
+	if launching or leaving or not seated_players().is_empty():
+		return
+	leaving = true
+	Sound.play("back")
+	SceneManager.go_to("res://match_setup.tscn")
