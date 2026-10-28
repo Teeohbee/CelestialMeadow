@@ -42,3 +42,26 @@ func test_a_rematch_keeps_the_lives() -> void:
 	await settle()
 	await ships_launched()
 	assert_int(ship(0).lives).is_equal(1)
+
+func time_attack_round(minutes: int) -> Node:
+	GameSettings.set_setting("time_minutes", minutes)
+	return await new_round([0, 1], [], 1)
+
+func test_the_clock_runs_for_the_time_setting() -> void:
+	var round := await time_attack_round(5)
+	assert_float(round.mode.clock.wait_time).is_equal(300.0)
+	assert_array(["5:00", "4:59"]).contains([scene().get_node("HUD").clock.text])
+
+func test_one_minute_is_a_minute() -> void:
+	var round := await time_attack_round(1)
+	assert_float(round.mode.clock.wait_time).is_equal(60.0)
+	assert_array(["1:00", "0:59"]).contains([scene().get_node("HUD").clock.text])
+
+func test_a_rematch_keeps_the_time() -> void:
+	var round := await time_attack_round(3)
+	round.mode.end_round([1] as Array[int])
+	await results()
+	await press("shoot0")
+	await settle()
+	await ships_launched()
+	assert_float(scene().mode.clock.wait_time).is_equal(180.0)
