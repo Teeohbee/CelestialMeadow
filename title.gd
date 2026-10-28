@@ -3,7 +3,8 @@ extends Control
 ## The first screen: the logo over drifting space and a prompt to press any
 ## button, which goes on to the match setup. Pressing a player's shoot button
 ## also takes their seat in the lobby, so the first press isn't wasted. B or
-## Menu asks before quitting the game.
+## Menu asks before quitting the game. Arriving here ends the session:
+## nobody is seated and the win tally starts again.
 
 const FADE_IN_TIME: float = 0.8
 
@@ -18,6 +19,7 @@ var leaving: bool = false
 
 func _ready():
 	Music.play_track("menu")
+	GameState.end_session()
 	quit_confirm.hide()
 	prompt.hide()
 	fade.modulate.a = 1.0

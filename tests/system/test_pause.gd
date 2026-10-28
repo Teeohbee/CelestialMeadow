@@ -30,6 +30,17 @@ func test_start_again_resumes() -> void:
 	assert_bool(pause_menu.visible).is_false()
 	assert_bool(get_tree().paused).is_false()
 
+func test_the_choices_are_resume_restart_change_match_and_main_menu() -> void:
+	await paused_round()
+	var names := pause_menu.find_children("*", "Button", true, false).map(func(b): return b.text)
+	assert_array(names).is_equal(["Resume", "Restart", "Change match", "Main Menu"])
+
+func test_down_reaches_change_match() -> void:
+	await paused_round()
+	await pad(JOY_BUTTON_DPAD_DOWN, 0)
+	await pad(JOY_BUTTON_DPAD_DOWN, 0)
+	assert_str(get_viewport().gui_get_focus_owner().text).is_equal("Change match")
+
 func test_resume_has_focus_and_resumes() -> void:
 	await paused_round()
 	var resume: Button = pause_menu.resume_button

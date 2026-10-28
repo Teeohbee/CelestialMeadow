@@ -1,6 +1,7 @@
 extends GameSuite
 # Every way between screens goes through SceneManager, and pressing a button twice still changes scene once:
-# title to match setup, lobby launch, the pause menu's Main Menu and Restart, and the results' Rematch and Main Menu.
+# title to match setup, lobby launch, the pause menu's Main Menu, Change match and Restart, and the results'
+# Rematch, Change match and Main Menu.
 
 func speed() -> float:
 	return 4.0
@@ -62,7 +63,16 @@ func test_pausing_main_menu_twice_changes_scene_once() -> void:
 		pause_menu._on_main_menu_button_pressed()
 		pause_menu._on_main_menu_button_pressed())
 	assert_array(routed).is_equal([true, 1])
-	assert_str(scene().name).is_equal("Menu")
+	assert_str(scene().name).is_equal("Title")
+	assert_bool(get_tree().paused).is_false()
+
+func test_pausing_change_match_twice_changes_scene_once() -> void:
+	var pause_menu := await paused_round()
+	var routed := await through_manager(func():
+		pause_menu._on_change_match_button_pressed()
+		pause_menu._on_change_match_button_pressed())
+	assert_array(routed).is_equal([true, 1])
+	assert_str(scene().name).is_equal("MatchSetup")
 	assert_bool(get_tree().paused).is_false()
 
 func test_pausing_restart_twice_reloads_once() -> void:
@@ -106,5 +116,14 @@ func test_main_menu_twice_changes_scene_once_and_unpauses() -> void:
 		shown.menu_button.pressed.emit()
 		shown.menu_button.pressed.emit())
 	assert_array(routed).is_equal([true, 1])
-	assert_str(scene().name).is_equal("Menu")
+	assert_str(scene().name).is_equal("Title")
+	assert_bool(get_tree().paused).is_false()
+
+func test_change_match_twice_changes_scene_once() -> void:
+	var shown := await round_results()
+	var routed := await through_manager(func():
+		shown.change_button.pressed.emit()
+		shown.change_button.pressed.emit())
+	assert_array(routed).is_equal([true, 1])
+	assert_str(scene().name).is_equal("MatchSetup")
 	assert_bool(get_tree().paused).is_false()

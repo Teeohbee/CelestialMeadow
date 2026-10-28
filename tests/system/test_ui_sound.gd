@@ -132,8 +132,9 @@ func test_moving_between_results_buttons_plays_focus() -> void:
 	await press("rotate_left0")
 	assert_array(played()).is_equal(["focus"])
 
-func test_pressing_towards_the_focused_button_is_silent() -> void:
+func test_pressing_past_the_last_button_is_silent() -> void:
 	await round_results()
+	await press("rotate_right0")
 	await press("rotate_right0")
 	played()
 	await press("rotate_right0")

@@ -1,7 +1,8 @@
 extends GameSuite
 # The results screen: it shows when a round ends, records the win, pauses the game behind it and locks its
 # buttons for a moment so mashed shoots can't skip it. Then any player rotates to choose and shoots to
-# confirm: Rematch keeps the session's wins, Main Menu goes back to the lobby.
+# confirm: Rematch keeps the session's wins, Change match goes to the match setup with the crew still seated,
+# and Main Menu goes to the title and starts afresh.
 
 func speed() -> float:
 	return 4.0
@@ -81,17 +82,53 @@ func test_a_draw_shows_results_and_records_no_win() -> void:
 	assert_str(shown().title.text).is_equal("Draw!")
 	assert_array(GameState.wins).is_equal([0, 0, 0, 0, 0, 0])
 
-func test_rotating_moves_focus_to_main_menu() -> void:
+func test_rotating_steps_along_the_buttons() -> void:
 	await round_over([0, 1, 2])
 	var unlocked := await results()
 	await press("rotate_right1")
+	assert_object(get_viewport().gui_get_focus_owner()).is_same(unlocked.change_button)
+	await press("rotate_right2")
 	assert_object(get_viewport().gui_get_focus_owner()).is_same(unlocked.menu_button)
+	await press("rotate_right0")
+	assert_object(get_viewport().gui_get_focus_owner()).is_same(unlocked.menu_button)
+	await press("rotate_left0")
+	assert_object(get_viewport().gui_get_focus_owner()).is_same(unlocked.change_button)
 
-func test_shooting_on_main_menu_goes_to_the_lobby_unpaused() -> void:
-	await round_over([0, 1, 2])
+func test_change_match_goes_to_match_setup_unpaused() -> void:
+	await round_over([1, 2])
 	await results()
 	await press("rotate_right1")
 	await press("shoot1")
 	await settle()
-	assert_str(scene().name).is_equal("Menu")
+	assert_str(scene().name).is_equal("MatchSetup")
 	assert_bool(get_tree().paused).is_false()
+
+func test_after_change_match_the_crew_is_still_seated() -> void:
+	await round_over([1, 2])
+	await results()
+	await press("rotate_right1")
+	await press("shoot1")
+	await settle()
+	await press("ui_accept")
+	await settle()
+	assert_array(scene().cards.map(func(c): return c.state)).is_equal([1, 1, 1, 0, 0, 0])
+
+func test_shooting_on_main_menu_goes_to_the_title_unpaused() -> void:
+	await round_over([0, 1, 2])
+	await results()
+	await press("rotate_right1")
+	await press("rotate_right1")
+	await press("shoot1")
+	await settle()
+	assert_str(scene().name).is_equal("Title")
+	assert_bool(get_tree().paused).is_false()
+
+func test_main_menu_clears_the_seats_and_the_tally() -> void:
+	await round_over([1, 2])
+	await results()
+	await press("rotate_right1")
+	await press("rotate_right1")
+	await press("shoot1")
+	await settle()
+	assert_array(GameState.players).is_empty()
+	assert_array(GameState.wins).is_equal([0, 0, 0, 0, 0, 0])

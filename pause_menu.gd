@@ -1,7 +1,8 @@
 extends Control
 
 ## The pause menu in a round. Start on any pad (or Esc) dims the arena under
-## a grainy wash and pops in a poster panel: Resume, Restart, Main Menu. The
+## a grainy wash and pops in a poster panel: Resume, Restart, Change match
+## (back to the match setup, crew still seated), Main Menu (the title). The
 ## music ducks while it's open. The panel wears the ink of whoever paused
 ## and names them, though anyone can resume. Unplugging a pilot's pad
 ## pauses too, and asks for it back. The results screen pauses the game
@@ -65,6 +66,7 @@ func _ready():
 
 	resume_button = add_button(box, "Resume", toggle_pause)
 	add_button(box, "Restart", _on_restart_button_pressed)
+	add_button(box, "Change match", _on_change_match_button_pressed)
 	add_button(box, "Main Menu", _on_main_menu_button_pressed)
 
 	hint = ButtonPrompt.new()
@@ -190,5 +192,8 @@ func _exit_tree():
 func _on_restart_button_pressed():
 	SceneManager.go_to(get_tree().current_scene.scene_file_path)
 
+func _on_change_match_button_pressed():
+	SceneManager.go_to("res://match_setup.tscn")
+
 func _on_main_menu_button_pressed():
-	SceneManager.go_to("res://menu.tscn")
+	SceneManager.go_to("res://title.tscn")

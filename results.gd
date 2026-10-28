@@ -1,8 +1,9 @@
 extends CanvasLayer
 
 ## End-of-round results: who won, the session's win tally, and a fast route
-## into the next round. Any player's controls can drive it: rotate to choose,
-## shoot to confirm.
+## into the next round: Rematch, Change match (back to the match setup with
+## the crew still seated) or Main Menu (the title, starting afresh). Any
+## player's controls can drive it: rotate to step along, shoot to confirm.
 
 const PIP_SIZE: Vector2 = Vector2(22, 10)
 
@@ -15,7 +16,9 @@ var chosen: bool = false
 @onready var heading: Label = $Center/Panel/Margin/VBox/TallyHeading
 @onready var tally: VBoxContainer = $Center/Panel/Margin/VBox/Tally
 @onready var rematch_button: Button = $Center/Panel/Margin/VBox/Buttons/RematchButton
+@onready var change_button: Button = $Center/Panel/Margin/VBox/Buttons/ChangeButton
 @onready var menu_button: Button = $Center/Panel/Margin/VBox/Buttons/MenuButton
+@onready var buttons: Array[Button] = [rematch_button, change_button, menu_button]
 
 func _ready():
 	# Poster type: a cream title offset in the winner's ink, like the HUD
@@ -114,8 +117,8 @@ func pill(colour: Color) -> Control:
 	return pip
 
 func set_buttons_disabled(disabled: bool):
-	rematch_button.disabled = disabled
-	menu_button.disabled = disabled
+	for button in buttons:
+		button.disabled = disabled
 
 func _input(event):
 	if not is_player_event(event):
@@ -130,13 +133,16 @@ func _input(event):
 				focused.pressed.emit()
 			return
 		if event.is_action_pressed("rotate_left%d" % i):
-			move_focus(rematch_button)
+			step_focus(-1)
 			return
 		if event.is_action_pressed("rotate_right%d" % i):
-			move_focus(menu_button)
+			step_focus(1)
 			return
 
-func move_focus(button: Button):
+## One button along, stopping at the ends
+func step_focus(step: int):
+	var focused = buttons.find(get_viewport().gui_get_focus_owner())
+	var button = buttons[clampi(focused + step, 0, buttons.size() - 1)]
 	if not button.has_focus():
 		button.grab_focus()
 		Sound.play("focus")
@@ -155,9 +161,16 @@ func _on_rematch_button_pressed():
 	Sound.play("confirm")
 	SceneManager.go_to(get_tree().current_scene.scene_file_path)
 
+func _on_change_button_pressed():
+	if chosen:
+		return
+	chosen = true
+	Sound.play("confirm")
+	SceneManager.go_to("res://match_setup.tscn")
+
 func _on_menu_button_pressed():
 	if chosen:
 		return
 	chosen = true
 	Sound.play("confirm")
-	SceneManager.go_to("res://menu.tscn")
+	SceneManager.go_to("res://title.tscn")

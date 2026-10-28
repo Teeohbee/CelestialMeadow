@@ -166,4 +166,6 @@ func test_back_in_the_lobby_only_the_human_is_seated() -> void:
 	await press("rotate_right2")
 	await press("shoot2")
 	await settle()
+	await press("ui_accept")
+	await settle()
 	assert_array(seats()).is_equal([0, 0, 1, 0, 0, 0])
