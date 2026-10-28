@@ -42,6 +42,38 @@ func test_a_missing_file_gives_the_defaults() -> void:
 	assert_int(_settings().get_setting("sound_volume")).is_equal(8)
 	assert_bool(_settings().get_setting("fullscreen")).is_true()
 	assert_int(_settings().get_setting("last_mode")).is_equal(0)
+	assert_bool(_settings().get_setting("teams")).is_false()
+	assert_int(_settings().get_setting("lives")).is_equal(3)
+	assert_int(_settings().get_setting("time_minutes")).is_equal(2)
+
+# Saved before the match settings existed: they load as their defaults, the rest as saved
+func test_an_older_save_without_the_match_settings_gives_their_defaults() -> void:
+	_load({"version": 1, "settings": {"music_volume": 3, "sound_volume": 8, "fullscreen": true, "last_mode": 1}})
+	assert_int(_settings().get_setting("music_volume")).is_equal(3)
+	assert_int(_settings().get_setting("last_mode")).is_equal(1)
+	assert_bool(_settings().get_setting("teams")).is_false()
+	assert_int(_settings().get_setting("lives")).is_equal(3)
+	assert_int(_settings().get_setting("time_minutes")).is_equal(2)
+
+func test_match_settings_load() -> void:
+	_load({"version": 1, "settings": {"teams": true, "lives": 5, "time_minutes": 1}})
+	assert_bool(_settings().get_setting("teams")).is_true()
+	assert_int(_settings().get_setting("lives")).is_equal(5)
+	assert_int(_settings().get_setting("time_minutes")).is_equal(1)
+
+func test_lives_and_time_are_clamped_to_one_to_five() -> void:
+	_load({"version": 1, "settings": {"lives": 9, "time_minutes": 0}})
+	assert_int(_settings().get_setting("lives")).is_equal(5)
+	assert_int(_settings().get_setting("time_minutes")).is_equal(1)
+	_load({"version": 1, "settings": {"lives": -2, "time_minutes": 12}})
+	assert_int(_settings().get_setting("lives")).is_equal(1)
+	assert_int(_settings().get_setting("time_minutes")).is_equal(5)
+
+func test_match_settings_of_the_wrong_type_keep_the_default() -> void:
+	_load({"version": 1, "settings": {"teams": 1, "lives": "lots", "time_minutes": false}})
+	assert_bool(_settings().get_setting("teams")).is_false()
+	assert_int(_settings().get_setting("lives")).is_equal(3)
+	assert_int(_settings().get_setting("time_minutes")).is_equal(2)
 
 func test_loading_never_writes_a_file() -> void:
 	assert_bool(FileAccess.file_exists(scratch_path)).is_false()

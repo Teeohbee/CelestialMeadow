@@ -9,9 +9,12 @@ var dummies: Array[int] = []
 # lobby's secret combo toggles it for the session on any build
 var dummy_pilot: bool = OS.is_debug_build()
 var lives_per_player: int = GameConfig.PLAYER_LIVES_DEFAULT
+# How long a Time Attack round runs
+var time_attack_seconds: float = 120.0
+# Each mode's rules are the GameSettings it uses, shown as rows in the match setup
 const MODES: Array[Dictionary] = [
-	{"name": "Last Ship Standing", "blurb": "Three lives each. Last ship flying wins.", "script": preload("res://last_ship_standing.gd")},
-	{"name": "Time Attack", "blurb": "Two minutes, endless respawns. Most kills wins.", "script": preload("res://time_attack.gd")},
+	{"name": "Last Ship Standing", "blurb": "Last ship flying wins.", "rules": ["lives"], "script": preload("res://last_ship_standing.gd")},
+	{"name": "Time Attack", "blurb": "Endless respawns. Most kills wins.", "rules": ["time_minutes"], "script": preload("res://time_attack.gd")},
 ]
 # The mode chosen on the title screen, an index into MODES
 var mode_index: int = 0
@@ -39,6 +42,8 @@ func start_session(seats: Array[int], dummy_seats: Array[int] = []):
 	for dummy in dummies:
 		teams[dummy] = SOLO
 	mode = MODES[mode_index].script
+	lives_per_player = GameSettings.get_setting("lives")
+	time_attack_seconds = GameSettings.get_setting("time_minutes") * 60.0
 	wins.fill(0)
 
 ## Which side a player fights for: their team, or just themselves

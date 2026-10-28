@@ -14,14 +14,14 @@ func _init():
 func _ready():
 	clock = Timer.new()
 	clock.one_shot = true
-	clock.wait_time = GameConfig.TIME_ATTACK_DURATION
+	clock.wait_time = GameState.time_attack_seconds
 	clock.timeout.connect(_on_time_up)
 	add_child(clock)
 	for player in GameState.players:
 		scores[player] = 0
 		hud.update_score(player, 0)
 	hud.set_team_scores(side_scores())
-	hud.set_clock(GameConfig.TIME_ATTACK_DURATION)
+	hud.set_clock(GameState.time_attack_seconds)
 
 func starting_lives() -> int:
 	return GameConfig.UNLIMITED_LIVES

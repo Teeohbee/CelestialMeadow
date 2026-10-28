@@ -42,9 +42,6 @@ const ASTEROID_SPAWN_COUNT: int = 2
 const ASTEROID_MIN_SPEED: float = 100.0
 const ASTEROID_MAX_SPEED: float = 200.0
 
-# Time Attack
-const TIME_ATTACK_DURATION: float = 120.0
-
 # Splash sting: how long it shows before handing over to the title
 const SPLASH_TIME: float = 2.0
 
