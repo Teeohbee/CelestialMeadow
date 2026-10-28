@@ -85,15 +85,15 @@ func _input(event):
 	var toggles = values[selected] != null
 	if event.is_action_pressed("ui_cancel") or event.is_action_pressed("options") or event.is_action_pressed("pause"):
 		close()
-	elif event.is_action_pressed("ui_up"):
+	elif MenuInput.pressed(event, "ui_up"):
 		select(selected - 1)
-	elif event.is_action_pressed("ui_down"):
+	elif MenuInput.pressed(event, "ui_down"):
 		select(selected + 1)
-	elif toggles and (event.is_action_pressed("ui_left") or event.is_action_pressed("ui_right") or event.is_action_pressed("ui_accept")):
+	elif toggles and (MenuInput.pressed(event, "ui_left") or MenuInput.pressed(event, "ui_right") or event.is_action_pressed("ui_accept")):
 		toggle(row.setting)
-	elif row.setting != "" and event.is_action_pressed("ui_left", true):
+	elif row.setting != "" and MenuInput.pressed(event, "ui_left", true):
 		change_volume(row.setting, -1)
-	elif row.setting != "" and event.is_action_pressed("ui_right", true):
+	elif row.setting != "" and MenuInput.pressed(event, "ui_right", true):
 		change_volume(row.setting, 1)
 	elif row.name == "Back" and event.is_action_pressed("ui_accept"):
 		close()
