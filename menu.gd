@@ -59,8 +59,8 @@ func _ready():
 	show_mode()
 	Input.joy_connection_changed.connect(_on_joy_connection_changed)
 	quit_confirm.hide()
-	quit_prompt = label_button($QuitButton, "%s Quit" % SeatCard.action_glyph("pause"))
-	options_prompt = label_button($OptionsButton, "%s Options" % SeatCard.action_glyph("options"))
+	quit_prompt = ButtonPrompt.on_button($QuitButton, "%s Quit" % SeatCard.action_glyph("pause"))
+	options_prompt = ButtonPrompt.on_button($OptionsButton, "%s Options" % SeatCard.action_glyph("options"))
 	options = Options.new()
 	options.name = "Options"
 	add_child(options)
@@ -237,20 +237,6 @@ func launch(seated: Array[int]):
 	GameState.start_session(seated, dummy_seats)
 	GameSettings.set_setting("last_mode", GameState.mode_index)
 	SceneManager.go_to("res://main.tscn")
-
-## A corner button's face: its pad button and what it does
-func label_button(button: Button, prompt_text: String) -> ButtonPrompt:
-	var centre = CenterContainer.new()
-	centre.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	centre.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	button.add_child(centre)
-	var prompt = ButtonPrompt.new()
-	prompt.font_size = 28
-	# The whole width, or the centre box squeezes it onto two lines
-	prompt.custom_minimum_size.x = button.size.x - 16
-	prompt.text = prompt_text
-	centre.add_child(prompt)
-	return prompt
 
 func open_options():
 	get_viewport().gui_release_focus()
