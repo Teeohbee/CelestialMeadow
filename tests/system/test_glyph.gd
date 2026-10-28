@@ -2,7 +2,7 @@ extends GameSuite
 # Controller glyphs: every ButtonGlyph draws at the size asked for, ButtonPrompt lays words and glyphs out
 # in order from a template, and the lobby prompts with pad glyphs only, never a keyboard key.
 
-const BUTTONS: Array[String] = ["a", "b", "x", "y", "view", "menu", "dpad", "dpad_left", "dpad_right", "dpad_up", "dpad_down", "rt", "lt"]
+const BUTTONS: Array[String] = ["a", "b", "x", "y", "view", "menu", "dpad", "dpad_left", "dpad_right", "dpad_up", "dpad_down", "dpad_up_down", "dpad_left_right", "rt", "lt"]
 
 var menu: Node
 
@@ -36,6 +36,11 @@ func test_every_glyph_is_as_tall_as_asked() -> void:
 		await frames(1)
 		assert_float(glyph.get_combined_minimum_size().y) \
 			.override_failure_message("%s isn't 40 tall" % button).is_equal(40.0)
+
+func test_the_d_pad_can_light_both_arms_of_one_axis() -> void:
+	assert_bool(ButtonGlyph.knows("dpad_up_down")).is_true()
+	assert_bool(ButtonGlyph.knows("dpad_left_right")).is_true()
+	assert_array(ButtonGlyph.DPAD_ARMS["dpad_up_down"]).is_equal([Vector2.UP, Vector2.DOWN])
 
 func test_triggers_are_wider_than_they_are_tall() -> void:
 	var rt: ButtonGlyph = auto_free(ButtonGlyph.new("rt", 40.0))
