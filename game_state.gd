@@ -9,9 +9,10 @@ var dummies: Array[int] = []
 # lobby's secret combo toggles it for the session on any build
 var dummy_pilot: bool = OS.is_debug_build()
 var lives_per_player: int = GameConfig.PLAYER_LIVES_DEFAULT
+# Each mode's rules are the GameSettings it uses, shown as rows in the match setup
 const MODES: Array[Dictionary] = [
-	{"name": "Last Ship Standing", "blurb": "Three lives each. Last ship flying wins.", "script": preload("res://last_ship_standing.gd")},
-	{"name": "Time Attack", "blurb": "Two minutes, endless respawns. Most kills wins.", "script": preload("res://time_attack.gd")},
+	{"name": "Last Ship Standing", "blurb": "Last ship flying wins.", "rules": ["lives"], "script": preload("res://last_ship_standing.gd")},
+	{"name": "Time Attack", "blurb": "Endless respawns. Most kills wins.", "rules": ["time_minutes"], "script": preload("res://time_attack.gd")},
 ]
 # The mode chosen on the title screen, an index into MODES
 var mode_index: int = 0
