@@ -40,6 +40,7 @@ func start_session(seats: Array[int], dummy_seats: Array[int] = []):
 	for dummy in dummies:
 		teams[dummy] = SOLO
 	mode = MODES[mode_index].script
+	lives_per_player = GameSettings.get_setting("lives")
 	wins.fill(0)
 
 ## Which side a player fights for: their team, or just themselves
