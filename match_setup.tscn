@@ -1,0 +1,129 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://match_setup.gd" id="1_setup"]
+[ext_resource type="PackedScene" path="res://backdrop.tscn" id="2_backdrop"]
+[ext_resource type="Script" path="res://art/arena_backdrop.gd" id="3_arena"]
+[ext_resource type="Script" path="res://art/grain.gd" id="4_grain"]
+[ext_resource type="Script" path="res://ui/button_prompt.gd" id="5_prompt"]
+[ext_resource type="FontFile" path="res://fonts/JosefinSans-Variable.ttf" id="6_josefin"]
+
+[sub_resource type="FontVariation" id="FontVariation_kicker"]
+base_font = ExtResource("6_josefin")
+variation_opentype = {2003265652: 600}
+spacing_glyph = 22
+
+[sub_resource type="FontVariation" id="FontVariation_logo"]
+base_font = ExtResource("6_josefin")
+variation_opentype = {2003265652: 700}
+spacing_glyph = 18
+
+[node name="MatchSetup" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_setup")
+
+[node name="ArenaBackdrop" type="Node2D" parent="."]
+script = ExtResource("3_arena")
+
+[node name="Backdrop" parent="." instance=ExtResource("2_backdrop")]
+
+[node name="Logo" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 70.0
+offset_bottom = 400.0
+grow_horizontal = 2
+mouse_filter = 2
+theme_override_constants/separation = -12
+
+[node name="Kicker" type="Label" parent="Logo"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.941, 0.655, 0.282, 1)
+theme_override_fonts/font = SubResource("FontVariation_kicker")
+theme_override_font_sizes/font_size = 52
+text = "CELESTIAL"
+horizontal_alignment = 1
+
+[node name="Title" type="Label" parent="Logo"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.953, 0.906, 0.824, 1)
+theme_override_colors/font_shadow_color = Color(0.153, 0.525, 0.498, 1)
+theme_override_constants/shadow_offset_x = 8
+theme_override_constants/shadow_offset_y = 8
+theme_override_fonts/font = SubResource("FontVariation_logo")
+theme_override_font_sizes/font_size = 168
+text = "MEADOW"
+horizontal_alignment = 1
+
+[node name="List" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 360.0
+offset_bottom = 900.0
+grow_horizontal = 2
+mouse_filter = 2
+theme_override_constants/separation = 16
+
+[node name="Hint" type="HFlowContainer" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 320.0
+offset_top = -96.0
+offset_right = -320.0
+offset_bottom = -36.0
+grow_horizontal = 2
+grow_vertical = 0
+script = ExtResource("5_prompt")
+font_size = 28
+ink = Color(0.953, 0.906, 0.824, 0.8)
+
+[node name="BackButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -230.0
+offset_top = -96.0
+offset_right = -40.0
+offset_bottom = -36.0
+grow_horizontal = 0
+grow_vertical = 0
+focus_mode = 1
+theme_override_font_sizes/font_size = 28
+
+[node name="OptionsButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = -96.0
+offset_right = 290.0
+offset_bottom = -36.0
+grow_vertical = 0
+focus_mode = 1
+theme_override_font_sizes/font_size = 28
+
+[node name="Grain" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("4_grain")
+
+[connection signal="pressed" from="BackButton" to="." method="back"]
+[connection signal="pressed" from="OptionsButton" to="." method="open_options"]
