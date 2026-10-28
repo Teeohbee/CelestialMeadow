@@ -1,6 +1,6 @@
 extends GameSuite
 # The lobby: each player takes a seat with their own shoot button, readies with it again and backs out with
-# rotate left. Once two or more are seated and all ready, the round launches with exactly those seats. B goes
+# their own B: unready, then leave. Once two or more are seated and all ready, the round launches with exactly those seats. B goes
 # back to the match setup while every seat is empty. In debug, one pilot can launch against a dummy.
 
 func speed() -> float:
@@ -37,11 +37,45 @@ func test_shoot_takes_a_seat() -> void:
 	await press("shoot3")
 	assert_int(seats()[3]).is_equal(1)
 
-func test_rotate_left_leaves_the_seat() -> void:
+func test_b_leaves_the_seat() -> void:
+	await lobby()
+	await press("shoot3")
+	await pad(JOY_BUTTON_B, 3)
+	assert_int(seats()[3]).is_equal(0)
+
+func test_b_unreadies_before_leaving() -> void:
+	await lobby()
+	await seat_and_ready(3)
+	await pad(JOY_BUTTON_B, 3)
+	assert_int(seats()[3]).is_equal(1)
+	await pad(JOY_BUTTON_B, 3)
+	assert_int(seats()[3]).is_equal(0)
+
+func test_b_only_backs_out_its_own_seat() -> void:
+	await lobby()
+	await press("shoot1")
+	await press("shoot3")
+	await pad(JOY_BUTTON_B, 3)
+	assert_array(seats()).is_equal([0, 1, 0, 0, 0, 0])
+
+func test_d_pad_left_no_longer_leaves() -> void:
 	await lobby()
 	await press("shoot3")
 	await press("rotate_left3")
-	assert_int(seats()[3]).is_equal(0)
+	assert_int(seats()[3]).is_equal(1)
+
+func test_leaving_the_last_seat_stays_in_the_lobby() -> void:
+	var menu := await lobby()
+	await press("shoot3")
+	await pad(JOY_BUTTON_B, 3)
+	await settle()
+	assert_object(scene()).is_same(menu)
+
+func test_backspace_backs_the_keyboard_seat_out() -> void:
+	await lobby()
+	await press("shoot0")
+	await key(KEY_BACKSPACE)
+	assert_int(seats()[0]).is_equal(0)
 
 func test_a_second_shoot_readies() -> void:
 	await lobby()
@@ -82,7 +116,7 @@ func test_the_back_corner_does_the_same() -> void:
 	menu.get_node("BackButton").pressed.emit()
 	await settle()
 	assert_object(scene()).is_same(menu)
-	await press("rotate_left0")
+	await press("back0")
 	menu.get_node("BackButton").pressed.emit()
 	await settle()
 	assert_str(scene().name).is_equal("MatchSetup")
@@ -98,7 +132,7 @@ func test_unreadying_cancels_the_launch() -> void:
 	await lobby()
 	await seat_and_ready(0)
 	await seat_and_ready(3)
-	await press("rotate_left3")
+	await press("back3")
 	await launch()
 	assert_str(scene().name).is_equal("Menu")
 

@@ -95,7 +95,7 @@ func set_state(new_state: State):
 			ship.modulate = Color.WHITE
 			status.ink = GameConfig.CREAM
 			status.text = "Press %s when ready" % action_glyph("shoot%d" % seat)
-			hint.text = "%s to leave" % action_glyph("rotate_left%d" % seat)
+			hint.text = "%s to leave" % action_glyph("back%d" % seat)
 		State.READY:
 			style.bg_color = colour.lerp(GameConfig.GROUND, 0.6)
 			style.set_border_width_all(6)
@@ -104,7 +104,7 @@ func set_state(new_state: State):
 			ship.modulate = Color.WHITE
 			status.ink = GameConfig.CREAM
 			status.text = "READY!"
-			hint.text = "%s to cancel" % action_glyph("rotate_left%d" % seat)
+			hint.text = "%s to cancel" % action_glyph("back%d" % seat)
 	add_theme_stylebox_override("panel", style)
 	show_team()
 	if popped:

@@ -92,13 +92,13 @@ func test_a_joined_seat_prompts_to_ready_or_leave() -> void:
 	await lobby()
 	menu.advance(menu.cards[0])
 	assert_str(menu.cards[0].status.text).is_equal("Press {a} when ready")
-	assert_str(menu.cards[0].hint.text).is_equal("{dpad_left} to leave")
+	assert_str(menu.cards[0].hint.text).is_equal("{b} to leave")
 
 func test_a_ready_seat_prompts_to_cancel() -> void:
 	await lobby()
 	menu.advance(menu.cards[0])
 	menu.advance(menu.cards[0])
-	assert_str(menu.cards[0].hint.text).is_equal("{dpad_left} to cancel")
+	assert_str(menu.cards[0].hint.text).is_equal("{b} to cancel")
 
 func test_the_options_hint_shows_b() -> void:
 	await lobby()

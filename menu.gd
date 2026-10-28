@@ -2,11 +2,12 @@ extends Control
 
 ## The lobby, "Who's flying?", for the match chosen in the match setup,
 ## shown as chips under the heading. Each player takes a seat by pressing
-## their own shoot button, presses it again when ready, and rotates left to
-## back out. The round launches on its own once enough players are seated
-## and all of them are ready, so nobody has to drive a menu for everyone
-## else. Seated players thrust to pick their team. Any pad's View button opens the options, and B goes back to
-## the match setup while every seat is empty. Unplugging a seated pad
+## their own A, presses it again when ready, and backs out with their own B:
+## unready, then leave. The round launches on its own once enough players
+## are seated and all of them are ready, so nobody has to drive a menu for
+## everyone else. Seated players thrust to pick their team. Any pad's View
+## button opens the options. B on a pad with no seat goes back to the match
+## setup, but only while every seat is empty. Unplugging a seated pad
 ## empties its seat.
 
 const SeatCard = preload("res://seat_card.gd")
@@ -115,6 +116,14 @@ func seated_players() -> Array[int]:
 func _input(event):
 	if launching or leaving:
 		return
+	for i in SEAT_COUNT:
+		if event.is_action_pressed("back%d" % i):
+			get_viewport().set_input_as_handled()
+			if cards[i].state == SeatCard.State.EMPTY:
+				back_to_setup()
+			else:
+				back(cards[i])
+			return
 	if event.is_action_pressed("ui_cancel"):
 		get_viewport().set_input_as_handled()
 		back_to_setup()
@@ -132,7 +141,6 @@ func _input(event):
 			get_viewport().set_input_as_handled()
 			if cards[i].state == SeatCard.State.EMPTY:
 				dummy_combo(i, "rotate_left")
-			back(cards[i])
 			return
 		if event.is_action_pressed("rotate_right%d" % i):
 			get_viewport().set_input_as_handled()

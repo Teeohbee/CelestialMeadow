@@ -66,14 +66,21 @@ func test_unreadying_and_leaving_play_back() -> void:
 	await press("shoot0")
 	await press("shoot0")
 	played()
-	await press("rotate_left0")
+	await press("back0")
 	assert_array(played()).is_equal(["back"])
-	await press("rotate_left0")
+	await press("back0")
 	assert_array(played()).is_equal(["back"])
 
-func test_nothing_to_back_out_of_is_silent() -> void:
+func test_d_pad_left_on_an_empty_seat_is_silent() -> void:
 	await lobby()
 	await press("rotate_left0")
+	assert_array(played()).is_empty()
+
+func test_b_on_a_free_pad_with_someone_seated_is_silent() -> void:
+	await lobby()
+	await press("shoot1")
+	played()
+	await press("back0")
 	assert_array(played()).is_empty()
 
 func test_changing_team_plays_focus() -> void:
