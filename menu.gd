@@ -5,7 +5,9 @@ extends Control
 ## their own A, presses it again when ready, and backs out with their own B:
 ## unready, then leave. The round launches on its own once enough players
 ## are seated and all of them are ready, so nobody has to drive a menu for
-## everyone else. Seated players thrust to pick their team. Any pad's View
+## everyone else. With Teams on in the match setup, every seated pilot is on
+## Alpha, Beta or Gamma, joining the smallest side, and D-pad left/right on
+## their own card changes it; with Teams off everyone is solo. Any pad's View
 ## button opens the options. B on a pad with no seat goes back to the match
 ## setup, but only while every seat is empty. Unplugging a seated pad
 ## empties its seat.
@@ -34,6 +36,8 @@ var leaving: bool = false
 ## The countdown second last ticked, so each one ticks once
 var ticked_second: int = 0
 var options: Control
+## The match's Teams setting
+var teams_on: bool
 var back_prompt: ButtonPrompt
 var options_prompt: ButtonPrompt
 
@@ -44,18 +48,23 @@ var options_prompt: ButtonPrompt
 
 func _ready():
 	Music.play_track("menu")
+	teams_on = GameSettings.get_setting("teams")
 	for i in SEAT_COUNT:
 		var card = SeatCard.new(i)
 		seats_row.add_child(card)
 		cards.append(card)
-	# Coming back from a game, the same crew is still seated
+	# Coming back from a game, the same crew is still seated, on their
+	# sides if the match still has teams
+	for i in GameState.players:
+		if not teams_on or i in GameState.dummies:
+			GameState.teams[i] = GameState.SOLO
 	for i in GameState.players:
 		if i not in GameState.dummies:
-			cards[i].set_state(SeatCard.State.JOINED)
+			take_seat(cards[i])
 	# The match set up last, this session or the last
 	GameState.mode_index = GameSettings.get_setting("last_mode")
-	if GameState.join_on_arrival >= 0:
-		cards[GameState.join_on_arrival].set_state(SeatCard.State.JOINED)
+	if GameState.join_on_arrival >= 0 and cards[GameState.join_on_arrival].state == SeatCard.State.EMPTY:
+		take_seat(cards[GameState.join_on_arrival])
 		GameState.join_on_arrival = -1
 	show_match()
 	Input.joy_connection_changed.connect(_on_joy_connection_changed)
@@ -87,9 +96,6 @@ func _process(delta):
 	else:
 		launch_countdown = GameConfig.TITLE_LAUNCH_DELAY
 		ticked_second = 0
-
-	if not launching and not options.visible:
-		pick_teams()
 
 	if seated.is_empty():
 		status.text = "Press %s to take a seat" % SeatCard.action_glyph("shoot0")
@@ -141,11 +147,15 @@ func _input(event):
 			get_viewport().set_input_as_handled()
 			if cards[i].state == SeatCard.State.EMPTY:
 				dummy_combo(i, "rotate_left")
+			else:
+				change_team(cards[i], -1)
 			return
 		if event.is_action_pressed("rotate_right%d" % i):
 			get_viewport().set_input_as_handled()
 			if cards[i].state == SeatCard.State.EMPTY:
 				dummy_combo(i, "rotate_right")
+			else:
+				change_team(cards[i], 1)
 			return
 
 func dummy_combo(seat: int, step: String):
@@ -165,7 +175,7 @@ func dummy_combo(seat: int, step: String):
 
 func advance(card):
 	if card.state == SeatCard.State.EMPTY:
-		card.set_state(SeatCard.State.JOINED)
+		take_seat(card)
 		Sound.play("seat")
 	elif card.state == SeatCard.State.JOINED:
 		card.set_state(SeatCard.State.READY)
@@ -190,20 +200,30 @@ func _on_joy_connection_changed(device: int, connected: bool):
 	notice = "%s's controller unplugged" % GameConfig.PLAYER_COLOR_NAMES[seat]
 	notice_until = Time.get_ticks_msec() + NOTICE_MS
 
-## Thrust is an analog trigger on pads, which sends a stream of motion
-## events per pull; polling the action catches each pull exactly once
-func pick_teams():
-	for card in cards:
-		if card.state != SeatCard.State.EMPTY and Input.is_action_just_pressed("thrust%d" % card.seat):
-			next_team(card)
+## Seats a pilot, on the smallest side if the match has teams. A returning
+## pilot keeps their side.
+func take_seat(card):
+	if teams_on and GameState.teams[card.seat] == GameState.SOLO:
+		GameState.teams[card.seat] = smallest_team()
+	card.set_state(SeatCard.State.JOINED)
 
-## Solo, then each team in turn, then back to solo. Teams change the
-## match for everyone, so everyone readies again.
-func next_team(card):
-	var team = GameState.teams[card.seat] + 1
-	if team >= GameConfig.TEAM_NAMES.size():
-		team = GameState.SOLO
-	GameState.teams[card.seat] = team
+## The team with fewest seated members, the lowest on a tie
+func smallest_team() -> int:
+	var counts = []
+	counts.resize(GameConfig.TEAM_NAMES.size())
+	counts.fill(0)
+	for card in cards:
+		var team = GameState.teams[card.seat]
+		if card.state != SeatCard.State.EMPTY and team != GameState.SOLO:
+			counts[team] += 1
+	return counts.find(counts.min())
+
+## Round the three teams, no solo. Teams change the match for everyone, so
+## everyone readies again.
+func change_team(card, step: int):
+	if not teams_on or card.state != SeatCard.State.JOINED:
+		return
+	GameState.teams[card.seat] = posmod(GameState.teams[card.seat] + step, GameConfig.TEAM_NAMES.size())
 	Sound.play("focus")
 	unready_all()
 	card.show_team()
@@ -218,7 +238,9 @@ func show_match():
 	var mode = GameState.MODES[GameState.mode_index]
 	for text in match_chips():
 		chips.add_child(chip_for(text))
-	mode_blurb.text = "%s  %s to pick a team." % [mode.blurb, SeatCard.action_glyph("thrust0")]
+	mode_blurb.text = mode.blurb
+	if teams_on:
+		mode_blurb.text += "  {dpad_left_right} to change team."
 
 func match_chips() -> Array[String]:
 	var mode = GameState.MODES[GameState.mode_index]

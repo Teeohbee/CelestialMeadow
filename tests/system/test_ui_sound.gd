@@ -84,15 +84,16 @@ func test_b_on_a_free_pad_with_someone_seated_is_silent() -> void:
 	assert_array(played()).is_empty()
 
 func test_changing_team_plays_focus() -> void:
+	GameSettings.set_setting("teams", true)
 	await lobby()
 	await press("shoot1")
 	played()
-	await press("thrust1")
+	await press("rotate_right1")
 	assert_array(played()).is_equal(["focus"])
-	await press("thrust1")
+	await press("rotate_left1")
 	assert_array(played()).is_equal(["focus"])
 
-func test_rotating_right_on_any_seat_is_silent() -> void:
+func test_rotating_right_with_teams_off_is_silent() -> void:
 	await lobby()
 	await press("shoot1")
 	played()

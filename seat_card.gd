@@ -113,11 +113,8 @@ func set_state(new_state: State):
 
 func show_team():
 	var team = GameState.teams[seat]
-	team_label.visible = state != State.EMPTY
-	if team == GameState.SOLO:
-		team_label.text = "Free for all"
-		team_label.add_theme_color_override("font_color", Color(GameConfig.CREAM, 0.6))
-	else:
+	team_label.visible = state != State.EMPTY and team != GameState.SOLO
+	if team != GameState.SOLO:
 		team_label.text = "Team %s" % GameConfig.TEAM_NAMES[team]
 		team_label.add_theme_color_override("font_color", GameConfig.TEAM_COLORS[team])
 
