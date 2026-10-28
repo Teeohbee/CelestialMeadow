@@ -76,15 +76,6 @@ func test_nothing_to_back_out_of_is_silent() -> void:
 	await press("rotate_left0")
 	assert_array(played()).is_empty()
 
-func test_changing_mode_plays_focus() -> void:
-	await lobby()
-	await press("shoot1")
-	played()
-	await press("rotate_right1")
-	assert_array(played()).is_equal(["focus"])
-	await press("rotate_right1")
-	assert_array(played()).is_equal(["focus"])
-
 func test_changing_team_plays_focus() -> void:
 	await lobby()
 	await press("shoot1")
@@ -94,7 +85,14 @@ func test_changing_team_plays_focus() -> void:
 	await press("thrust1")
 	assert_array(played()).is_equal(["focus"])
 
-func test_an_empty_seat_cant_change_mode_so_its_silent() -> void:
+func test_rotating_right_on_any_seat_is_silent() -> void:
+	await lobby()
+	await press("shoot1")
+	played()
+	await press("rotate_right1")
+	assert_array(played()).is_empty()
+
+func test_an_empty_seats_rotate_is_silent() -> void:
 	await lobby()
 	await press("rotate_right2")
 	assert_array(played()).is_empty()

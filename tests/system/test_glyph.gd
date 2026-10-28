@@ -62,9 +62,9 @@ func test_the_lobby_status_asks_for_a() -> void:
 	await lobby()
 	assert_str(menu.status.text).is_equal("Press {a} to take a seat")
 
-func test_the_mode_blurb_shows_the_d_pad_and_trigger() -> void:
+func test_the_mode_blurb_shows_the_trigger_for_teams() -> void:
 	await lobby()
-	assert_str(menu.mode_blurb.text).contains("{dpad_right}").contains("{rt}")
+	assert_str(menu.mode_blurb.text).contains("{rt}").not_contains("{dpad_right}")
 
 func test_the_corners_show_b_and_view() -> void:
 	await lobby()

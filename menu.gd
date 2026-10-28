@@ -1,11 +1,11 @@
 extends Control
 
-## Title screen and lobby. Each player takes a seat by pressing their own
-## shoot button, presses it again when ready, and rotates left to back out.
-## The round launches on its own once enough players are seated and all of
-## them are ready, so nobody has to drive a menu for everyone else. Any
-## seated player can rotate right to change the mode, and thrusts to pick
-## their team. Any pad's View button opens the options, and B goes back to
+## The lobby, "Who's flying?", for the match chosen in the match setup,
+## shown as chips under the heading. Each player takes a seat by pressing
+## their own shoot button, presses it again when ready, and rotates left to
+## back out. The round launches on its own once enough players are seated
+## and all of them are ready, so nobody has to drive a menu for everyone
+## else. Seated players thrust to pick their team. Any pad's View button opens the options, and B goes back to
 ## the match setup while every seat is empty. Unplugging a seated pad
 ## empties its seat.
 
@@ -38,7 +38,7 @@ var options_prompt: ButtonPrompt
 
 @onready var seats_row: HBoxContainer = $Seats
 @onready var status: ButtonPrompt = $Status
-@onready var mode_label: Label = $ModeLabel
+@onready var chips: HBoxContainer = $Chips
 @onready var mode_blurb: ButtonPrompt = $ModeBlurb
 
 func _ready():
@@ -51,12 +51,12 @@ func _ready():
 	for i in GameState.players:
 		if i not in GameState.dummies:
 			cards[i].set_state(SeatCard.State.JOINED)
-	# The lobby opens on the mode last played, this session or the last
+	# The match set up last, this session or the last
 	GameState.mode_index = GameSettings.get_setting("last_mode")
 	if GameState.join_on_arrival >= 0:
 		cards[GameState.join_on_arrival].set_state(SeatCard.State.JOINED)
 		GameState.join_on_arrival = -1
-	show_mode()
+	show_match()
 	Input.joy_connection_changed.connect(_on_joy_connection_changed)
 	back_prompt = ButtonPrompt.on_button($BackButton, "%s Back" % SeatCard.action_glyph("ui_cancel"))
 	options_prompt = ButtonPrompt.on_button($OptionsButton, "%s Options" % SeatCard.action_glyph("options"))
@@ -138,8 +138,6 @@ func _input(event):
 			get_viewport().set_input_as_handled()
 			if cards[i].state == SeatCard.State.EMPTY:
 				dummy_combo(i, "rotate_right")
-			else:
-				next_mode()
 			return
 
 func dummy_combo(seat: int, step: String):
@@ -184,13 +182,6 @@ func _on_joy_connection_changed(device: int, connected: bool):
 	notice = "%s's controller unplugged" % GameConfig.PLAYER_COLOR_NAMES[seat]
 	notice_until = Time.get_ticks_msec() + NOTICE_MS
 
-## Everyone readied up for the old mode, so they ready again for the new one
-func next_mode():
-	GameState.mode_index = (GameState.mode_index + 1) % GameState.MODES.size()
-	Sound.play("focus")
-	unready_all()
-	show_mode()
-
 ## Thrust is an analog trigger on pads, which sends a stream of motion
 ## events per pull; polling the action catches each pull exactly once
 func pick_teams():
@@ -214,10 +205,43 @@ func unready_all():
 		if card.state == SeatCard.State.READY:
 			card.set_state(SeatCard.State.JOINED)
 
-func show_mode():
+## The match as chips: the mode, teams or not, and the mode's rules
+func show_match():
 	var mode = GameState.MODES[GameState.mode_index]
-	mode_label.text = "Mode:  %s" % mode.name
-	mode_blurb.text = "%s  %s to change mode, %s to pick a team." % [mode.blurb, SeatCard.action_glyph("rotate_right0"), SeatCard.action_glyph("thrust0")]
+	for text in match_chips():
+		chips.add_child(chip_for(text))
+	mode_blurb.text = "%s  %s to pick a team." % [mode.blurb, SeatCard.action_glyph("thrust0")]
+
+func match_chips() -> Array[String]:
+	var mode = GameState.MODES[GameState.mode_index]
+	var texts: Array[String] = [mode.name, "Teams" if GameSettings.get_setting("teams") else "Free for all"]
+	for rule in mode.rules:
+		var value = GameSettings.get_setting(rule)
+		match rule:
+			"lives":
+				texts.append("1 life" if value == 1 else "%d lives" % value)
+			"time_minutes":
+				texts.append("%d min" % value)
+	return texts
+
+func chip_for(text: String) -> PanelContainer:
+	var chip = PanelContainer.new()
+	var style = StyleBoxFlat.new()
+	style.draw_center = false
+	style.set_border_width_all(2)
+	style.border_color = Color(GameConfig.CREAM, 0.45)
+	style.set_corner_radius_all(22)
+	style.content_margin_left = 22
+	style.content_margin_right = 22
+	style.content_margin_top = 6
+	style.content_margin_bottom = 4
+	chip.add_theme_stylebox_override("panel", style)
+	var label = Label.new()
+	label.text = text
+	label.add_theme_font_size_override("font_size", 24)
+	label.add_theme_color_override("font_color", GameConfig.CREAM)
+	chip.add_child(label)
+	return chip
 
 func launch(seated: Array[int]):
 	launching = true
@@ -229,7 +253,6 @@ func launch(seated: Array[int]):
 				dummy_seats.append(card.seat)
 				break
 	GameState.start_session(seated, dummy_seats)
-	GameSettings.set_setting("last_mode", GameState.mode_index)
 	SceneManager.go_to("res://main.tscn")
 
 func open_options():
