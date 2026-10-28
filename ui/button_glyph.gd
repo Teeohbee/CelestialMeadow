@@ -2,13 +2,16 @@ class_name ButtonGlyph
 extends Control
 
 ## A pad button drawn in one ink: Xbox-layout face buttons, View and Menu,
-## the D-pad (optionally with one direction lit) and the triggers. Outlines
+## the D-pad (optionally with one direction, or both ends of one axis, lit)
+## and the triggers. Outlines
 ## rather than fills, so it reads on any card colour.
 
 const FACE_LETTERS: Dictionary = {"a": "A", "b": "B", "x": "X", "y": "Y"}
-const DPAD_DIRECTIONS: Dictionary = {
-	"dpad": Vector2.ZERO, "dpad_left": Vector2.LEFT, "dpad_right": Vector2.RIGHT,
-	"dpad_up": Vector2.UP, "dpad_down": Vector2.DOWN,
+## The D-pad arms each one lights
+const DPAD_ARMS: Dictionary = {
+	"dpad": [], "dpad_left": [Vector2.LEFT], "dpad_right": [Vector2.RIGHT],
+	"dpad_up": [Vector2.UP], "dpad_down": [Vector2.DOWN],
+	"dpad_up_down": [Vector2.UP, Vector2.DOWN], "dpad_left_right": [Vector2.LEFT, Vector2.RIGHT],
 }
 const TRIGGER_LABELS: Dictionary = {"rt": "RT", "lt": "LT"}
 const TRIGGER_WIDTH: float = 1.6  # times the height
@@ -17,7 +20,7 @@ var button: String
 var ink: Color
 
 static func knows(button_name: String) -> bool:
-	return button_name in FACE_LETTERS or button_name in DPAD_DIRECTIONS \
+	return button_name in FACE_LETTERS or button_name in DPAD_ARMS \
 		or button_name in TRIGGER_LABELS or button_name in ["view", "menu"]
 
 func _init(button_name: String = "a", height: float = 32.0, glyph_ink: Color = Color("#F3E7D2")):
@@ -49,8 +52,8 @@ func _draw():
 		for row in [-1, 0, 1]:
 			var y = centre.y + row * s * 0.14
 			Poster.bar(self, Vector2(centre.x - s * 0.2, y), Vector2(centre.x + s * 0.2, y), line * 0.9, ink)
-	elif button in DPAD_DIRECTIONS:
-		draw_dpad(centre, s, line, DPAD_DIRECTIONS[button])
+	elif button in DPAD_ARMS:
+		draw_dpad(centre, s, line, DPAD_ARMS[button])
 	elif button in TRIGGER_LABELS:
 		var style = StyleBoxFlat.new()
 		style.draw_center = false
@@ -62,8 +65,8 @@ func _draw():
 		draw_style_box(style, Rect2(Vector2.ONE * line * 0.5, size - Vector2.ONE * line))
 		letter(TRIGGER_LABELS[button], centre, s * 0.48)
 
-## A plus outline; the pressed direction's arm filled in
-func draw_dpad(centre: Vector2, s: float, line: float, lit: Vector2):
+## A plus outline; the pressed directions' arms filled in
+func draw_dpad(centre: Vector2, s: float, line: float, arms: Array):
 	var half_arm = s * 0.17
 	var reach = s * 0.5 - line * 0.5
 	var outline = PackedVector2Array()
@@ -75,7 +78,7 @@ func draw_dpad(centre: Vector2, s: float, line: float, lit: Vector2):
 		Vector2(-half_arm, -reach)]:
 		outline.append(centre + corner)
 	draw_polyline(outline, ink, line, true)
-	if lit != Vector2.ZERO:
+	for lit in arms:
 		var across = Vector2(lit.y, lit.x).abs() * half_arm
 		var near = centre + lit * half_arm
 		var far = centre + lit * reach

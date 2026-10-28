@@ -1,6 +1,7 @@
 extends GameSuite
 # Every way between screens goes through SceneManager, and pressing a button twice still changes scene once:
-# title to lobby, lobby launch, the pause menu's Main Menu and Restart, and the results' Rematch and Main Menu.
+# title to match setup, lobby launch, the pause menu's Main Menu, Change match and Restart, and the results'
+# Rematch, Change match and Main Menu.
 
 func speed() -> float:
 	return 4.0
@@ -24,10 +25,16 @@ func round_results() -> Node:
 	kill([1])
 	return await results()
 
-func test_the_title_goes_to_the_lobby_through_scene_manager() -> void:
+func test_the_title_goes_to_match_setup_through_scene_manager() -> void:
 	await open("res://title.tscn")
 	await seconds(GameConfig.TITLE_INTRO_TIME + 0.2)
 	assert_array(await through_manager(func(): await press("shoot2"))).is_equal([true, 1])
+	assert_str(scene().name).is_equal("MatchSetup")
+
+func test_match_setup_goes_to_the_lobby_through_scene_manager() -> void:
+	await open("res://match_setup.tscn")
+	await frames(1)
+	assert_array(await through_manager(func(): await press("ui_accept"))).is_equal([true, 1])
 	assert_str(scene().name).is_equal("Menu")
 
 func test_the_lobby_has_no_hand_rolled_fade() -> void:
@@ -56,7 +63,16 @@ func test_pausing_main_menu_twice_changes_scene_once() -> void:
 		pause_menu._on_main_menu_button_pressed()
 		pause_menu._on_main_menu_button_pressed())
 	assert_array(routed).is_equal([true, 1])
-	assert_str(scene().name).is_equal("Menu")
+	assert_str(scene().name).is_equal("Title")
+	assert_bool(get_tree().paused).is_false()
+
+func test_pausing_change_match_twice_changes_scene_once() -> void:
+	var pause_menu := await paused_round()
+	var routed := await through_manager(func():
+		pause_menu._on_change_match_button_pressed()
+		pause_menu._on_change_match_button_pressed())
+	assert_array(routed).is_equal([true, 1])
+	assert_str(scene().name).is_equal("MatchSetup")
 	assert_bool(get_tree().paused).is_false()
 
 func test_pausing_restart_twice_reloads_once() -> void:
@@ -100,5 +116,14 @@ func test_main_menu_twice_changes_scene_once_and_unpauses() -> void:
 		shown.menu_button.pressed.emit()
 		shown.menu_button.pressed.emit())
 	assert_array(routed).is_equal([true, 1])
-	assert_str(scene().name).is_equal("Menu")
+	assert_str(scene().name).is_equal("Title")
+	assert_bool(get_tree().paused).is_false()
+
+func test_change_match_twice_changes_scene_once() -> void:
+	var shown := await round_results()
+	var routed := await through_manager(func():
+		shown.change_button.pressed.emit()
+		shown.change_button.pressed.emit())
+	assert_array(routed).is_equal([true, 1])
+	assert_str(scene().name).is_equal("MatchSetup")
 	assert_bool(get_tree().paused).is_false()

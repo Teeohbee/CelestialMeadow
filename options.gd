@@ -7,9 +7,6 @@ extends Control
 
 signal closed
 
-const ROW_WIDTH: float = 640.0
-const PIP_COUNT: int = 10
-
 ## Each row: its name, and the setting it changes ("" for none). A number
 ## setting is a volume shown as bars; an on/off one toggles.
 const ROWS: Array[Dictionary] = [
@@ -21,10 +18,7 @@ const ROWS: Array[Dictionary] = [
 
 var panel: PanelContainer
 var hint: ButtonPrompt
-var rows: Array[PanelContainer] = []
-var labels: Array[Label] = []
-## Each row's volume bars, or null
-var pip_rows: Array = []
+var rows: Array[OptionRow] = []
 ## Each row's On/Off label, or null
 var values: Array = []
 var selected: int = 0
@@ -63,32 +57,13 @@ func _ready():
 	box.add_child(hint)
 	hide()
 
-func make_row(row: Dictionary) -> PanelContainer:
-	var container = PanelContainer.new()
-	container.name = row.name
-	container.custom_minimum_size.x = ROW_WIDTH
-	var line = HBoxContainer.new()
-	container.add_child(line)
-	var label = Label.new()
-	label.text = row.name
-	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	label.add_theme_font_size_override("font_size", 34)
-	line.add_child(label)
-	labels.append(label)
-	var pips = null
-	var value = null
-	if row.setting != "" and GameSettings.get_setting(row.setting) is bool:
-		value = Label.new()
-		value.add_theme_font_size_override("font_size", 34)
-		line.add_child(value)
-	elif row.setting != "":
-		pips = Control.new()
-		pips.custom_minimum_size = Vector2(300, 40)
-		pips.draw.connect(draw_pips.bind(pips, row.setting, ROWS.find(row)))
-		line.add_child(pips)
-	pip_rows.append(pips)
-	values.append(value)
-	return container
+func make_row(row: Dictionary) -> OptionRow:
+	var kind = OptionRow.Kind.NONE
+	if row.setting != "":
+		kind = OptionRow.Kind.WORDS if GameSettings.get_setting(row.setting) is bool else OptionRow.Kind.BARS
+	var option_row = OptionRow.new(row.name, kind)
+	values.append(option_row.value_label)
+	return option_row
 
 func open():
 	selected = 0
@@ -110,15 +85,15 @@ func _input(event):
 	var toggles = values[selected] != null
 	if event.is_action_pressed("ui_cancel") or event.is_action_pressed("options") or event.is_action_pressed("pause"):
 		close()
-	elif event.is_action_pressed("ui_up"):
+	elif MenuInput.pressed(event, "ui_up"):
 		select(selected - 1)
-	elif event.is_action_pressed("ui_down"):
+	elif MenuInput.pressed(event, "ui_down"):
 		select(selected + 1)
-	elif toggles and (event.is_action_pressed("ui_left") or event.is_action_pressed("ui_right") or event.is_action_pressed("ui_accept")):
+	elif toggles and (MenuInput.pressed(event, "ui_left") or MenuInput.pressed(event, "ui_right") or event.is_action_pressed("ui_accept")):
 		toggle(row.setting)
-	elif row.setting != "" and event.is_action_pressed("ui_left", true):
+	elif row.setting != "" and MenuInput.pressed(event, "ui_left", true):
 		change_volume(row.setting, -1)
-	elif row.setting != "" and event.is_action_pressed("ui_right", true):
+	elif row.setting != "" and MenuInput.pressed(event, "ui_right", true):
 		change_volume(row.setting, 1)
 	elif row.name == "Back" and event.is_action_pressed("ui_accept"):
 		close()
@@ -143,31 +118,8 @@ func toggle(setting: String):
 
 func refresh():
 	for i in rows.size():
-		var is_selected = i == selected
-		var style = StyleBoxFlat.new()
-		style.set_corner_radius_all(32)
-		style.content_margin_left = 28
-		style.content_margin_right = 28
-		style.content_margin_top = 10
-		style.content_margin_bottom = 10
-		style.bg_color = Color(GameConfig.MID, 0.95) if is_selected else Color(GameConfig.DEEP, 0.92)
-		style.set_border_width_all(4 if is_selected else 2)
-		style.border_color = GameConfig.LIGHT if is_selected else Color(GameConfig.CREAM, 0.35)
-		rows[i].add_theme_stylebox_override("panel", style)
-		labels[i].add_theme_color_override("font_color", GameConfig.LIGHT if is_selected else GameConfig.CREAM)
-		if pip_rows[i]:
-			pip_rows[i].queue_redraw()
-		if values[i]:
-			values[i].text = "On" if GameSettings.get_setting(ROWS[i].setting) else "Off"
-			values[i].add_theme_color_override("font_color", GameConfig.LIGHT if is_selected else GameConfig.CREAM)
-
-## The volume as a row of flat bars, lit up to the level
-func draw_pips(pips: Control, setting: String, row_index: int):
-	var volume = GameSettings.get_setting(setting)
-	var lit = GameConfig.LIGHT if row_index == selected else GameConfig.CREAM
-	var gap = pips.size.x / PIP_COUNT
-	for i in PIP_COUNT:
-		var x = gap * (i + 0.5)
-		var height = 14.0 + 18.0 * i / (PIP_COUNT - 1)
-		var colour = lit if i < volume else Color(GameConfig.CREAM, 0.18)
-		Poster.bar(pips, Vector2(x, pips.size.y * 0.5 + height * 0.5), Vector2(x, pips.size.y * 0.5 - height * 0.5), 10.0, colour)
+		rows[i].set_selected(i == selected)
+		var setting = ROWS[i].setting
+		if setting != "":
+			var value = GameSettings.get_setting(setting)
+			rows[i].show_value(("On" if value else "Off") if value is bool else value)

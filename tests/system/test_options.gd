@@ -46,6 +46,7 @@ func test_d_pad_left_turns_music_down_live() -> void:
 	await opened()
 	await pad(JOY_BUTTON_DPAD_LEFT, 0)
 	assert_int(GameSettings.get_setting("music_volume")).is_equal(7)
+	await stick(JOY_AXIS_LEFT_X, 0.0)
 	assert_float(bus_db("Music")).is_equal_approx(linear_to_db(0.7), 0.001)
 
 func test_a_pads_d_pad_goes_to_options_not_the_lobby() -> void:
@@ -86,6 +87,7 @@ func test_fullscreen_comes_after_sounds() -> void:
 	await press("ui_down")
 	await press("ui_down")
 	assert_str(row_name()).is_equal("Fullscreen")
+	await stick(JOY_AXIS_LEFT_Y, 0.0)
 
 func test_right_toggles_fullscreen_and_the_row_shows_it() -> void:
 	await opened()
@@ -120,17 +122,17 @@ func test_tab_opens_options() -> void:
 	await press("options")
 	assert_bool(options.visible).is_true()
 
-func test_b_closes_options_without_asking_to_quit() -> void:
+func test_b_closes_options_without_leaving_the_lobby() -> void:
 	await opened()
 	await pad(JOY_BUTTON_B, 5)
 	assert_bool(options.visible).is_false()
-	assert_bool(menu.quit_confirm.visible).is_false()
+	assert_bool(SceneManager.is_changing_scene).is_false()
 
 func test_esc_closes_options_only() -> void:
 	await opened()
 	await press("ui_cancel")
 	assert_bool(options.visible).is_false()
-	assert_bool(menu.quit_confirm.visible).is_false()
+	assert_bool(SceneManager.is_changing_scene).is_false()
 
 func test_view_again_closes_options() -> void:
 	await lobby()
@@ -148,3 +150,28 @@ func test_nothing_launches_while_options_are_open() -> void:
 	assert_object(scene()).is_same(menu)
 	assert_bool(SceneManager.is_changing_scene).is_false()
 	assert_str(menu.status.text).not_contains("Launching")
+
+func stick(axis: JoyAxis, value: float, device := 1) -> void:
+	var motion := InputEventJoypadMotion.new()
+	motion.device = device
+	motion.axis = axis
+	motion.axis_value = value
+	Input.parse_input_event(motion)
+	await get_tree().process_frame
+
+func test_one_push_of_the_stick_moves_one_row() -> void:
+	await opened()
+	for value in [0.6, 0.8, 1.0]:
+		await stick(JOY_AXIS_LEFT_Y, value)
+	assert_str(row_name()).is_equal("Sounds")
+	await stick(JOY_AXIS_LEFT_Y, 0.0)
+	await stick(JOY_AXIS_LEFT_Y, 1.0)
+	assert_str(row_name()).is_equal("Fullscreen")
+	await stick(JOY_AXIS_LEFT_Y, 0.0)
+
+func test_one_push_of_the_stick_changes_the_volume_by_one() -> void:
+	await opened()
+	for value in [-0.6, -0.9, -1.0]:
+		await stick(JOY_AXIS_LEFT_X, value)
+	assert_int(GameSettings.get_setting("music_volume")).is_equal(7)
+	await stick(JOY_AXIS_LEFT_X, 0.0)

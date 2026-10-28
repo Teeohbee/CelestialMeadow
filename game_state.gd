@@ -46,6 +46,13 @@ func start_session(seats: Array[int], dummy_seats: Array[int] = []):
 	time_attack_seconds = GameSettings.get_setting("time_minutes") * 60.0
 	wins.fill(0)
 
+## Back to nobody seated and no wins, for a fresh start from the title
+func end_session():
+	players.clear()
+	dummies.clear()
+	teams.fill(SOLO)
+	wins.fill(0)
+
 ## Which side a player fights for: their team, or just themselves
 func side_of(player_number: int) -> int:
 	if teams[player_number] == SOLO:

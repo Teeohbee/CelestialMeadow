@@ -33,6 +33,20 @@ func _init():
 	alignment = FlowContainer.ALIGNMENT_CENTER
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 
+## A corner button's face: its pad button and what it does
+static func on_button(button: Button, prompt_text: String) -> ButtonPrompt:
+	var centre = CenterContainer.new()
+	centre.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	centre.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	button.add_child(centre)
+	var prompt = ButtonPrompt.new()
+	prompt.font_size = 28
+	# The whole width, or the centre box squeezes it onto two lines
+	prompt.custom_minimum_size.x = button.size.x - 16
+	prompt.text = prompt_text
+	centre.add_child(prompt)
+	return prompt
+
 func rebuild():
 	for child in get_children():
 		remove_child(child)

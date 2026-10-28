@@ -1,6 +1,7 @@
 extends GameSuite
 # The title screen: after the splash it sits on the arena backdrop, ignores presses until the intro is done, then
-# any press goes to the lobby, and a player's shoot button takes their seat on the way.
+# any press goes to the match setup, and a player's shoot button takes their seat in the lobby after it. B, Menu
+# or Esc ask before quitting, with Stay focused.
 
 func speed() -> float:
 	return 4.0
@@ -50,20 +51,75 @@ func test_the_prompt_shows_after_the_intro() -> void:
 	assert_bool(scene().prompt.visible).is_true()
 	assert_str(scene().prompt.text).is_equal("Press any button")
 
-func test_esc_doesnt_leave_the_title() -> void:
+func asking_to_quit() -> bool:
+	return scene().quit_confirm.visible
+
+func test_esc_asks_before_quitting_and_doesnt_leave() -> void:
 	await ready_title()
 	await key(KEY_ESCAPE)
 	await settle()
 	assert_str(scene().name).is_equal("Title")
+	assert_bool(asking_to_quit()).is_true()
+
+func test_b_asks_before_quitting_with_stay_focused() -> void:
+	await ready_title()
+	await pad(JOY_BUTTON_B, 3)
+	assert_bool(asking_to_quit()).is_true()
+	assert_object(get_viewport().gui_get_focus_owner()).is_same(scene().stay_button)
+
+func test_menu_asks_too() -> void:
+	await ready_title()
+	await pad(JOY_BUTTON_START, 1)
+	assert_bool(asking_to_quit()).is_true()
+
+func test_b_again_stays() -> void:
+	await ready_title()
+	await pad(JOY_BUTTON_B, 3)
+	await pad(JOY_BUTTON_B, 3)
+	assert_bool(asking_to_quit()).is_false()
+	assert_str(scene().name).is_equal("Title")
+
+func test_a_on_stay_stays() -> void:
+	await ready_title()
+	await pad(JOY_BUTTON_B, 0)
+	await pad(JOY_BUTTON_A, 0)
+	await settle()
+	assert_bool(asking_to_quit()).is_false()
+	assert_str(scene().name).is_equal("Title")
+
+func test_right_moves_to_quit() -> void:
+	await ready_title()
+	await pad(JOY_BUTTON_B, 0)
+	await pad(JOY_BUTTON_DPAD_RIGHT, 0)
+	assert_str(get_viewport().gui_get_focus_owner().name).is_equal("ConfirmQuitButton")
+
+func test_a_press_goes_to_match_setup() -> void:
+	await ready_title()
+	await press("shoot2")
+	await settle()
+	assert_str(scene().name).is_equal("MatchSetup")
 
 func test_a_shoot_press_seats_that_player_in_the_lobby() -> void:
 	await ready_title()
 	await press("shoot2")
 	await settle()
+	await press("ui_accept")
+	await settle()
 	assert_str(scene().name).is_equal("Menu")
 	assert_array(seats()).is_equal([0, 0, 1, 0, 0, 0])
 
-func test_the_lobby_still_has_its_asteroids() -> void:
+func test_a_then_a_reaches_the_lobby_on_the_last_match() -> void:
+	GameSettings.set_setting("last_mode", 1)
+	await ready_title()
+	await pad(JOY_BUTTON_A, 0)
+	await settle()
+	await pad(JOY_BUTTON_A, 0)
+	await settle()
+	assert_str(scene().name).is_equal("Menu")
+	assert_int(GameState.mode_index).is_equal(1)
+	assert_array(seats()).is_equal([1, 0, 0, 0, 0, 0])
+
+func test_match_setup_still_has_its_asteroids() -> void:
 	await ready_title()
 	await press("shoot2")
 	await settle()
@@ -73,6 +129,5 @@ func test_any_other_key_just_continues() -> void:
 	await ready_title()
 	await key(KEY_ENTER)
 	await settle()
-	assert_str(scene().name).is_equal("Menu")
-	assert_array(seats()).is_equal([0, 0, 0, 0, 0, 0])
+	assert_str(scene().name).is_equal("MatchSetup")
 	assert_int(GameState.join_on_arrival).is_equal(-1)

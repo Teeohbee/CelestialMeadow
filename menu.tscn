@@ -81,20 +81,34 @@ grow_vertical = 2
 theme_override_constants/separation = 20
 alignment = 1
 
-[node name="ModeLabel" type="Label" parent="."]
+[node name="Heading" type="Label" parent="."]
 layout_mode = 1
 anchors_preset = 14
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
-offset_top = -118.0
-offset_bottom = -62.0
+offset_top = -168.0
+offset_bottom = -112.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 38
-text = "Mode:  Last Ship Standing"
+theme_override_colors/font_color = Color(0.953, 0.906, 0.824, 1)
+theme_override_font_sizes/font_size = 44
+text = "Who's flying?"
 horizontal_alignment = 1
+
+[node name="Chips" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -104.0
+offset_bottom = -60.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 12
+alignment = 1
 
 [node name="ModeBlurb" type="HFlowContainer" parent="."]
 layout_mode = 1
@@ -124,7 +138,7 @@ script = ExtResource("12_prompt")
 font_size = 40
 ink = Color(0.941, 0.655, 0.282, 1)
 
-[node name="QuitButton" type="Button" parent="."]
+[node name="BackButton" type="Button" parent="."]
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
@@ -165,60 +179,5 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("10_grain")
 
-[node name="QuitConfirm" type="Control" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Dim" type="ColorRect" parent="QuitConfirm"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.0863, 0.0706, 0.122, 0.75)
-
-[node name="Center" type="CenterContainer" parent="QuitConfirm"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Panel" type="PanelContainer" parent="QuitConfirm/Center"]
-layout_mode = 2
-
-[node name="VBox" type="VBoxContainer" parent="QuitConfirm/Center/Panel"]
-layout_mode = 2
-theme_override_constants/separation = 28
-
-[node name="Question" type="Label" parent="QuitConfirm/Center/Panel/VBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 40
-text = "Leave Celestial Meadow?"
-horizontal_alignment = 1
-
-[node name="Buttons" type="HBoxContainer" parent="QuitConfirm/Center/Panel/VBox"]
-layout_mode = 2
-theme_override_constants/separation = 24
-alignment = 1
-
-[node name="StayButton" type="Button" parent="QuitConfirm/Center/Panel/VBox/Buttons"]
-custom_minimum_size = Vector2(200, 64)
-layout_mode = 2
-text = "Stay"
-
-[node name="ConfirmQuitButton" type="Button" parent="QuitConfirm/Center/Panel/VBox/Buttons"]
-custom_minimum_size = Vector2(200, 64)
-layout_mode = 2
-text = "Quit"
-
-[connection signal="pressed" from="QuitButton" to="." method="_on_quit_button_pressed"]
+[connection signal="pressed" from="BackButton" to="." method="back_to_setup"]
 [connection signal="pressed" from="OptionsButton" to="." method="open_options"]
-[connection signal="pressed" from="QuitConfirm/Center/Panel/VBox/Buttons/StayButton" to="." method="_on_stay_button_pressed"]
-[connection signal="pressed" from="QuitConfirm/Center/Panel/VBox/Buttons/ConfirmQuitButton" to="." method="_on_confirm_quit_button_pressed"]

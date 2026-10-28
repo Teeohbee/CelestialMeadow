@@ -1,12 +1,16 @@
 extends Control
 
-## Title screen and lobby. Each player takes a seat by pressing their own
-## shoot button, presses it again when ready, and rotates left to back out.
-## The round launches on its own once enough players are seated and all of
-## them are ready, so nobody has to drive a menu for everyone else. Any
-## seated player can rotate right to change the mode, and thrusts to pick
-## their team. Any pad's View button opens the options. Unplugging a seated
-## pad empties its seat.
+## The lobby, "Who's flying?", for the match chosen in the match setup,
+## shown as chips under the heading. Each player takes a seat by pressing
+## their own A, presses it again when ready, and backs out with their own B:
+## unready, then leave. The round launches on its own once enough players
+## are seated and all of them are ready, so nobody has to drive a menu for
+## everyone else. With Teams on in the match setup, every seated pilot is on
+## Alpha, Beta or Gamma, joining the smallest side, and D-pad left/right on
+## their own card changes it; with Teams off everyone is solo. Any pad's View
+## button opens the options. B on a pad with no seat goes back to the match
+## setup, but only while every seat is empty. Unplugging a seated pad
+## empties its seat.
 
 const SeatCard = preload("res://seat_card.gd")
 const Options = preload("res://options.gd")
@@ -28,39 +32,44 @@ var notice_until: int = 0
 var cards: Array = []
 var launch_countdown: float = GameConfig.TITLE_LAUNCH_DELAY
 var launching: bool = false
+var leaving: bool = false
 ## The countdown second last ticked, so each one ticks once
 var ticked_second: int = 0
 var options: Control
-var quit_prompt: ButtonPrompt
+## The match's Teams setting
+var teams_on: bool
+var back_prompt: ButtonPrompt
 var options_prompt: ButtonPrompt
 
 @onready var seats_row: HBoxContainer = $Seats
 @onready var status: ButtonPrompt = $Status
-@onready var mode_label: Label = $ModeLabel
+@onready var chips: HBoxContainer = $Chips
 @onready var mode_blurb: ButtonPrompt = $ModeBlurb
-@onready var quit_confirm: Control = $QuitConfirm
-@onready var stay_button: Button = $QuitConfirm/Center/Panel/VBox/Buttons/StayButton
 
 func _ready():
 	Music.play_track("menu")
+	teams_on = GameSettings.get_setting("teams")
 	for i in SEAT_COUNT:
 		var card = SeatCard.new(i)
 		seats_row.add_child(card)
 		cards.append(card)
-	# Coming back from a game, the same crew is still seated
+	# Coming back from a game, the same crew is still seated, on their
+	# sides if the match still has teams
+	for i in GameState.players:
+		if not teams_on or i in GameState.dummies:
+			GameState.teams[i] = GameState.SOLO
 	for i in GameState.players:
 		if i not in GameState.dummies:
-			cards[i].set_state(SeatCard.State.JOINED)
-	# The lobby opens on the mode last played, this session or the last
+			take_seat(cards[i])
+	# The match set up last, this session or the last
 	GameState.mode_index = GameSettings.get_setting("last_mode")
-	if GameState.join_on_arrival >= 0:
-		cards[GameState.join_on_arrival].set_state(SeatCard.State.JOINED)
+	if GameState.join_on_arrival >= 0 and cards[GameState.join_on_arrival].state == SeatCard.State.EMPTY:
+		take_seat(cards[GameState.join_on_arrival])
 		GameState.join_on_arrival = -1
-	show_mode()
+	show_match()
 	Input.joy_connection_changed.connect(_on_joy_connection_changed)
-	quit_confirm.hide()
-	quit_prompt = label_button($QuitButton, "%s Quit" % SeatCard.action_glyph("pause"))
-	options_prompt = label_button($OptionsButton, "%s Options" % SeatCard.action_glyph("options"))
+	back_prompt = ButtonPrompt.on_button($BackButton, "%s Back" % SeatCard.action_glyph("ui_cancel"))
+	options_prompt = ButtonPrompt.on_button($OptionsButton, "%s Options" % SeatCard.action_glyph("options"))
 	options = Options.new()
 	options.name = "Options"
 	add_child(options)
@@ -88,9 +97,6 @@ func _process(delta):
 		launch_countdown = GameConfig.TITLE_LAUNCH_DELAY
 		ticked_second = 0
 
-	if not launching and not quit_confirm.visible and not options.visible:
-		pick_teams()
-
 	if seated.is_empty():
 		status.text = "Press %s to take a seat" % SeatCard.action_glyph("shoot0")
 	elif not enough:
@@ -114,16 +120,19 @@ func seated_players() -> Array[int]:
 	return seated
 
 func _input(event):
-	if launching:
+	if launching or leaving:
 		return
-	if quit_confirm.visible:
-		if event.is_action_pressed("ui_cancel"):
+	for i in SEAT_COUNT:
+		if event.is_action_pressed("back%d" % i):
 			get_viewport().set_input_as_handled()
-			_on_stay_button_pressed()
-		return
-	if event.is_action_pressed("ui_cancel") or event.is_action_pressed("pause"):
+			if cards[i].state == SeatCard.State.EMPTY:
+				back_to_setup()
+			else:
+				back(cards[i])
+			return
+	if event.is_action_pressed("ui_cancel"):
 		get_viewport().set_input_as_handled()
-		_on_quit_button_pressed()
+		back_to_setup()
 		return
 	if event.is_action_pressed("options"):
 		get_viewport().set_input_as_handled()
@@ -138,14 +147,15 @@ func _input(event):
 			get_viewport().set_input_as_handled()
 			if cards[i].state == SeatCard.State.EMPTY:
 				dummy_combo(i, "rotate_left")
-			back(cards[i])
+			else:
+				change_team(cards[i], -1)
 			return
 		if event.is_action_pressed("rotate_right%d" % i):
 			get_viewport().set_input_as_handled()
 			if cards[i].state == SeatCard.State.EMPTY:
 				dummy_combo(i, "rotate_right")
 			else:
-				next_mode()
+				change_team(cards[i], 1)
 			return
 
 func dummy_combo(seat: int, step: String):
@@ -165,7 +175,7 @@ func dummy_combo(seat: int, step: String):
 
 func advance(card):
 	if card.state == SeatCard.State.EMPTY:
-		card.set_state(SeatCard.State.JOINED)
+		take_seat(card)
 		Sound.play("seat")
 	elif card.state == SeatCard.State.JOINED:
 		card.set_state(SeatCard.State.READY)
@@ -190,27 +200,30 @@ func _on_joy_connection_changed(device: int, connected: bool):
 	notice = "%s's controller unplugged" % GameConfig.PLAYER_COLOR_NAMES[seat]
 	notice_until = Time.get_ticks_msec() + NOTICE_MS
 
-## Everyone readied up for the old mode, so they ready again for the new one
-func next_mode():
-	GameState.mode_index = (GameState.mode_index + 1) % GameState.MODES.size()
-	Sound.play("focus")
-	unready_all()
-	show_mode()
+## Seats a pilot, on the smallest side if the match has teams. A returning
+## pilot keeps their side.
+func take_seat(card):
+	if teams_on and GameState.teams[card.seat] == GameState.SOLO:
+		GameState.teams[card.seat] = smallest_team()
+	card.set_state(SeatCard.State.JOINED)
 
-## Thrust is an analog trigger on pads, which sends a stream of motion
-## events per pull; polling the action catches each pull exactly once
-func pick_teams():
+## The team with fewest seated members, the lowest on a tie
+func smallest_team() -> int:
+	var counts = []
+	counts.resize(GameConfig.TEAM_NAMES.size())
+	counts.fill(0)
 	for card in cards:
-		if card.state != SeatCard.State.EMPTY and Input.is_action_just_pressed("thrust%d" % card.seat):
-			next_team(card)
+		var team = GameState.teams[card.seat]
+		if card.state != SeatCard.State.EMPTY and team != GameState.SOLO:
+			counts[team] += 1
+	return counts.find(counts.min())
 
-## Solo, then each team in turn, then back to solo. Teams change the
-## match for everyone, so everyone readies again.
-func next_team(card):
-	var team = GameState.teams[card.seat] + 1
-	if team >= GameConfig.TEAM_NAMES.size():
-		team = GameState.SOLO
-	GameState.teams[card.seat] = team
+## Round the three teams, no solo. Teams change the match for everyone, so
+## everyone readies again.
+func change_team(card, step: int):
+	if not teams_on or card.state != SeatCard.State.JOINED:
+		return
+	GameState.teams[card.seat] = posmod(GameState.teams[card.seat] + step, GameConfig.TEAM_NAMES.size())
 	Sound.play("focus")
 	unready_all()
 	card.show_team()
@@ -220,10 +233,45 @@ func unready_all():
 		if card.state == SeatCard.State.READY:
 			card.set_state(SeatCard.State.JOINED)
 
-func show_mode():
+## The match as chips: the mode, teams or not, and the mode's rules
+func show_match():
 	var mode = GameState.MODES[GameState.mode_index]
-	mode_label.text = "Mode:  %s" % mode.name
-	mode_blurb.text = "%s  %s to change mode, %s to pick a team." % [mode.blurb, SeatCard.action_glyph("rotate_right0"), SeatCard.action_glyph("thrust0")]
+	for text in match_chips():
+		chips.add_child(chip_for(text))
+	mode_blurb.text = mode.blurb
+	if teams_on:
+		mode_blurb.text += "  {dpad_left_right} to change team."
+
+func match_chips() -> Array[String]:
+	var mode = GameState.MODES[GameState.mode_index]
+	var texts: Array[String] = [mode.name, "Teams" if GameSettings.get_setting("teams") else "Free for all"]
+	for rule in mode.rules:
+		var value = GameSettings.get_setting(rule)
+		match rule:
+			"lives":
+				texts.append("1 life" if value == 1 else "%d lives" % value)
+			"time_minutes":
+				texts.append("%d min" % value)
+	return texts
+
+func chip_for(text: String) -> PanelContainer:
+	var chip = PanelContainer.new()
+	var style = StyleBoxFlat.new()
+	style.draw_center = false
+	style.set_border_width_all(2)
+	style.border_color = Color(GameConfig.CREAM, 0.45)
+	style.set_corner_radius_all(22)
+	style.content_margin_left = 22
+	style.content_margin_right = 22
+	style.content_margin_top = 6
+	style.content_margin_bottom = 4
+	chip.add_theme_stylebox_override("panel", style)
+	var label = Label.new()
+	label.text = text
+	label.add_theme_font_size_override("font_size", 24)
+	label.add_theme_color_override("font_color", GameConfig.CREAM)
+	chip.add_child(label)
+	return chip
 
 func launch(seated: Array[int]):
 	launching = true
@@ -235,34 +283,16 @@ func launch(seated: Array[int]):
 				dummy_seats.append(card.seat)
 				break
 	GameState.start_session(seated, dummy_seats)
-	GameSettings.set_setting("last_mode", GameState.mode_index)
 	SceneManager.go_to("res://main.tscn")
-
-## A corner button's face: its pad button and what it does
-func label_button(button: Button, prompt_text: String) -> ButtonPrompt:
-	var centre = CenterContainer.new()
-	centre.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	centre.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	button.add_child(centre)
-	var prompt = ButtonPrompt.new()
-	prompt.font_size = 28
-	# The whole width, or the centre box squeezes it onto two lines
-	prompt.custom_minimum_size.x = button.size.x - 16
-	prompt.text = prompt_text
-	centre.add_child(prompt)
-	return prompt
 
 func open_options():
 	get_viewport().gui_release_focus()
 	options.open()
 
-func _on_quit_button_pressed():
-	quit_confirm.show()
-	stay_button.grab_focus()
-
-func _on_stay_button_pressed():
-	quit_confirm.hide()
-	get_viewport().gui_release_focus()
-
-func _on_confirm_quit_button_pressed():
-	get_tree().quit()
+## Only from an empty room, so a stray press can't pull everyone out
+func back_to_setup():
+	if launching or leaving or not seated_players().is_empty():
+		return
+	leaving = true
+	Sound.play("back")
+	SceneManager.go_to("res://match_setup.tscn")

@@ -1,32 +1,26 @@
 extends RoundSuite
-# Time Attack: picked in the lobby by any seated player, two minutes of endless respawns where kills score and
-# crashes don't. Most kills at time up wins; a tie goes to sudden death with one life each. The lobby remembers
-# the mode.
+# Time Attack: picked in the match setup, endless respawns against the clock where kills score and crashes
+# don't. Most kills at time up wins; a tie goes to sudden death with one life each.
 
 func speed() -> float:
 	return 4.0
 
-func mode_label() -> String:
-	return scene().mode_label.text
-
-func lobby() -> Node:
-	var menu := await open("res://menu.tscn")
-	GameState.dummy_pilot = false
-	await frames(2)
-	return menu
-
-# Pilots 0 and 1 seated and ready in the lobby, then pilot 0 switches to Time Attack
-func lobby_switched_to_time_attack() -> void:
-	await lobby()
-	await press("shoot0")
-	await press("shoot1")
-	await press("shoot1")
-	await press("rotate_right0")
-
+# Time Attack chosen in the match setup, then pilots 0 and 1 seat and ready in the lobby
 func launched_in_time_attack() -> void:
-	await lobby_switched_to_time_attack()
-	await press("shoot0")
-	await press("shoot1")
+	await open("res://match_setup.tscn")
+	await frames(1)
+	await press("ui_up")
+	await press("ui_up")
+	await press("ui_up")
+	await press("ui_right")
+	while scene().selected != "Pick seats":
+		await press("ui_down")
+	await press("ui_accept")
+	await settle()
+	GameState.dummy_pilot = false
+	for seat in [0, 1]:
+		await press("shoot%d" % seat)
+		await press("shoot%d" % seat)
 	await seconds(GameConfig.TITLE_LAUNCH_DELAY + 0.2)
 	await settle()
 
@@ -61,32 +55,14 @@ func test_there_are_two_modes() -> void:
 	assert_array(GameState.MODES.map(func(mode): return mode.name)).is_equal(["Last Ship Standing", "Time Attack"])
 
 func test_classic_is_the_default() -> void:
-	await lobby()
-	assert_str(mode_label()).contains("Last Ship Standing")
+	await open("res://menu.tscn")
+	await frames(1)
+	assert_int(GameState.mode_index).is_equal(0)
 
-func test_unseated_players_cant_change_mode() -> void:
-	await lobby()
-	await press("rotate_right1")
-	assert_str(mode_label()).contains("Last Ship Standing")
-
-func test_a_seated_player_changes_mode() -> void:
-	await lobby_switched_to_time_attack()
-	assert_str(mode_label()).contains("Time Attack")
-
-func test_changing_mode_unreadies_everyone() -> void:
-	await lobby_switched_to_time_attack()
-	assert_int(scene().cards[1].state).is_equal(1)
-
-func test_time_attack_runs_the_round() -> void:
+func test_time_attack_from_match_setup_runs_the_round() -> void:
 	await launched_in_time_attack()
 	assert_str(scene().name).is_equal("Main")
 	assert_str(scene().mode.name).is_equal("TimeAttack")
-
-func test_the_lobby_remembers_the_mode() -> void:
-	await launched_in_time_attack()
-	await open("res://menu.tscn")
-	await frames(1)
-	assert_str(mode_label()).contains("Time Attack")
 
 func test_the_clock_counts_down_from_two_minutes() -> void:
 	await time_attack()

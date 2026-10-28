@@ -28,36 +28,53 @@ pads:
 | 5 | Pilot 5 | Orchid |
 | 6 | Pilot 6 | Lagoon |
 
-### In the lobby
+### Menus
+
+Any pad drives the title, the match setup, the options, pause and results:
+**D-pad** or **left stick** to move, **A** to choose, **B** to go back.
+**View** opens the options. On the title, **B** or **Menu** asks to quit.
+
+### Match setup
+
+Pick the **Mode**, **Teams** (off or on) and the mode's rule: **Lives** (1-5)
+for Last Ship Standing, **Time** (1-5 minutes) for Time Attack. Then **Pick
+seats**. It remembers the last match, and opens on Pick seats, so the same
+again is just **A**, **A** from the title.
+
+### Who's flying? (the lobby)
 
 Nobody drives a menu for everyone else. Each pilot uses their own pad:
 
 - **A** takes your seat, and **A** again says you're ready.
-- **D-pad left** backs out (un-ready, then leave the seat).
-- **D-pad right** changes the mode for everyone.
-- **RT** cycles your team: solo, Alpha, Beta or Gamma.
-- **View** (any pad) opens the options: music and sound volume, fullscreen.
-- **Menu** or **B** asks to quit.
+- **B** backs out: un-ready, then leave the seat.
+- **D-pad left / right** changes your team, when the match has teams: Alpha,
+  Beta or Gamma. Joining puts you on the smallest side.
+- **B** on a pad with no seat goes back to the match setup, but only while
+  every seat is empty.
 
 The round launches on its own once at least two sides are seated and everyone
 is ready.
 
 ### During a round
 
-- **Menu** pauses. The panel shows who paused, and anyone can resume.
+- **Menu** pauses. The panel shows who paused, and anyone can resume:
+  Resume, Restart, Change match or Main Menu.
 - Unplugging a pilot's controller pauses the game and asks for it back.
 - Alt-tabbing or opening the Steam overlay pauses too.
 
 ## Modes
 
-- **Last Ship Standing** - three lives each. The last ship (or team) flying wins.
-- **Time Attack** - two minutes and endless respawns. Most kills wins; a tie
-  goes to sudden death.
+- **Last Ship Standing** - a few lives each (three unless you change it). The
+  last ship (or team) flying wins.
+- **Time Attack** - endless respawns against the clock (two minutes unless you
+  change it). Most kills wins; a tie goes to sudden death.
 
 Asteroids sometimes drop a power-up: a **shield**, **rapid fire** or a
 **speed boost**. Teammates' shots pass through each other.
 
-Wins are tallied across rematches until you go back to the lobby.
+After a round: **Rematch**, **Change match** (back to the match setup, still
+seated) or **Main Menu** (the title, starting afresh). Wins are tallied across
+rematches until you start a new match.
 
 ### Playing solo
 

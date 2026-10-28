@@ -66,35 +66,41 @@ func test_unreadying_and_leaving_play_back() -> void:
 	await press("shoot0")
 	await press("shoot0")
 	played()
-	await press("rotate_left0")
+	await press("back0")
 	assert_array(played()).is_equal(["back"])
-	await press("rotate_left0")
+	await press("back0")
 	assert_array(played()).is_equal(["back"])
 
-func test_nothing_to_back_out_of_is_silent() -> void:
+func test_d_pad_left_on_an_empty_seat_is_silent() -> void:
 	await lobby()
 	await press("rotate_left0")
 	assert_array(played()).is_empty()
 
-func test_changing_mode_plays_focus() -> void:
+func test_b_on_a_free_pad_with_someone_seated_is_silent() -> void:
 	await lobby()
 	await press("shoot1")
 	played()
-	await press("rotate_right1")
-	assert_array(played()).is_equal(["focus"])
-	await press("rotate_right1")
-	assert_array(played()).is_equal(["focus"])
+	await press("back0")
+	assert_array(played()).is_empty()
 
 func test_changing_team_plays_focus() -> void:
+	GameSettings.set_setting("teams", true)
 	await lobby()
 	await press("shoot1")
 	played()
-	await press("thrust1")
+	await press("rotate_right1")
 	assert_array(played()).is_equal(["focus"])
-	await press("thrust1")
+	await press("rotate_left1")
 	assert_array(played()).is_equal(["focus"])
 
-func test_an_empty_seat_cant_change_mode_so_its_silent() -> void:
+func test_rotating_right_with_teams_off_is_silent() -> void:
+	await lobby()
+	await press("shoot1")
+	played()
+	await press("rotate_right1")
+	assert_array(played()).is_empty()
+
+func test_an_empty_seats_rotate_is_silent() -> void:
 	await lobby()
 	await press("rotate_right2")
 	assert_array(played()).is_empty()
@@ -132,8 +138,9 @@ func test_moving_between_results_buttons_plays_focus() -> void:
 	await press("rotate_left0")
 	assert_array(played()).is_equal(["focus"])
 
-func test_pressing_towards_the_focused_button_is_silent() -> void:
+func test_pressing_past_the_last_button_is_silent() -> void:
 	await round_results()
+	await press("rotate_right0")
 	await press("rotate_right0")
 	played()
 	await press("rotate_right0")
