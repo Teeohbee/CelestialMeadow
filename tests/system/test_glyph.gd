@@ -94,14 +94,28 @@ func test_a_seat_names_only_its_pad() -> void:
 func test_a_joined_seat_prompts_to_ready_or_leave() -> void:
 	await lobby()
 	menu.advance(menu.cards[0])
-	assert_str(menu.cards[0].status.text).is_equal("Press {a} when ready")
-	assert_str(menu.cards[0].hint.text).is_equal("{b} to leave")
+	assert_str(menu.cards[0].status.text).is_equal("{a} Ready")
+	assert_str(menu.cards[0].hint.text).is_equal("{b} Leave")
+
+func test_with_teams_on_a_joined_seat_shows_the_d_pad_for_its_team() -> void:
+	GameSettings.set_setting("teams", true)
+	await lobby()
+	menu.advance(menu.cards[0])
+	assert_str(menu.cards[0].hint.text).is_equal("{dpad_left_right} Team  {b} Leave")
 
 func test_a_ready_seat_prompts_to_cancel() -> void:
 	await lobby()
 	menu.advance(menu.cards[0])
 	menu.advance(menu.cards[0])
-	assert_str(menu.cards[0].hint.text).is_equal("{b} to cancel")
+	assert_str(menu.cards[0].status.text).is_equal("READY!")
+	assert_str(menu.cards[0].hint.text).is_equal("{b} Cancel")
+
+func test_a_ready_seat_shows_no_team_d_pad() -> void:
+	GameSettings.set_setting("teams", true)
+	await lobby()
+	menu.advance(menu.cards[0])
+	menu.advance(menu.cards[0])
+	assert_str(menu.cards[0].hint.text).not_contains("dpad")
 
 func test_the_options_hint_shows_b() -> void:
 	await lobby()

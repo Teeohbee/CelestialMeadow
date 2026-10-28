@@ -1,6 +1,6 @@
 extends PanelContainer
 
-## One seat on the title screen. Shows the seat's colour and ship, whether
+## One seat in the lobby. Shows the seat's colour and ship, whether
 ## it's empty, joined or ready, and the pad buttons that drive it, read from
 ## the input map so it stays right if bindings change.
 
@@ -94,8 +94,11 @@ func set_state(new_state: State):
 			header.add_theme_color_override("font_color", colour)
 			ship.modulate = Color.WHITE
 			status.ink = GameConfig.CREAM
-			status.text = "Press %s when ready" % action_glyph("shoot%d" % seat)
-			hint.text = "%s to leave" % action_glyph("back%d" % seat)
+			status.text = "%s Ready" % action_glyph("shoot%d" % seat)
+			hint.text = "%s Leave" % action_glyph("back%d" % seat)
+			# Only a seat with a team can change it
+			if GameState.teams[seat] != GameState.SOLO:
+				hint.text = "{dpad_left_right} Team  " + hint.text
 		State.READY:
 			style.bg_color = colour.lerp(GameConfig.GROUND, 0.6)
 			style.set_border_width_all(6)
@@ -104,7 +107,7 @@ func set_state(new_state: State):
 			ship.modulate = Color.WHITE
 			status.ink = GameConfig.CREAM
 			status.text = "READY!"
-			hint.text = "%s to cancel" % action_glyph("back%d" % seat)
+			hint.text = "%s Cancel" % action_glyph("back%d" % seat)
 	add_theme_stylebox_override("panel", style)
 	show_team()
 	if popped:
