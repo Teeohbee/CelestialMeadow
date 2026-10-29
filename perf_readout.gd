@@ -4,8 +4,8 @@ extends CanvasLayer
 ## in the last second, the whole frame's time (Godot's process monitor, which
 ## includes waiting for the screen), physics, and render CPU and GPU, plus the
 ## size the game draws at. Frame time well above render time means the game
-## is waiting on the display, not working. F3 toggles it; launching with
-## --perf starts with it on, for a Steam launch option when there's no keyboard.
+## is waiting on the display, not working. The Frame readout option turns it
+## on from the pad; F3 toggles it too, and launching with --perf starts it on.
 
 const REFRESH_TIME: float = 0.5
 
@@ -26,7 +26,7 @@ func _ready():
 	label.add_theme_constant_override("outline_size", 6)
 	add_child(label)
 	RenderingServer.viewport_set_measure_render_time(get_viewport().get_viewport_rid(), true)
-	visible = "--perf" in OS.get_cmdline_args() or "--perf" in OS.get_cmdline_user_args()
+	visible = GameSettings.get_setting("perf_readout") or "--perf" in OS.get_cmdline_args() or "--perf" in OS.get_cmdline_user_args()
 
 func _unhandled_input(event):
 	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F3:

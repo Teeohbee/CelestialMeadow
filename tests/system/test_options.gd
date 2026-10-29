@@ -130,6 +130,40 @@ func test_toggling_again_goes_back_to_native() -> void:
 	assert_bool(GameSettings.get_setting("render_1080p")).is_false()
 	assert_int(get_tree().root.content_scale_mode).is_equal(Window.CONTENT_SCALE_MODE_CANVAS_ITEMS)
 
+func vsync_row() -> void:
+	await opened()
+	for i in 4:
+		await press("ui_down")
+
+func test_vsync_comes_after_resolution_and_starts_on() -> void:
+	await vsync_row()
+	assert_str(row_name()).is_equal("VSync")
+	assert_str(options.values[options.selected].text).is_equal("On")
+
+func test_right_steps_vsync_through_its_modes_and_wraps() -> void:
+	await vsync_row()
+	var shown := []
+	for i in 4:
+		await press("ui_right")
+		shown.append(options.values[options.selected].text)
+	assert_array(shown).is_equal(["Adaptive", "Mailbox", "Off", "On"])
+
+func test_left_steps_vsync_back() -> void:
+	await vsync_row()
+	await press("ui_left")
+	assert_int(GameSettings.get_setting("vsync_mode")).is_equal(DisplayServer.VSYNC_DISABLED)
+
+func test_the_frame_readout_row_shows_the_readout() -> void:
+	await opened()
+	for i in 5:
+		await press("ui_down")
+	assert_str(row_name()).is_equal("Frame readout")
+	await press("ui_accept")
+	assert_bool(GameSettings.get_setting("perf_readout")).is_true()
+	assert_bool(PerfReadout.visible).is_true()
+	await press("ui_accept")
+	assert_bool(PerfReadout.visible).is_false()
+
 func test_up_from_music_wraps_to_back() -> void:
 	await opened()
 	await press("ui_up")

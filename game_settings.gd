@@ -7,6 +7,8 @@ extends Node
 ## The game launches fullscreen; turning that off gives a maximised window.
 ## render_1080p draws at the 1920x1080 layout size and scales it up, rather
 ## than drawing at the screen's own size: a quarter of the pixels on a 4K TV.
+## vsync_mode is a DisplayServer.VSyncMode, applied live. perf_readout shows
+## PerfReadout from launch, for a pad-only Steam Machine.
 
 signal setting_changed(setting_name: String, new_value: Variant)
 
@@ -20,6 +22,8 @@ var setting_limits: Dictionary = {
 	"sound_volume": {"default": 8, "smallest": 0, "largest": 10},
 	"fullscreen": {"default": true},
 	"render_1080p": {"default": false},
+	"vsync_mode": {"default": DisplayServer.VSYNC_ENABLED, "smallest": 0, "largest": 3},
+	"perf_readout": {"default": false},
 	"last_mode": {"default": 0, "smallest": 0, "largest": GameState.MODES.size() - 1},
 	"teams": {"default": false},
 	"lives": {"default": GameConfig.PLAYER_LIVES_DEFAULT, "smallest": 1, "largest": 5},
@@ -58,6 +62,7 @@ func load_from_disk():
 	for setting_name in VOLUME_BUSES:
 		apply(setting_name)
 	apply("render_1080p")
+	apply("vsync_mode")
 	# The game launches fullscreen already; only a saved "off" changes that,
 	# so --windowed and the editor's game window are left alone
 	if not settings.fullscreen:
@@ -103,3 +108,10 @@ func apply(setting_name: String):
 	elif setting_name == "render_1080p":
 		var draw_at = Window.CONTENT_SCALE_MODE_VIEWPORT if settings.render_1080p else Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
 		get_tree().root.content_scale_mode = draw_at
+	elif setting_name == "vsync_mode":
+		DisplayServer.window_set_vsync_mode(settings.vsync_mode)
+	elif setting_name == "perf_readout":
+		# PerfReadout loads after this, and reads the setting itself at launch
+		var readout = get_tree().root.get_node_or_null("PerfReadout")
+		if readout:
+			readout.visible = settings.perf_readout
