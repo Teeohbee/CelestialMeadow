@@ -24,7 +24,7 @@ func test_f3_toggles_it() -> void:
 func test_it_shows_where_the_time_goes() -> void:
 	await key(KEY_F3)
 	await seconds(PerfReadout.REFRESH_TIME + 0.2)
-	for part in ["fps", "worst", "frame", "physics", "render cpu", "gpu", "drawn"]:
+	for part in ["fps", "worst", "frame", "physics", "render cpu", "gpu", "drawn", "window", "screen"]:
 		assert_str(PerfReadout.label.text).contains(part)
 
 func test_it_draws_over_the_curtain() -> void:
