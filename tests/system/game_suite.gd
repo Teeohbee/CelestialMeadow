@@ -12,6 +12,7 @@ var real_path: String
 var swaps := 0
 var real_ticks: int
 var real_max_steps: int
+var real_aspect: Window.ContentScaleAspect
 
 # How much faster than real time a suite runs; override to speed one up. Physics ticks go up by the same
 # factor, so every physics step is still 1/60s of game time: more steps, not bigger ones. SceneManager's
@@ -21,6 +22,10 @@ func speed() -> float:
 
 func before_test() -> void:
 	swaps = 0
+	# Headless runs in a square window, which the expand aspect would turn into a 1920x1920 arena. Every
+	# suite plays on the 16:9 design screen; test_taller_arena covers 16:10.
+	real_aspect = get_tree().root.content_scale_aspect
+	get_tree().root.content_scale_aspect = Window.CONTENT_SCALE_ASPECT_KEEP
 	real_ticks = Engine.physics_ticks_per_second
 	real_max_steps = Engine.max_physics_steps_per_frame
 	Engine.time_scale = speed()
@@ -40,6 +45,7 @@ func after_test() -> void:
 	get_tree().unload_current_scene()
 	get_tree().paused = false
 	Engine.time_scale = 1.0
+	get_tree().root.content_scale_aspect = real_aspect
 	Engine.physics_ticks_per_second = real_ticks
 	Engine.max_physics_steps_per_frame = real_max_steps
 	SceneManager.speed_scale = 1.0

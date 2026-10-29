@@ -3,8 +3,18 @@ extends Node2D
 ## The still space scene behind the title screen and lobby: placed planets,
 ## the station, and a few asteroids drifting slowly past
 
+## The height the placed planets were laid out for
+const DESIGN_HEIGHT: float = 1080.0
+
 func _ready():
+	spread_to(get_viewport_rect().size)
 	spawn_asteroids()
+
+## Spreads the placed planets and station down a taller (16:10) screen
+func spread_to(size: Vector2):
+	for child in get_children():
+		if child is Node2D:
+			child.position.y *= size.y / DESIGN_HEIGHT
 
 func spawn_asteroids():
 	var asteroid_scene = preload("res://asteroid.tscn")
