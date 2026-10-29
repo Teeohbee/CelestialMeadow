@@ -9,12 +9,16 @@ signal closed
 
 ## Each row: its name, and the setting it changes ("" for none). A number
 ## setting is a volume shown as bars; an on/off one toggles, shown as On/Off
-## or as the row's own words for off and on.
+## or as the row's own words for off and on. A number setting with words
+## steps through them instead.
 const ROWS: Array[Dictionary] = [
 	{"name": "Music", "setting": "music_volume"},
 	{"name": "Sounds", "setting": "sound_volume"},
 	{"name": "Fullscreen", "setting": "fullscreen"},
 	{"name": "Resolution", "setting": "render_1080p", "words": ["Native", "1080p"]},
+	# In DisplayServer.VSyncMode order
+	{"name": "VSync", "setting": "vsync_mode", "words": ["Off", "On", "Adaptive", "Mailbox"]},
+	{"name": "Frame readout", "setting": "perf_readout"},
 	{"name": "Back", "setting": ""},
 ]
 
@@ -62,7 +66,7 @@ func _ready():
 func make_row(row: Dictionary) -> OptionRow:
 	var kind = OptionRow.Kind.NONE
 	if row.setting != "":
-		kind = OptionRow.Kind.WORDS if GameSettings.get_setting(row.setting) is bool else OptionRow.Kind.BARS
+		kind = OptionRow.Kind.WORDS if GameSettings.get_setting(row.setting) is bool or row.has("words") else OptionRow.Kind.BARS
 	var option_row = OptionRow.new(row.name, kind)
 	values.append(option_row.value_label)
 	return option_row
@@ -92,7 +96,7 @@ func _input(event):
 	elif MenuInput.pressed(event, "ui_down"):
 		select(selected + 1)
 	elif toggles and (MenuInput.pressed(event, "ui_left") or MenuInput.pressed(event, "ui_right") or event.is_action_pressed("ui_accept")):
-		toggle(row.setting)
+		toggle(row, -1 if MenuInput.pressed(event, "ui_left") else 1)
 	elif row.setting != "" and MenuInput.pressed(event, "ui_left", true):
 		change_volume(row.setting, -1)
 	elif row.setting != "" and MenuInput.pressed(event, "ui_right", true):
@@ -113,8 +117,12 @@ func change_volume(setting: String, step: int):
 		Sound.play("focus", 0.8 + 0.04 * GameSettings.get_setting(setting))
 	refresh()
 
-func toggle(setting: String):
-	GameSettings.set_setting(setting, not GameSettings.get_setting(setting))
+func toggle(row: Dictionary, step: int):
+	var value = GameSettings.get_setting(row.setting)
+	if value is bool:
+		GameSettings.set_setting(row.setting, not value)
+	else:
+		GameSettings.set_setting(row.setting, posmod(value + step, row.words.size()))
 	Sound.play("confirm")
 	refresh()
 
@@ -125,4 +133,4 @@ func refresh():
 		if setting != "":
 			var value = GameSettings.get_setting(setting)
 			var words = ROWS[i].get("words", ["Off", "On"])
-			rows[i].show_value(words[int(value)] if value is bool else value)
+			rows[i].show_value(words[int(value)] if value is bool or ROWS[i].has("words") else value)

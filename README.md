@@ -37,6 +37,9 @@ Any pad drives the title, the match setup, the options, pause and results:
 Options has music and sound volume, fullscreen, and **Resolution**: Native
 draws at the screen's own size, 1080p draws at 1920x1080 and scales it up,
 which is much lighter on a 4K TV. On a Steam Deck, Native is already 800p.
+**VSync** steps through On, Adaptive, Mailbox and Off, live, for chasing
+frame pacing with the frame-rate readout. **Frame readout** turns that on
+from the pad, and it stays on between launches.
 
 ### Match setup
 
@@ -112,5 +115,5 @@ that updates itself from those releases. The library art lives in
 **F3** toggles a corner readout: fps, the slowest frame in the last second,
 the whole frame's time (including waiting for the screen), and the
 milliseconds spent on physics and rendering (CPU and GPU).
-With no keyboard, add `--perf` to the shortcut's launch options in Steam
-(`%command% --perf`) and it starts switched on.
+With no keyboard, turn on **Frame readout** in Options, or add `--perf` to
+the shortcut's launch options in Steam (`%command% --perf`).
