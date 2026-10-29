@@ -1,8 +1,10 @@
 extends CanvasLayer
 
 ## A corner readout for chasing frame rate on the TV: fps, the slowest frame
-## in the last second, and where the time goes (script, physics, render CPU
-## and GPU), plus the size the game draws at. F3 toggles it; launching with
+## in the last second, the whole frame's time (Godot's process monitor, which
+## includes waiting for the screen), physics, and render CPU and GPU, plus the
+## size the game draws at. Frame time well above render time means the game
+## is waiting on the display, not working. F3 toggles it; launching with
 ## --perf starts with it on, for a Steam launch option when there's no keyboard.
 
 const REFRESH_TIME: float = 0.5
@@ -44,7 +46,7 @@ func _process(delta):
 
 func readout() -> String:
 	var rid = get_viewport().get_viewport_rid()
-	return "%d fps   worst %.1f ms\nscript %.1f   physics %.1f\nrender cpu %.1f   gpu %.1f\n%s drawn, %s logical" % [
+	return "%d fps   worst %.1f ms\nframe %.1f   physics %.1f\nrender cpu %.1f   gpu %.1f\n%s drawn, %s logical" % [
 		Engine.get_frames_per_second(), worst_frame / 1000.0,
 		Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0,
 		Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0,
