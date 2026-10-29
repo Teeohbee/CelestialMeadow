@@ -10,7 +10,8 @@ signal closed
 ## Each row: its name, and the setting it changes ("" for none). A number
 ## setting is a volume shown as bars; an on/off one toggles, shown as On/Off
 ## or as the row's own words for off and on. A number setting with words
-## steps through them instead. Display switches DisplayDriver, restarting.
+## steps through them instead. Display switches DisplayDriver, restarting,
+## and Benchmark runs the frame-rate benchmark.
 const ROWS: Array[Dictionary] = [
 	{"name": "Music", "setting": "music_volume"},
 	{"name": "Sounds", "setting": "sound_volume"},
@@ -20,6 +21,7 @@ const ROWS: Array[Dictionary] = [
 	{"name": "VSync", "setting": "vsync_mode", "words": ["Off", "On", "Adaptive", "Mailbox"]},
 	{"name": "Frame readout", "setting": "perf_readout"},
 	{"name": "Display", "setting": "", "display": true},
+	{"name": "Benchmark", "setting": ""},
 	{"name": "Back", "setting": ""},
 ]
 
@@ -111,6 +113,9 @@ func _input(event):
 		change_volume(row.setting, 1)
 	elif row.name == "Back" and event.is_action_pressed("ui_accept"):
 		close()
+	elif row.name == "Benchmark" and event.is_action_pressed("ui_accept"):
+		close()
+		SceneManager.go_to("res://bench.tscn")
 
 func select(index: int):
 	selected = posmod(index, rows.size())

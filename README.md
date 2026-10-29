@@ -42,7 +42,8 @@ frame pacing with the frame-rate readout. **Frame readout** turns that on
 from the pad, and it stays on between launches. **Display** switches the
 Linux build between X11 and Wayland and restarts the game; the choice is
 saved as `override.cfg` beside the executable, so delete that file to go
-back to the default.
+back to the default. **Benchmark** runs a few stripped-down scenes for a few
+seconds each and shows their frame rates on one screen.
 
 ### Match setup
 
