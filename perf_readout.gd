@@ -1,8 +1,10 @@
 extends CanvasLayer
 
 ## A corner readout for chasing frame rate on the TV: fps, the slowest frame
-## in the last second, and where the time goes (script, physics, render CPU
-## and GPU), plus the size the game draws at. F3 toggles it; launching with
+## in the last second, the whole frame's time (Godot's process monitor, which
+## includes waiting for the screen), physics, and render CPU and GPU, plus the
+## size the game draws at. Frame time well above render time means the game
+## is waiting on the display, not working. F3 toggles it; launching with
 ## --perf starts with it on, for a Steam launch option when there's no keyboard.
 
 const REFRESH_TIME: float = 0.5
@@ -44,7 +46,7 @@ func _process(delta):
 
 func readout() -> String:
 	var rid = get_viewport().get_viewport_rid()
-	return "%d fps   worst %.1f ms\nscript %.1f   physics %.1f\nrender cpu %.1f   gpu %.1f\n%s drawn, %s logical" % [
+	return "%d fps   worst %.1f ms\nframe %.1f   physics %.1f\nrender cpu %.1f   gpu %.1f\n%s drawn, %s logical\nwindow %s   screen %s at %.2fx   %s" % [
 		Engine.get_frames_per_second(), worst_frame / 1000.0,
 		Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0,
 		Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0,
@@ -52,6 +54,10 @@ func readout() -> String:
 		RenderingServer.viewport_get_measured_render_time_gpu(rid),
 		# The texture is what's actually drawn: the screen's size, or the layout's at 1080p
 		size_text(get_viewport().get_texture().get_size()), size_text(get_viewport().get_visible_rect().size),
+		# Where a drawn size bigger than the screen comes from: the window, the
+		# screen's reported size and scale, and which display server Godot chose
+		size_text(get_window().size), size_text(DisplayServer.screen_get_size()),
+		DisplayServer.screen_get_scale(), DisplayServer.get_name(),
 	]
 
 func size_text(size: Vector2) -> String:

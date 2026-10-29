@@ -110,6 +110,7 @@ that updates itself from those releases. The library art lives in
 ### Frame-rate readout
 
 **F3** toggles a corner readout: fps, the slowest frame in the last second,
-and the milliseconds spent on script, physics and rendering (CPU and GPU).
+the whole frame's time (including waiting for the screen), and the
+milliseconds spent on physics and rendering (CPU and GPU).
 With no keyboard, add `--perf` to the shortcut's launch options in Steam
 (`%command% --perf`) and it starts switched on.
