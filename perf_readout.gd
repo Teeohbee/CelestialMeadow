@@ -52,13 +52,21 @@ func readout() -> String:
 		Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0,
 		RenderingServer.viewport_get_measured_render_time_cpu(rid),
 		RenderingServer.viewport_get_measured_render_time_gpu(rid),
-		# The texture is what's actually drawn: the screen's size, or the layout's at 1080p
-		size_text(get_viewport().get_texture().get_size()), size_text(get_viewport().get_visible_rect().size),
+		size_text(drawn_size()), size_text(get_viewport().get_visible_rect().size),
 		# Where a drawn size bigger than the screen comes from: the window, the
 		# screen's reported size and scale, and which display server Godot chose
 		size_text(get_window().size), size_text(DisplayServer.screen_get_size()),
 		DisplayServer.screen_get_scale(), DisplayServer.get_name(),
 	]
+
+## The size actually drawn: the window's, or the layout's at 1080p. Not the
+## root's texture size, which in canvas_items mode is the window size times
+## the stretch scale, so a 4K window read as 7680x4320.
+func drawn_size() -> Vector2:
+	var window = get_window()
+	if window.content_scale_mode == Window.CONTENT_SCALE_MODE_VIEWPORT:
+		return window.get_visible_rect().size
+	return Vector2(window.size)
 
 func size_text(size: Vector2) -> String:
 	return "%dx%d" % [size.x, size.y]
