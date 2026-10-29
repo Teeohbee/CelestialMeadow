@@ -50,7 +50,8 @@ func readout() -> String:
 		Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0,
 		RenderingServer.viewport_get_measured_render_time_cpu(rid),
 		RenderingServer.viewport_get_measured_render_time_gpu(rid),
-		size_text(get_window().size), size_text(get_viewport().get_visible_rect().size),
+		# The texture is what's actually drawn: the screen's size, or the layout's at 1080p
+		size_text(get_viewport().get_texture().get_size()), size_text(get_viewport().get_visible_rect().size),
 	]
 
 func size_text(size: Vector2) -> String:
