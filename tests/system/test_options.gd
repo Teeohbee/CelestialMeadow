@@ -164,6 +164,21 @@ func test_the_frame_readout_row_shows_the_readout() -> void:
 	await press("ui_accept")
 	assert_bool(PerfReadout.visible).is_false()
 
+func test_the_display_row_shows_the_driver_running() -> void:
+	await opened()
+	for i in 6:
+		await press("ui_down")
+	assert_str(row_name()).is_equal("Display")
+	assert_str(options.values[options.selected].text).is_equal(DisplayDriver.label())
+
+func test_from_source_the_display_row_changes_nothing() -> void:
+	await opened()
+	for i in 6:
+		await press("ui_down")
+	await press("ui_right")
+	assert_bool(options.visible).is_true()
+	assert_str(options.rows[options.selected].blurb.text).is_equal("Only in the Linux build")
+
 func test_up_from_music_wraps_to_back() -> void:
 	await opened()
 	await press("ui_up")
