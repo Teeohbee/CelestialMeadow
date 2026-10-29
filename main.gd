@@ -23,6 +23,7 @@ var player_configs = [
 func _ready():
 	Music.play_track("round")
 	screen_size = get_viewport().get_visible_rect().size
+	lay_out(screen_size)
 	mode = GameState.mode.new()
 	mode.hud = $HUD
 	mode.round_over.connect(show_results)
@@ -37,6 +38,19 @@ func _ready():
 	# Start countdown before beginning the game
 	$Countdown.countdown_finished.connect(_on_countdown_finished)
 	$Countdown.start_countdown()
+
+## Fits the arena to the screen: 1920x1080 on 16:9, taller on 16:10
+func lay_out(size: Vector2):
+	$Camera2D.original_offset = size * 0.5
+	$Camera2D.offset = size * 0.5
+	$SpaceStation.position = size * 0.5
+	var edge = Curve2D.new()
+	for corner in [Vector2.ZERO, Vector2(size.x, 0), size, Vector2(0, size.y), Vector2.ZERO]:
+		edge.add_point(corner)
+	$AsteroidPath.curve = edge
+	# A margin past the edge so camera shake never shows the grain's border
+	$Grain.position = Vector2(-64, -64)
+	$Grain.size = size + Vector2(128, 128)
 
 func _on_countdown_finished():
 	game_started = true
