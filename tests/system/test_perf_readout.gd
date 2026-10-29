@@ -37,3 +37,14 @@ func test_it_updates_while_paused() -> void:
 	get_tree().paused = true
 	await get_tree().create_timer(PerfReadout.REFRESH_TIME + 0.2, true, false, true).timeout
 	assert_str(PerfReadout.label.text).contains("fps")
+
+func test_drawn_is_the_window_size_at_native() -> void:
+	get_tree().root.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
+	assert_vector(PerfReadout.drawn_size()).is_equal(Vector2(get_tree().root.size))
+
+func test_drawn_is_the_layout_size_at_1080p() -> void:
+	get_tree().root.content_scale_mode = Window.CONTENT_SCALE_MODE_VIEWPORT
+	await frames(1)
+	var drawn: Vector2 = PerfReadout.drawn_size()
+	get_tree().root.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
+	assert_vector(drawn).is_equal(Vector2(1920, 1080))
