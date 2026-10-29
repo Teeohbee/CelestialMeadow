@@ -12,6 +12,9 @@ const UNCOVER_TIME: float = 0.65
 
 const BAND_SKEW: float = 260.0
 
+## The curtain has cleared and the new scene is running
+signal scene_revealed
+
 var is_changing_scene: bool = false
 ## How fast the curtain sweeps. Always 1 in the game; tests turn it up
 var speed_scale: float = 1.0
@@ -65,6 +68,7 @@ func change_scene_behind_curtain(scene_path: String):
 	unfreeze(new_scene)
 	get_viewport().set_disable_input(false)
 	is_changing_scene = false
+	scene_revealed.emit()
 
 func sweep_to(target: float, seconds: float, easing: Tween.EaseType) -> Tween:
 	var tween = create_tween().set_ignore_time_scale(true).set_speed_scale(speed_scale)

@@ -34,8 +34,10 @@ func _ready():
 	for i in GameConfig.ASTEROID_INITIAL_COUNT:
 		spawn_asteroid()
 	
-	# Start countdown before beginning the game
+	# Start countdown before beginning the game, once the curtain is out of the way
 	$Countdown.countdown_finished.connect(_on_countdown_finished)
+	if SceneManager.is_changing_scene:
+		await SceneManager.scene_revealed
 	$Countdown.start_countdown()
 
 func _on_countdown_finished():

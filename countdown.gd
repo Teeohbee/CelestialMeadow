@@ -43,8 +43,8 @@ func show_number(number: int):
 	# Slight overshoot for impact
 	tween.chain().tween_property(countdown_label, "scale", Vector2(1.0, 1.0), 0.15)
 	
-	# Hold for medium duration
-	await get_tree().create_timer(0.6).timeout
+	# Hold for medium duration. A tween rather than a tree timer, so pausing holds it too
+	await create_tween().tween_interval(0.6).finished
 	
 	# Fade out medium speed
 	var fade_tween = create_tween()
