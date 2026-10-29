@@ -10,7 +10,7 @@ signal closed
 ## Each row: its name, and the setting it changes ("" for none). A number
 ## setting is a volume shown as bars; an on/off one toggles, shown as On/Off
 ## or as the row's own words for off and on. A number setting with words
-## steps through them instead.
+## steps through them instead. Display switches DisplayDriver, restarting.
 const ROWS: Array[Dictionary] = [
 	{"name": "Music", "setting": "music_volume"},
 	{"name": "Sounds", "setting": "sound_volume"},
@@ -19,6 +19,7 @@ const ROWS: Array[Dictionary] = [
 	# In DisplayServer.VSyncMode order
 	{"name": "VSync", "setting": "vsync_mode", "words": ["Off", "On", "Adaptive", "Mailbox"]},
 	{"name": "Frame readout", "setting": "perf_readout"},
+	{"name": "Display", "setting": "", "display": true},
 	{"name": "Back", "setting": ""},
 ]
 
@@ -65,9 +66,13 @@ func _ready():
 
 func make_row(row: Dictionary) -> OptionRow:
 	var kind = OptionRow.Kind.NONE
-	if row.setting != "":
+	if row.has("display"):
+		kind = OptionRow.Kind.WORDS
+	elif row.setting != "":
 		kind = OptionRow.Kind.WORDS if GameSettings.get_setting(row.setting) is bool or row.has("words") else OptionRow.Kind.BARS
 	var option_row = OptionRow.new(row.name, kind)
+	if row.has("display"):
+		option_row.show_blurb("Restarts the game" if DisplayDriver.can_switch() else "Only in the Linux build")
 	values.append(option_row.value_label)
 	return option_row
 
@@ -95,6 +100,9 @@ func _input(event):
 		select(selected - 1)
 	elif MenuInput.pressed(event, "ui_down"):
 		select(selected + 1)
+	elif row.has("display") and (MenuInput.pressed(event, "ui_left") or MenuInput.pressed(event, "ui_right") or event.is_action_pressed("ui_accept")):
+		Sound.play("confirm")
+		DisplayDriver.switch(get_tree())
 	elif toggles and (MenuInput.pressed(event, "ui_left") or MenuInput.pressed(event, "ui_right") or event.is_action_pressed("ui_accept")):
 		toggle(row, -1 if MenuInput.pressed(event, "ui_left") else 1)
 	elif row.setting != "" and MenuInput.pressed(event, "ui_left", true):
@@ -130,7 +138,9 @@ func refresh():
 	for i in rows.size():
 		rows[i].set_selected(i == selected)
 		var setting = ROWS[i].setting
-		if setting != "":
+		if ROWS[i].has("display"):
+			rows[i].show_value(DisplayDriver.label())
+		elif setting != "":
 			var value = GameSettings.get_setting(setting)
 			var words = ROWS[i].get("words", ["Off", "On"])
 			rows[i].show_value(words[int(value)] if value is bool or ROWS[i].has("words") else value)
