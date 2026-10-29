@@ -8,11 +8,13 @@ extends Control
 signal closed
 
 ## Each row: its name, and the setting it changes ("" for none). A number
-## setting is a volume shown as bars; an on/off one toggles.
+## setting is a volume shown as bars; an on/off one toggles, shown as On/Off
+## or as the row's own words for off and on.
 const ROWS: Array[Dictionary] = [
 	{"name": "Music", "setting": "music_volume"},
 	{"name": "Sounds", "setting": "sound_volume"},
 	{"name": "Fullscreen", "setting": "fullscreen"},
+	{"name": "Resolution", "setting": "render_1080p", "words": ["Native", "1080p"]},
 	{"name": "Back", "setting": ""},
 ]
 
@@ -122,4 +124,5 @@ func refresh():
 		var setting = ROWS[i].setting
 		if setting != "":
 			var value = GameSettings.get_setting(setting)
-			rows[i].show_value(("On" if value else "Off") if value is bool else value)
+			var words = ROWS[i].get("words", ["Off", "On"])
+			rows[i].show_value(words[int(value)] if value is bool else value)

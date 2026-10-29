@@ -154,3 +154,16 @@ func test_a_save_that_cant_be_written_still_changes_the_setting() -> void:
 
 func test_the_game_launches_fullscreen() -> void:
 	assert_int(ProjectSettings.get_setting("display/window/size/mode")).is_equal(DisplayServer.WINDOW_MODE_FULLSCREEN)
+
+func test_the_game_draws_at_native_resolution_by_default() -> void:
+	assert_bool(_settings().get_setting("render_1080p")).is_false()
+	assert_int(get_tree().root.content_scale_mode).is_equal(Window.CONTENT_SCALE_MODE_CANVAS_ITEMS)
+
+func test_a_saved_1080p_draws_at_the_layout_size() -> void:
+	_load({"version": 1, "settings": {"render_1080p": true}})
+	assert_int(get_tree().root.content_scale_mode).is_equal(Window.CONTENT_SCALE_MODE_VIEWPORT)
+
+func test_loading_native_after_1080p_goes_back_to_native() -> void:
+	_load({"version": 1, "settings": {"render_1080p": true}})
+	_load({"version": 1, "settings": {"render_1080p": false}})
+	assert_int(get_tree().root.content_scale_mode).is_equal(Window.CONTENT_SCALE_MODE_CANVAS_ITEMS)
