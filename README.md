@@ -102,3 +102,10 @@ git tag v0.4.0 && git push origin v0.4.0
 `steamdeck/README.md` covers adding the game to Steam as a non-Steam shortcut
 that updates itself from those releases. The library art lives in
 `steam/art`.
+
+### Frame-rate readout
+
+**F3** toggles a corner readout: fps, the slowest frame in the last second,
+and the milliseconds spent on script, physics and rendering (CPU and GPU).
+With no keyboard, add `--perf` to the shortcut's launch options in Steam
+(`%command% --perf`) and it starts switched on.
