@@ -5,6 +5,8 @@ extends Node
 ## settings we know about are read, only of the right type, and numbers are
 ## clamped. Volumes are applied to the Music and Sounds buses as they change.
 ## The game launches fullscreen; turning that off gives a maximised window.
+## render_1080p draws at the 1920x1080 layout size and scales it up, rather
+## than drawing at the screen's own size: a quarter of the pixels on a 4K TV.
 
 signal setting_changed(setting_name: String, new_value: Variant)
 
@@ -17,6 +19,7 @@ var setting_limits: Dictionary = {
 	"music_volume": {"default": 8, "smallest": 0, "largest": 10},
 	"sound_volume": {"default": 8, "smallest": 0, "largest": 10},
 	"fullscreen": {"default": true},
+	"render_1080p": {"default": false},
 	"last_mode": {"default": 0, "smallest": 0, "largest": GameState.MODES.size() - 1},
 	"teams": {"default": false},
 	"lives": {"default": GameConfig.PLAYER_LIVES_DEFAULT, "smallest": 1, "largest": 5},
@@ -54,6 +57,7 @@ func load_from_disk():
 			copy_known_values(parser.data.get("settings", {}))
 	for setting_name in VOLUME_BUSES:
 		apply(setting_name)
+	apply("render_1080p")
 	# The game launches fullscreen already; only a saved "off" changes that,
 	# so --windowed and the editor's game window are left alone
 	if not settings.fullscreen:
@@ -96,3 +100,6 @@ func apply(setting_name: String):
 		var mode = DisplayServer.WINDOW_MODE_FULLSCREEN if settings.fullscreen else DisplayServer.WINDOW_MODE_MAXIMIZED
 		if DisplayServer.window_get_mode() != mode:
 			DisplayServer.window_set_mode(mode)
+	elif setting_name == "render_1080p":
+		var draw_at = Window.CONTENT_SCALE_MODE_VIEWPORT if settings.render_1080p else Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
+		get_tree().root.content_scale_mode = draw_at

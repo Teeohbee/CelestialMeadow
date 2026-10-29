@@ -34,6 +34,10 @@ Any pad drives the title, the match setup, the options, pause and results:
 **D-pad** or **left stick** to move, **A** to choose, **B** to go back.
 **View** opens the options. On the title, **B** or **Menu** asks to quit.
 
+Options has music and sound volume, fullscreen, and **Resolution**: Native
+draws at the screen's own size, 1080p draws at 1920x1080 and scales it up,
+which is much lighter on a 4K TV. On a Steam Deck, Native is already 800p.
+
 ### Match setup
 
 Pick the **Mode**, **Teams** (off or on) and the mode's rule: **Lives** (1-5)

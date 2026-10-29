@@ -1,6 +1,6 @@
 extends GameSuite
 # The options overlay in the lobby: any pad's View opens it, the D-pad picks a row and changes it live and
-# saved, volumes stop at 0 and 10 and 0 mutes, fullscreen toggles, B, Esc, Back or View close it, and while
+# saved, volumes stop at 0 and 10 and 0 mutes, fullscreen toggles, resolution flips between Native and 1080p, B, Esc, Back or View close it, and while
 # it's open it takes every press so nobody joins and nothing launches behind it.
 
 var menu: Node
@@ -105,6 +105,30 @@ func test_a_and_left_toggle_fullscreen_too() -> void:
 	assert_bool(GameSettings.get_setting("fullscreen")).is_false()
 	await press("ui_left")
 	assert_bool(GameSettings.get_setting("fullscreen")).is_true()
+
+func resolution_row() -> void:
+	await opened()
+	for i in 3:
+		await press("ui_down")
+
+func test_resolution_comes_after_fullscreen_and_starts_native() -> void:
+	await resolution_row()
+	assert_str(row_name()).is_equal("Resolution")
+	assert_str(options.values[options.selected].text).is_equal("Native")
+
+func test_right_draws_at_1080p_and_the_row_shows_it() -> void:
+	await resolution_row()
+	await press("ui_right")
+	assert_bool(GameSettings.get_setting("render_1080p")).is_true()
+	assert_str(options.values[options.selected].text).is_equal("1080p")
+	assert_int(get_tree().root.content_scale_mode).is_equal(Window.CONTENT_SCALE_MODE_VIEWPORT)
+
+func test_toggling_again_goes_back_to_native() -> void:
+	await resolution_row()
+	await press("ui_right")
+	await press("ui_accept")
+	assert_bool(GameSettings.get_setting("render_1080p")).is_false()
+	assert_int(get_tree().root.content_scale_mode).is_equal(Window.CONTENT_SCALE_MODE_CANVAS_ITEMS)
 
 func test_up_from_music_wraps_to_back() -> void:
 	await opened()
