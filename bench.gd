@@ -84,7 +84,7 @@ func measure(duration: float) -> String:
 		frames += 1
 		gpu += RenderingServer.viewport_get_measured_render_time_gpu(rid)
 	var elapsed = (Time.get_ticks_usec() - started) / 1000000.0
-	var drawn = get_viewport().get_texture().get_size()
+	var drawn = PerfReadout.drawn_size()
 	return "%5.1f fps   worst %5.1f ms   gpu %4.1f ms   %dx%d" % [
 		frames / elapsed, worst / 1000.0, gpu / maxi(frames, 1), drawn.x, drawn.y]
 
