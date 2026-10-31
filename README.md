@@ -11,8 +11,8 @@ Every pilot flies the same way:
 
 | | Controller | Keyboard (pilot 1 only) |
 |---|---|---|
-| Rotate | D-pad left / right | Left / Right arrows |
-| Thrust | RT | Up arrow |
+| Rotate | D-pad left / right, or left stick | Left / Right arrows |
+| Thrust | RT or B | Up arrow |
 | Shoot | A | Space |
 | Pause | Menu (Start) | Escape |
 

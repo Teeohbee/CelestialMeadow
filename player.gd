@@ -65,7 +65,11 @@ func get_input():
 		$Ship.thrusting = true
 	else:
 		$Ship.thrusting = false
-	rotation_direction = Input.get_axis(str("rotate_left", player_number), str("rotate_right", player_number))
+	# D-pad or left stick; the stick is analog, and only ships read it (the lobby's
+	# rotate actions would see a push as a stream of presses)
+	var dpad = Input.get_axis(str("rotate_left", player_number), str("rotate_right", player_number))
+	var stick = Input.get_axis(str("steer_left", player_number), str("steer_right", player_number))
+	rotation_direction = clampf(dpad + stick, -1.0, 1.0)
 	
 	if Input.is_action_pressed(str("shoot", player_number)):
 		shoot()
