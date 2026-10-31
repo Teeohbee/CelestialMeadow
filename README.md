@@ -39,7 +39,9 @@ draws at the screen's own size, 1080p draws at 1920x1080 and scales it up,
 which is much lighter on a 4K TV. On a Steam Deck, Native is already 800p.
 **VSync** steps through On, Adaptive, Mailbox and Off, live, for chasing
 frame pacing with the frame-rate readout. **Frame readout** turns that on
-from the pad, and it stays on between launches.
+from the pad, and it stays on between launches. **OLED black** swaps the
+plum ground for pure black and drops the horizon glow and film grain, so an
+OLED TV's pixels switch off.
 
 ### Match setup
 

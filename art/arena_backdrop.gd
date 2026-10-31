@@ -4,7 +4,8 @@ extends Node2D
 ## Atomic Clock dashed orbits, drifting speed bars and a rounded bezel.
 ## Only the speed bars move, so they redraw each frame on their own layer and
 ## everything else is drawn once: redrawing the ~850 dashes and screen-sized
-## circles every frame cost the Steam Machine's CPU about 20ms.
+## circles every frame cost the Steam Machine's CPU about 20ms. OLED black
+## drops the horizon rings and redraws the still parts once, black.
 
 const SEED: int = 23
 
@@ -46,19 +47,28 @@ func _ready():
 	bezel_layer.name = "Bezel"
 	bezel_layer.draw.connect(func(): bezel.draw(bezel_layer.get_canvas_item(), Rect2(Vector2(14, 14), size - Vector2(28, 28))))
 	add_child(bezel_layer)
+	GameSettings.setting_changed.connect(on_setting_changed)
+
+func on_setting_changed(setting_name: String, _value: Variant):
+	if setting_name == "oled":
+		queue_redraw()
 
 func _process(_delta):
 	bars_layer.queue_redraw()
 
 func _draw():
-	draw_rect(Rect2(Vector2(-200, -200), size + Vector2(400, 400)), GameConfig.GROUND)
+	draw_rect(Rect2(Vector2(-200, -200), size + Vector2(400, 400)), GameSettings.ground())
 	# Horizon glow in flat stepped rings, the poster's stand-in for a gradient
-	for i in range(5, -1, -1):
+	for i in range(horizon_rings() - 1, -1, -1):
 		draw_circle(Vector2(size.x * 0.5, size.y * 1.6), size.y * (1.0 + i * 0.17), GameConfig.GROUND.lerp(GameConfig.DEEP, (6 - i) / 6.0))
 	for s in stars:
 		draw_circle(s[0], s[1], Color(GameConfig.CREAM, s[2]))
 	for f in [0.42, 0.66, 0.92]:
 		Poster.dashed_circle(self, size * 0.5, size.y * f, 7, 9, Color(GameConfig.CREAM, 0.12), 1.5)
+
+## OLED black has none: they'd light the bottom third of the screen
+func horizon_rings() -> int:
+	return 0 if GameSettings.get_setting("oled") else 6
 
 ## Where a speed bar's head is at t seconds; they all drift one way and wrap
 func bar_head_x(b: Dictionary, t: float) -> float:

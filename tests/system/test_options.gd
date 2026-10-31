@@ -164,6 +164,16 @@ func test_the_frame_readout_row_shows_the_readout() -> void:
 	await press("ui_accept")
 	assert_bool(PerfReadout.visible).is_false()
 
+func test_the_oled_row_turns_the_ground_black() -> void:
+	await opened()
+	for i in 6:
+		await press("ui_down")
+	assert_str(row_name()).is_equal("OLED black")
+	assert_str(options.values[options.selected].text).is_equal("Off")
+	await press("ui_accept")
+	assert_bool(GameSettings.get_setting("oled")).is_true()
+	assert_object(RenderingServer.get_default_clear_color()).is_equal(Color.BLACK)
+
 func test_up_from_music_wraps_to_back() -> void:
 	await opened()
 	await press("ui_up")

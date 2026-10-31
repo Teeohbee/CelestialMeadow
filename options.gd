@@ -19,6 +19,7 @@ const ROWS: Array[Dictionary] = [
 	# In DisplayServer.VSyncMode order
 	{"name": "VSync", "setting": "vsync_mode", "words": ["Off", "On", "Adaptive", "Mailbox"]},
 	{"name": "Frame readout", "setting": "perf_readout"},
+	{"name": "OLED black", "setting": "oled"},
 	{"name": "Back", "setting": ""},
 ]
 
