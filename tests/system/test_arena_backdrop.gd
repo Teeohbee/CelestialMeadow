@@ -35,3 +35,21 @@ func test_the_speed_bars_drift() -> void:
 func test_the_bezel_sits_above_the_bars() -> void:
 	var node := await backdrop()
 	assert_int(node.bezel_layer.get_index()).is_greater(node.bars_layer.get_index())
+
+# OLED: the ground and its horizon rings are pure black, so the panel's pixels switch off
+func test_oled_redraws_the_still_parts_once_with_no_horizon() -> void:
+	var node := await backdrop()
+	assert_int(node.horizon_rings()).is_equal(6)
+	GameSettings.set_setting("oled", true)
+	assert_int(await draws_over(node, 10)).is_equal(1)
+	assert_int(node.horizon_rings()).is_equal(0)
+
+func test_oled_hides_the_grain() -> void:
+	var grain := ColorRect.new()
+	grain.set_script(load("res://art/grain.gd"))
+	add_child(auto_free(grain))
+	assert_bool(grain.visible).is_true()
+	GameSettings.set_setting("oled", true)
+	assert_bool(grain.visible).is_false()
+	GameSettings.set_setting("oled", false)
+	assert_bool(grain.visible).is_true()

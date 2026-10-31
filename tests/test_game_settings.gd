@@ -167,3 +167,13 @@ func test_loading_native_after_1080p_goes_back_to_native() -> void:
 	_load({"version": 1, "settings": {"render_1080p": true}})
 	_load({"version": 1, "settings": {"render_1080p": false}})
 	assert_int(get_tree().root.content_scale_mode).is_equal(Window.CONTENT_SCALE_MODE_CANVAS_ITEMS)
+
+func test_the_ground_is_plum_by_default() -> void:
+	assert_bool(_settings().get_setting("oled")).is_false()
+	assert_object(_settings().ground()).is_equal(GameConfig.GROUND)
+	assert_object(RenderingServer.get_default_clear_color()).is_equal(GameConfig.GROUND)
+
+func test_a_saved_oled_makes_the_ground_black() -> void:
+	_load({"version": 1, "settings": {"oled": true}})
+	assert_object(_settings().ground()).is_equal(Color.BLACK)
+	assert_object(RenderingServer.get_default_clear_color()).is_equal(Color.BLACK)

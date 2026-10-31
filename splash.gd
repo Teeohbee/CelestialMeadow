@@ -36,7 +36,7 @@ func play():
 	leave()
 
 func _draw():
-	draw_rect(Rect2(Vector2.ZERO, size), GameConfig.GROUND)
+	draw_rect(Rect2(Vector2.ZERO, size), GameSettings.ground())
 	var count = GameConfig.PLAYER_COLORS.size()
 	var top = size.y * 0.5 - BAR_GAP * (count - 1) * 0.5
 	for i in count:
