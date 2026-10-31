@@ -34,6 +34,25 @@ func _process(delta):
 	orbit += rotation_speed * delta
 	queue_redraw()
 
+func _physics_process(delta):
+	var ship = nearest_ship()
+	if ship == null:
+		return
+	# Slow at the edge of reach, quickening as it closes, so it reads as a pull
+	var closeness = 1.0 - position.distance_to(ship.global_position) / GameConfig.POWERUP_MAGNET_RADIUS
+	position = position.move_toward(ship.global_position, GameConfig.POWERUP_MAGNET_SPEED * closeness * delta)
+
+## The closest living ship within reach, or null
+func nearest_ship() -> Node2D:
+	var nearest: Node2D = null
+	var reach = GameConfig.POWERUP_MAGNET_RADIUS
+	for ship in get_tree().get_nodes_in_group("players"):
+		var distance = position.distance_to(ship.global_position)
+		if not ship.dead and distance < reach:
+			nearest = ship
+			reach = distance
+	return nearest
+
 ## One cream token for every power-up; the glyph inside says which:
 ## a ring for Shield, two bars for Rapid Fire, a chevron for Speed Boost
 func _draw():

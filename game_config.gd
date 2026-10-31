@@ -31,6 +31,9 @@ const POWERUP_SPEED_DURATION: float = 8.0
 const POWERUP_SPEED_MULTIPLIER: float = 2.0
 const POWERUP_DROP_CHANCE: float = 0.3
 const POWERUP_DESPAWN_TIME: float = 15.0
+# A power-up this close to a ship drifts in to it, at up to this speed as it arrives
+const POWERUP_MAGNET_RADIUS: float = 140.0
+const POWERUP_MAGNET_SPEED: float = 320.0
 
 # Shield Visual
 const SHIELD_RADIUS: int = 40
