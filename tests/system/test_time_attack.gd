@@ -51,8 +51,8 @@ func tied_at_time_up() -> Node:
 	await time_up(round)
 	return round
 
-func test_there_are_two_modes() -> void:
-	assert_array(GameState.MODES.map(func(mode): return mode.name)).is_equal(["Last Ship Standing", "Time Attack"])
+func test_time_attack_is_the_second_mode() -> void:
+	assert_str(GameState.MODES[1].name).is_equal("Time Attack")
 
 func test_classic_is_the_default() -> void:
 	await open("res://menu.tscn")

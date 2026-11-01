@@ -35,6 +35,10 @@ const POWERUP_DESPAWN_TIME: float = 15.0
 const POWERUP_MAGNET_RADIUS: float = 140.0
 const POWERUP_MAGNET_SPEED: float = 320.0
 
+# Wanted: what shooting the kill leader scores, and the size of their sights
+const WANTED_BOUNTY: int = 3
+const WANTED_MARK_RADIUS: float = 46.0
+
 # Shield Visual
 const SHIELD_RADIUS: int = 40
 

@@ -33,8 +33,9 @@ func _ready():
 	heading.add_theme_color_override("font_color", GameConfig.LIGHT)
 
 ## winners is every player credited with the round; empty for a draw.
-## scores is each player's score this round, if the mode keeps one.
-func show_result(winners: Array[int], scores: Dictionary = {}):
+## scores is each player's score this round, if the mode keeps one, counted
+## in units (kills, points).
+func show_result(winners: Array[int], scores: Dictionary = {}, unit: String = "kill"):
 	var team = GameState.teams[winners[0]] if not winners.is_empty() else GameState.SOLO
 	if team != GameState.SOLO:
 		var colour = GameConfig.TEAM_COLORS[team]
@@ -57,7 +58,7 @@ func show_result(winners: Array[int], scores: Dictionary = {}):
 		title.add_theme_color_override("font_shadow_color", GameConfig.HUE)
 		subtitle.text = "Everyone lost"
 		ship.hide()
-	build_tally(winners, scores)
+	build_tally(winners, scores, unit)
 
 	get_tree().paused = true
 	set_buttons_disabled(true)
@@ -75,7 +76,7 @@ func names(players: Array[int]) -> String:
 		return colour_names[0]
 	return "%s & %s" % [", ".join(colour_names.slice(0, -1)), colour_names[-1]]
 
-func build_tally(winners: Array[int], scores: Dictionary):
+func build_tally(winners: Array[int], scores: Dictionary, unit: String):
 	for i in GameState.players:
 		var row = HBoxContainer.new()
 		row.add_theme_constant_override("separation", 6)
@@ -89,7 +90,7 @@ func build_tally(winners: Array[int], scores: Dictionary):
 		if i in scores:
 			var kills = Label.new()
 			kills.name = "Kills"
-			kills.text = "%d kill%s" % [scores[i], "" if scores[i] == 1 else "s"]
+			kills.text = "%d %s%s" % [scores[i], unit, "" if scores[i] == 1 else "s"]
 			kills.custom_minimum_size.x = 100
 			kills.add_theme_font_override("font", Poster.font(700))
 			kills.add_theme_color_override("font_color", GameConfig.PLAYER_COLORS[i])

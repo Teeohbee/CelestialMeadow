@@ -19,6 +19,8 @@ var lives: Dictionary = {}
 var pill_slots: Dictionary = {}
 var scores: Dictionary = {}
 var hidden: Dictionary = {}
+## The Wanted player, whose corner says so, or -1
+var wanted: int = -1
 var canvas: Node2D
 var clock: Label
 var side_scores: Label
@@ -94,6 +96,14 @@ func update_score(player_number: int, score: int):
 	scores[player_number] = score
 	canvas.queue_redraw()
 
+func set_wanted(player_number: int):
+	wanted = player_number
+	canvas.queue_redraw()
+
+## The line over a pilot's lives: "PILOT n", or "WANTED"
+func block_label(i: int) -> String:
+	return "WANTED" if i == wanted else "PILOT %d" % (i + 1)
+
 ## Pilots whose block is drawn, in seat order
 func shown_players() -> Array:
 	return lives.keys().filter(func(i): return i not in hidden)
@@ -143,7 +153,7 @@ func show_banner(text: String):
 func block_layout(i: int) -> Dictionary:
 	var size = canvas.get_viewport_rect().size
 	var slot = SLOTS[i]
-	var label_w = Poster.font(600, 4).get_string_size("PILOT %d" % (i + 1), HORIZONTAL_ALIGNMENT_LEFT, -1, 14).x
+	var label_w = Poster.font(600, 4).get_string_size(block_label(i), HORIZONTAL_ALIGNMENT_LEFT, -1, 14).x
 	var w = NUMERAL_GAP + maxf(label_w, row_width(i))
 	var right = slot[0] == 1.0
 	var top = MARGIN if slot[1] else size.y - MARGIN - BLOCK_H
@@ -183,7 +193,7 @@ func _draw_hud():
 		var ink = GameConfig.PLAYER_COLORS[i]
 		var top = b.top
 		var numeral = str(i + 1)
-		var label = "PILOT %d" % (i + 1)
+		var label = block_label(i)
 		var numeral_w = numeral_font.get_string_size(numeral, HORIZONTAL_ALIGNMENT_LEFT, -1, 58).x
 		var label_w = label_font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, 14).x
 		var row_w = row_width(i)
@@ -192,7 +202,7 @@ func _draw_hud():
 		var num_x = b.x0 + b.w - numeral_w if b.right else b.x0
 		canvas.draw_string_outline(numeral_font, Vector2(num_x, top + numeral_font.get_ascent(58) - 8), numeral, HORIZONTAL_ALIGNMENT_LEFT, -1, 58, 3, ink)
 		var label_x = inner - label_w if b.right else inner
-		canvas.draw_string(label_font, Vector2(label_x, top + 8 + label_font.get_ascent(14)), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color(GameConfig.CREAM, 0.8))
+		canvas.draw_string(label_font, Vector2(label_x, top + 8 + label_font.get_ascent(14)), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 14, GameConfig.LIGHT if i == wanted else Color(GameConfig.CREAM, 0.8))
 		for n in pill_slots[i]:
 			var px = inner - 20.0 - n * PILL_STEP if b.right else inner + n * PILL_STEP
 			var colour = ink if n < lives[i] else Color(GameConfig.CREAM, 0.18)
