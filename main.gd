@@ -101,7 +101,7 @@ func show_results(winners: Array[int]):
 		GameState.record_win(winner)
 	var results = ResultsScene.instantiate()
 	add_child(results)
-	results.show_result(winners, mode.round_scores())
+	results.show_result(winners, mode.round_scores(), mode.score_unit())
 
 func _on_player_respawn_requested(player):
 	var marker = SpawnMarker.new()

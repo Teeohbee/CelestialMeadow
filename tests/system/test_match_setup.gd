@@ -94,7 +94,7 @@ func test_the_mode_wraps_round() -> void:
 	await opened()
 	await select("Mode")
 	await press("ui_left")
-	assert_str(value_of("Mode")).is_equal("Time Attack")
+	assert_str(value_of("Mode")).is_equal(GameState.MODES[-1].name)
 	await press("ui_right")
 	assert_str(value_of("Mode")).is_equal("Last Ship Standing")
 

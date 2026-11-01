@@ -23,8 +23,8 @@ func _ready():
 		hud.update_score(player, 0)
 	hud.set_team_scores(side_scores())
 	hud.set_clock(GameState.time_attack_seconds)
-	if GameState.kill_target > 0:
-		hud.set_goal("First to %d" % GameState.kill_target)
+	if kill_target() > 0:
+		hud.set_goal("First to %d" % kill_target())
 
 func starting_lives() -> int:
 	return GameConfig.UNLIMITED_LIVES
@@ -42,7 +42,7 @@ func _process(_delta):
 func on_player_killed(victim: int, killer: int):
 	if sudden_death or killer < 0 or killer == victim:
 		return
-	scores[killer] += 1
+	scores[killer] += points_for(victim)
 	hud.update_score(killer, scores[killer])
 	hud.set_team_scores(side_scores())
 	end_if_target_reached()
@@ -51,12 +51,20 @@ func on_player_eliminated(_player: int):
 	if sudden_death:
 		end_if_last_standing()
 
+## The score that wins the round there and then; 0 for none
+func kill_target() -> int:
+	return GameState.kill_target
+
+## What shooting down this player scores
+func points_for(_victim: int) -> int:
+	return 1
+
 func end_if_target_reached():
-	if GameState.kill_target <= 0:
+	if kill_target() <= 0:
 		return
 	var totals = side_scores()
 	for side in totals:
-		if totals[side] >= GameState.kill_target:
+		if totals[side] >= kill_target():
 			clock.stop()
 			end_round(GameState.members_of(side))
 			return

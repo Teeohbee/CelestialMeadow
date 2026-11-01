@@ -21,6 +21,10 @@ func starting_lives() -> int:
 func round_scores() -> Dictionary:
 	return {}
 
+## What round_scores() counts, for the results: "kill" makes "3 kills"
+func score_unit() -> String:
+	return "kill"
+
 ## The countdown has finished and play has begun
 func start():
 	pass
