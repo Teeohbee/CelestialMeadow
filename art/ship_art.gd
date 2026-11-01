@@ -19,7 +19,7 @@ var thrusting: bool = false
 ## Velocity in world space; empty for a ship that never moves, e.g. a seat card
 var velocity: Vector2 = Vector2.ZERO
 var show_trail: bool = true
-## The trail and its side streaks: lines in world space behind the ship
+## The trail and its side streaks, drawn behind the ship
 var trail: Line2D
 var streaks: Array[Line2D] = []
 ## Newest first, each the emitters' world positions that frame
@@ -34,7 +34,7 @@ func _ready():
 
 func trail_line(width: float) -> Line2D:
 	var line = Line2D.new()
-	line.top_level = true
+	# Not top_level: that would let it use world points, but draws it over the ship
 	line.show_behind_parent = true
 	line.width = width
 	line.begin_cap_mode = Line2D.LINE_CAP_ROUND
@@ -85,11 +85,13 @@ func update_trail():
 			history.clear()
 		history.push_front(now)
 	var length = minf(speed * TRAIL_PER_SPEED, L * 6.0)
-	trail.points = path_back(0, length)
+	# History is in world space so it stays put as the ship turns; the lines draw in the ship's own
+	var to_ship = get_global_transform().affine_inverse()
+	trail.points = to_ship * path_back(0, length)
 	trail.default_color = Color(ink, 0.9)
 	trail.visible = trail.points.size() > 1
 	for i in streaks.size():
-		streaks[i].points = path_back(i + 1, length * 0.55)
+		streaks[i].points = to_ship * path_back(i + 1, length * 0.55)
 		streaks[i].default_color = Color(ink.lerp(GameConfig.CREAM, 0.5), 0.6)
 		streaks[i].visible = trail.visible
 	# Keep just enough history for the longest line
