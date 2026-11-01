@@ -12,11 +12,13 @@ const Options = preload("res://options.gd")
 const SeatCard = preload("res://seat_card.gd")
 const ROW_WIDTH: float = 960.0
 const PICK_SEATS: String = "Pick seats"
-## The row for each rule a mode can use (GameState.MODES "rules"), and how
-## its value reads
+## The row for each rule a mode can use (GameState.MODES "rules"), how its
+## value reads, how far left and right move it (1 unless given), and what 0
+## reads as when it means "none"
 const RULE_ROWS: Dictionary = {
 	"lives": {"name": "Lives", "format": "%d"},
 	"time_minutes": {"name": "Time", "format": "%d:00"},
+	"kill_target": {"name": "Win at", "format": "%d kills", "step": 5, "off": "Off"},
 }
 
 var mode_index: int
@@ -141,12 +143,18 @@ func change(step: int):
 		_:
 			var rule = rule_named(selected)
 			var limits = GameSettings.setting_limits[rule]
-			var value = clampi(rules[rule] + step, limits.smallest, limits.largest)
+			var value = clampi(rules[rule] + step * RULE_ROWS[rule].get("step", 1), limits.smallest, limits.largest)
 			if value == rules[rule]:
 				return
 			rules[rule] = value
 	Sound.play("focus")
 	refresh()
+
+func rule_text(rule: String) -> String:
+	var row = RULE_ROWS[rule]
+	if rules[rule] == 0 and row.has("off"):
+		return row.off
+	return row.format % rules[rule]
 
 func rule_named(row_name: String) -> String:
 	for rule in RULE_ROWS:
@@ -162,7 +170,7 @@ func refresh():
 	get_row("Mode").show_blurb(mode.blurb)
 	get_row("Teams").show_value("On" if teams else "Off")
 	for rule in RULE_ROWS:
-		get_row(RULE_ROWS[rule].name).show_value(RULE_ROWS[rule].format % rules[rule])
+		get_row(RULE_ROWS[rule].name).show_value(rule_text(rule))
 	for row in rows:
 		row.set_selected(row.name == selected)
 	var on = selected == PICK_SEATS

@@ -16,8 +16,9 @@ signal setting_changed(setting_name: String, new_value: Variant)
 const SAVE_FORMAT_VERSION: int = 1
 
 ## Each setting: its default, and for numbers the smallest and largest value.
-## last_mode is an index into GameState.MODES. teams, lives and time_minutes
-## are the match rules, kept between sessions like the mode.
+## last_mode is an index into GameState.MODES. teams, lives, time_minutes and
+## kill_target are the match rules, kept between sessions like the mode.
+## kill_target is the kills that end a Time Attack round early, 0 for none.
 var setting_limits: Dictionary = {
 	"music_volume": {"default": 8, "smallest": 0, "largest": 10},
 	"sound_volume": {"default": 8, "smallest": 0, "largest": 10},
@@ -30,6 +31,7 @@ var setting_limits: Dictionary = {
 	"teams": {"default": false},
 	"lives": {"default": GameConfig.PLAYER_LIVES_DEFAULT, "smallest": 1, "largest": 5},
 	"time_minutes": {"default": 2, "smallest": 1, "largest": 5},
+	"kill_target": {"default": 0, "smallest": 0, "largest": 20},
 }
 
 ## Which bus each volume setting drives
