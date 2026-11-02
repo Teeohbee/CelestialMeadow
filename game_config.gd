@@ -39,6 +39,16 @@ const POWERUP_MAGNET_SPEED: float = 320.0
 const WANTED_BOUNTY: int = 3
 const WANTED_MARK_RADIUS: float = 46.0
 
+# Hot Potato: the bomb's fuse in seconds, how long a new carrier must hold it
+# before passing it on, the wait for a fresh bomb after a blast, the push
+# a harmless shot gives, and the size of the fuse ring
+const HOT_POTATO_FUSE_MIN: float = 8.0
+const HOT_POTATO_FUSE_MAX: float = 15.0
+const HOT_POTATO_CATCH: float = 1.0
+const HOT_POTATO_REARM: float = 2.0
+const HOT_POTATO_SHOVE: float = 450.0
+const HOT_POTATO_MARK_RADIUS: float = 46.0
+
 # Shield Visual
 const SHIELD_RADIUS: int = 40
 

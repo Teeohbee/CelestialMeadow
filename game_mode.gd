@@ -29,6 +29,10 @@ func score_unit() -> String:
 func start():
 	pass
 
+## A bullet from shooter has hit an enemy ship; usually that shoots it down
+func ship_shot(shooter: int, ship: Node, _bullet: Node):
+	ship.destroy(shooter)
+
 ## killer is the player whose bullet did it, or -1 for nobody
 func on_player_killed(_victim: int, _killer: int):
 	pass

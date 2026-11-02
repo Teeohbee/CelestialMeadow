@@ -18,6 +18,7 @@ const MODES: Array[Dictionary] = [
 	{"name": "Last Ship Standing", "blurb": "Last ship flying wins.", "rules": ["lives"], "script": preload("res://last_ship_standing.gd")},
 	{"name": "Time Attack", "blurb": "Endless respawns. Most kills wins.", "rules": ["time_minutes", "kill_target"], "script": preload("res://time_attack.gd")},
 	{"name": "Wanted", "blurb": "The kill leader is Wanted. Shoot them for 3.", "rules": ["time_minutes"], "script": preload("res://wanted.gd")},
+	{"name": "Hot Potato", "blurb": "Shoot to pass the bomb before it blows.", "rules": ["lives"], "script": preload("res://hot_potato.gd")},
 ]
 # The mode chosen on the title screen, an index into MODES
 var mode_index: int = 0

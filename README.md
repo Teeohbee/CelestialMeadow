@@ -47,7 +47,7 @@ OLED TV's pixels switch off.
 
 Pick the **Mode**, **Teams** (off or on) and the mode's rules: **Lives** (1-5)
 for Last Ship Standing, **Time** (1-5 minutes) and **Win at** (off, or 5-20
-kills) for Time Attack, and **Time** for Wanted. Then **Pick seats**. It remembers the last match, and opens on Pick seats, so the same
+kills) for Time Attack, **Time** for Wanted and **Lives** for Hot Potato. Then **Pick seats**. It remembers the last match, and opens on Pick seats, so the same
 again is just **A**, **A** from the title.
 
 ### Who's flying? (the lobby)
@@ -81,6 +81,10 @@ is ready.
 - **Wanted** - Time Attack with a price on the leader. Whoever alone has the
   most kills is Wanted (amber sights on their ship), and shooting them scores
   3. Most points wins.
+- **Hot Potato** - only the bomb takes lives. One ship carries it, its fuse
+  burning away as a ring. Shoot someone to pass it on; anyone else's shots
+  just shove. When it blows, the carrier loses a life and a new bomb appears.
+  The last ship (or team) flying wins.
 
 Asteroids sometimes drop a power-up: a **shield**, **rapid fire** or a
 **speed boost**. Teammates' shots pass through each other.
