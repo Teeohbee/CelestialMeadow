@@ -47,7 +47,7 @@ OLED TV's pixels switch off.
 
 Pick the **Mode**, **Teams** (off or on) and the mode's rules: **Lives** (1-5)
 for Last Ship Standing, **Time** (1-5 minutes) and **Win at** (off, or 5-20
-kills) for Time Attack. Then **Pick seats**. It remembers the last match, and opens on Pick seats, so the same
+kills) for Time Attack, and **Time** for Wanted. Then **Pick seats**. It remembers the last match, and opens on Pick seats, so the same
 again is just **A**, **A** from the title.
 
 ### Who's flying? (the lobby)
@@ -78,6 +78,9 @@ is ready.
 - **Time Attack** - endless respawns against the clock (two minutes unless you
   change it). Most kills wins; a tie goes to sudden death. With **Win at** set,
   the first side to that many kills wins there and then.
+- **Wanted** - Time Attack with a price on the leader. Whoever alone has the
+  most kills is Wanted (amber sights on their ship), and shooting them scores
+  3. Most points wins.
 
 Asteroids sometimes drop a power-up: a **shield**, **rapid fire** or a
 **speed boost**. Teammates' shots pass through each other.
