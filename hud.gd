@@ -22,6 +22,8 @@ var hidden: Dictionary = {}
 var canvas: Node2D
 var clock: Label
 var side_scores: Label
+## The kill target under the clock, when the round has one
+var goal: Label
 var banner: Label
 
 func _ready():
@@ -45,6 +47,15 @@ func _ready():
 	side_scores.add_theme_color_override("font_color", Color(GameConfig.CREAM, 0.85))
 	side_scores.hide()
 	add_child(side_scores)
+
+	goal = poster_label(20, 600, 6, 0)
+	goal.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
+	goal.position.y = 84
+	goal.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	goal.uppercase = true
+	goal.add_theme_color_override("font_color", Color(GameConfig.LIGHT, 0.9))
+	goal.hide()
+	add_child(goal)
 
 	banner = poster_label(120, 700, 14, 10)
 	banner.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
@@ -97,6 +108,14 @@ func set_team_scores(totals: Dictionary):
 	side_scores.visible = not parts.is_empty()
 	canvas.queue_redraw()
 
+## A line under the clock saying what wins, e.g. "First to 10"; team totals
+## move down under it
+func set_goal(text: String):
+	goal.text = text
+	goal.show()
+	side_scores.position.y = goal.position.y + 34
+	canvas.queue_redraw()
+
 ## Shows the time left as m:ss, top centre
 func set_clock(seconds: float):
 	if not clock.visible:
@@ -137,8 +156,9 @@ func block_layout(i: int) -> Dictionary:
 		# aside to the right of them rather than down into the arena
 		if slot[1] and clock.visible:
 			var half = clock.get_minimum_size().x * 0.5
-			if side_scores.visible:
-				half = maxf(half, side_scores.get_minimum_size().x * 0.5)
+			for line in [side_scores, goal]:
+				if line.visible:
+					half = maxf(half, line.get_minimum_size().x * 0.5)
 			x0 = size.x * 0.5 + half + 40.0
 	return {"x0": x0, "top": top, "w": w, "right": right}
 

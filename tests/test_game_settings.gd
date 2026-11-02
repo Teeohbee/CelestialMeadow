@@ -75,6 +75,17 @@ func test_match_settings_of_the_wrong_type_keep_the_default() -> void:
 	assert_int(_settings().get_setting("lives")).is_equal(3)
 	assert_int(_settings().get_setting("time_minutes")).is_equal(2)
 
+func test_the_kill_target_is_off_unless_saved() -> void:
+	assert_int(_settings().get_setting("kill_target")).is_equal(0)
+	_load({"version": 1, "settings": {"kill_target": 15}})
+	assert_int(_settings().get_setting("kill_target")).is_equal(15)
+
+func test_the_kill_target_is_clamped_to_twenty() -> void:
+	_load({"version": 1, "settings": {"kill_target": 99}})
+	assert_int(_settings().get_setting("kill_target")).is_equal(20)
+	_load({"version": 1, "settings": {"kill_target": -5}})
+	assert_int(_settings().get_setting("kill_target")).is_equal(0)
+
 func test_loading_never_writes_a_file() -> void:
 	assert_bool(FileAccess.file_exists(scratch_path)).is_false()
 

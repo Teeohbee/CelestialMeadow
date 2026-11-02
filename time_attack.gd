@@ -2,7 +2,8 @@ extends GameMode
 
 ## Ships respawn forever and every kill scores for the killer's side. Most
 ## kills when the clock runs out wins; a tie goes to sudden death, where
-## only the tied sides' ships remain with one life each.
+## only the tied sides' ships remain with one life each. With a kill target
+## set, the first side to reach it wins there and then.
 
 var scores: Dictionary = {}
 var sudden_death: bool = false
@@ -22,6 +23,8 @@ func _ready():
 		hud.update_score(player, 0)
 	hud.set_team_scores(side_scores())
 	hud.set_clock(GameState.time_attack_seconds)
+	if GameState.kill_target > 0:
+		hud.set_goal("First to %d" % GameState.kill_target)
 
 func starting_lives() -> int:
 	return GameConfig.UNLIMITED_LIVES
@@ -42,10 +45,21 @@ func on_player_killed(victim: int, killer: int):
 	scores[killer] += 1
 	hud.update_score(killer, scores[killer])
 	hud.set_team_scores(side_scores())
+	end_if_target_reached()
 
 func on_player_eliminated(_player: int):
 	if sudden_death:
 		end_if_last_standing()
+
+func end_if_target_reached():
+	if GameState.kill_target <= 0:
+		return
+	var totals = side_scores()
+	for side in totals:
+		if totals[side] >= GameState.kill_target:
+			clock.stop()
+			end_round(GameState.members_of(side))
+			return
 
 ## Total kills for each side
 func side_scores() -> Dictionary:

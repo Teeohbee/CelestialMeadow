@@ -5,8 +5,8 @@ extends GdUnitTestSuite
 func test_last_ship_standing_uses_lives() -> void:
 	assert_array(GameState.MODES[0].rules).is_equal(["lives"])
 
-func test_time_attack_uses_the_time() -> void:
-	assert_array(GameState.MODES[1].rules).is_equal(["time_minutes"])
+func test_time_attack_uses_the_time_and_the_kill_target() -> void:
+	assert_array(GameState.MODES[1].rules).is_equal(["time_minutes", "kill_target"])
 
 func test_every_rule_is_a_saved_setting() -> void:
 	for mode in GameState.MODES:

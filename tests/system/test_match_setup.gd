@@ -59,7 +59,7 @@ func test_it_opens_on_the_last_match() -> void:
 	GameSettings.set_setting("teams", true)
 	GameSettings.set_setting("time_minutes", 4)
 	await opened()
-	assert_array(shown()).is_equal(["Mode", "Teams", "Time", "Pick seats"])
+	assert_array(shown()).is_equal(["Mode", "Teams", "Time", "Win at", "Pick seats"])
 	assert_str(value_of("Mode")).is_equal("Time Attack")
 	assert_str(value_of("Teams")).is_equal("On")
 	assert_str(value_of("Time")).is_equal("4:00")
@@ -84,8 +84,9 @@ func test_changing_the_mode_swaps_the_rule_row() -> void:
 	await select("Mode")
 	await press("ui_right")
 	assert_str(value_of("Mode")).is_equal("Time Attack")
-	assert_array(shown()).is_equal(["Mode", "Teams", "Time", "Pick seats"])
+	assert_array(shown()).is_equal(["Mode", "Teams", "Time", "Win at", "Pick seats"])
 	assert_str(value_of("Time")).is_equal("2:00")
+	assert_str(value_of("Win at")).is_equal("Off")
 	assert_str(setup.get_row("Mode").blurb.text).is_equal("Endless respawns. Most kills wins.")
 	assert_array(played()).is_equal(["focus"])
 
@@ -121,6 +122,37 @@ func test_time_stops_at_one_minute() -> void:
 		await press("ui_left")
 	assert_str(value_of("Time")).is_equal("1:00")
 	assert_array(played()).is_equal(["focus"])
+
+func test_win_at_steps_by_five_kills_up_to_twenty() -> void:
+	GameSettings.set_setting("last_mode", 1)
+	await opened()
+	await select("Win at")
+	var seen := []
+	for i in 5:
+		await press("ui_right")
+		seen.append(value_of("Win at"))
+	assert_array(seen).is_equal(["5 kills", "10 kills", "15 kills", "20 kills", "20 kills"])
+	assert_array(played()).is_equal(["focus", "focus", "focus", "focus"])
+
+func test_win_at_stops_at_off() -> void:
+	GameSettings.set_setting("last_mode", 1)
+	GameSettings.set_setting("kill_target", 5)
+	await opened()
+	await select("Win at")
+	await press("ui_left")
+	await press("ui_left")
+	assert_str(value_of("Win at")).is_equal("Off")
+	assert_array(played()).is_equal(["focus"])
+
+func test_pick_seats_saves_the_kill_target() -> void:
+	GameSettings.set_setting("last_mode", 1)
+	await opened()
+	await select("Win at")
+	await press("ui_right")
+	await press("ui_right")
+	await select("Pick seats")
+	await press("ui_accept")
+	assert_int(GameSettings.get_setting("kill_target")).is_equal(10)
 
 func test_a_on_a_value_row_does_nothing() -> void:
 	await opened()

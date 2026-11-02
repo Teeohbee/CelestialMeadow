@@ -11,10 +11,12 @@ var dummy_pilot: bool = OS.is_debug_build()
 var lives_per_player: int = GameConfig.PLAYER_LIVES_DEFAULT
 # How long a Time Attack round runs
 var time_attack_seconds: float = 120.0
+# Kills that end a Time Attack round before the clock does; 0 for none
+var kill_target: int = 0
 # Each mode's rules are the GameSettings it uses, shown as rows in the match setup
 const MODES: Array[Dictionary] = [
 	{"name": "Last Ship Standing", "blurb": "Last ship flying wins.", "rules": ["lives"], "script": preload("res://last_ship_standing.gd")},
-	{"name": "Time Attack", "blurb": "Endless respawns. Most kills wins.", "rules": ["time_minutes"], "script": preload("res://time_attack.gd")},
+	{"name": "Time Attack", "blurb": "Endless respawns. Most kills wins.", "rules": ["time_minutes", "kill_target"], "script": preload("res://time_attack.gd")},
 ]
 # The mode chosen on the title screen, an index into MODES
 var mode_index: int = 0
@@ -44,6 +46,7 @@ func start_session(seats: Array[int], dummy_seats: Array[int] = []):
 	mode = MODES[mode_index].script
 	lives_per_player = GameSettings.get_setting("lives")
 	time_attack_seconds = GameSettings.get_setting("time_minutes") * 60.0
+	kill_target = GameSettings.get_setting("kill_target")
 	wins.fill(0)
 
 ## Back to nobody seated and no wins, for a fresh start from the title

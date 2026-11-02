@@ -120,3 +120,35 @@ func test_the_last_ship_in_sudden_death_wins() -> void:
 	ship(0).destroy(1)
 	await results()
 	assert_str(results_title()).is_equal("Lime Wins!")
+
+func test_reaching_the_kill_target_wins_before_time_up() -> void:
+	GameSettings.set_setting("kill_target", 2)
+	await lime_leads()
+	await results()
+	assert_str(results_title()).is_equal("Lime Wins!")
+	assert_array(GameState.wins).is_equal([0, 1, 0, 0, 0, 0])
+
+func test_a_teams_kills_count_together_towards_the_target() -> void:
+	GameSettings.set_setting("kill_target", 2)
+	await new_round([0, 1, 2], [0, 0, 1, GameState.SOLO, GameState.SOLO, GameState.SOLO], 1)
+	ship(2).destroy(0)
+	await respawned(2)
+	ship(2).destroy(1)
+	await results()
+	assert_str(results_title()).is_equal("Team Alpha Wins!")
+
+func test_with_win_at_off_kills_never_end_the_round() -> void:
+	await lime_leads()
+	await seconds(1.0)
+	assert_object(scene().get_node_or_null("Results")).is_null()
+
+func test_the_hud_shows_the_kill_target() -> void:
+	GameSettings.set_setting("kill_target", 10)
+	await time_attack()
+	var goal: Label = scene().get_node("HUD").goal
+	assert_bool(goal.visible).is_true()
+	assert_str(goal.text).is_equal("First to 10")
+
+func test_the_hud_shows_no_target_when_win_at_is_off() -> void:
+	await time_attack()
+	assert_bool(scene().get_node("HUD").goal.visible).is_false()
